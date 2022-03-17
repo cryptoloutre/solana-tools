@@ -1,7 +1,7 @@
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { WalletContextState } from "@solana/wallet-adapter-react";
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { createSPLToken } from './createSPLToken';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
@@ -52,7 +52,7 @@ export const CreateTokenButton: FC<Props> = ({
                 </button>
             }
 
-            {tokenAddresss !== "" && <div className="mt-5">✅ {quantityCreated} token(s) <a href={'https://solscan.io/tx/' + signature + '?cluster=devnet'}><strong className="underline">{tokenAddresss}</strong></a> successfully created!</div>}
+            {tokenAddresss !== "" && <div className="mt-5">✅ {quantityCreated} token(s) <a href={'https://solscan.io/tx/' + signature}><strong className="underline">{tokenAddresss}</strong></a> successfully created!</div>}
 
         </div>
     );

@@ -3,10 +3,9 @@ import { FC, useState } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
-import { Loader, SolanaLogo, SelectAndConnectWalletButton, ConnectWallet } from "components";
+import { SolanaLogo, ConnectWallet } from "components";
 import styles from "./index.module.css";
 
-import { createSPLToken } from "../../utils/createSPLToken"
 import { CreateTokenButton } from '../../utils/CreateTokenButton';
 
 const walletPublicKey = "";
@@ -56,13 +55,13 @@ export const SPLTokenView: FC = ({ }) => {
                 <h1 className="mb-5 text-5xl">
                   Create Solana <SolanaLogo /> token
                 </h1>
-                {/* Géner le NaN */}
                 <div>
                   <form className="mt-[10%] mb-[5%]">
 
                     <label className="input-group input-group-vertical input-group-lg">Number of tokens to mint</label>
                     <input className="mb-[2%] text-black pl-1 border-2 border-black"
                       type="number"
+                      min="0"
                       required
                       value={quantity}
                       onChange={(e) => setQuantity(parseInt(e.target.value))}
@@ -75,6 +74,7 @@ export const SPLTokenView: FC = ({ }) => {
                     <label className="input-group input-group-vertical input-group-lg">Number of decimals</label>
                     <input className="mb-[2%] text-black pl-1 border-2 border-black"
                       type="number"
+                      min="0"
                       required
                       value={decimals}
                       onChange={(e) => setDecimals(parseInt(e.target.value))}
