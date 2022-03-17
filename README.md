@@ -1,35 +1,31 @@
 # Burn-NFT-UI
 
-Want to start develop with Solana fetching NFTs from the blockchain or power-up your [Anchor](https://project-serum.github.io/anchor/getting-started/introduction.html) app with UI?   
-This boilerplate can be used to setup your UI with React.JS / Next.JS and deploy it to [Vercel Platform](https://vercel.com/) in just a minutes.
-
-
-
-https://user-images.githubusercontent.com/188568/152035121-400a89b2-a5f7-4dca-9abd-b5991dc99f2c.mp4
+A UI for burning Solana NFTs and geting back $SOL from the associated token account.
 
 
 
 
-## 🛵 ◍ Demo: https://create-dapp-solana-nextjs.vercel.app/
+https://user-images.githubusercontent.com/35653371/157632711-68911aa8-0028-46d7-b836-5b192cc6d2ef.mp4
 
-This project includes:
 
-- Next.JS
-- TypeScript
-- [@solana/wallet-adapter](https://github.com/solana-labs/wallet-adapter) and [@solana/web3.js](https://solana-labs.github.io/solana-web3.js) for interactions with wallets & blockchain.
-- Tailwind CSS (with [daisyUI](https://daisyui.com/))
+
+
+
+
+## Demo: https://burn-nft-ui.vercel.app/
+
 
 ## Getting Started
 
-First, run the development server:
+Clone the repo, install the dependencies and run `yarn run dev` to run the development server.
 
 ```bash
-yarn
+git clone https://github.com/cryptoloutre/burn-nft-ui.git
+cd burn-nft-ui
+yarn install
 yarn run dev
 ```
 
-// TODO
-If you deploy new Candy Machine you can update UI config here: `./src/config/candy-machine.config.js`.
 
 ## Style
 
@@ -49,14 +45,16 @@ Before push run localy `npm run build` to make sure app can be build succesffull
 Vercel will automatically create environment and deployment for you if you have vercel account connected to your GitHub account. Go to the vercel.com to connect it.
 Then any push to `main` branch will automatically rebuild and redploy app.
 
-### Possible Issues 
+To deploy on Vercel use the following settings :
 
-- You might [need to overwrite default output derictory](https://github.com/thuglabs/create-dapp-solana-nextjs/issues/23) for vercel settings if you see [`Routes Manifest Could Not Be Found
-`](https://github.com/vercel/vercel/blob/main/errors/now-next-routes-manifest.md) error.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/35653371/157638049-4944f065-5985-4a35-bbe6-e46efc984737.png"/>
+</p>
 
-## Templates
 
-This boilerplate includes some templates you may find useful:
+## Community
+If you have questions or any troubles, feel free to reach me on Twitter [@laloutre](https://twitter.com/laloutre).
 
-- NFT Gallery Template
-- UI for Anchor app (Anchor program based on [this tutorial](https://lorisleiva.com/create-a-solana-dapp-from-scratch))
+
+## Tips
+Donations can be made at `6MupHwVuaZnxeXbw2DEvH96ouaWdg5TygPaSruB4H7YG` if you are feeling generous and want to support me!
