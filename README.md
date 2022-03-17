@@ -1,18 +1,10 @@
-# Burn-NFT-UI
+# Solana-Tools
 
-A UI for burning Solana NFTs and geting back $SOL from the associated token account.
-
-
-
-
-https://user-images.githubusercontent.com/35653371/157632711-68911aa8-0028-46d7-b836-5b192cc6d2ef.mp4
+A bunch of tools to help people in the Solana ecosystem. This website includes an UI to burn Solana NFTs and an UI to create SPL-Tokens. More tools are scheduled...
+    
 
 
-
-
-
-
-## Demo: https://burn-nft-ui.vercel.app/
+## Demo: https://solanatools.vercel.app/
 
 
 ## Getting Started
@@ -20,11 +12,31 @@ https://user-images.githubusercontent.com/35653371/157632711-68911aa8-0028-46d7-
 Clone the repo, install the dependencies and run `yarn run dev` to run the development server.
 
 ```bash
-git clone https://github.com/cryptoloutre/burn-nft-ui.git
-cd burn-nft-ui
+git clone https://github.com/cryptoloutre/solana-tools.git
+cd solana-tools
 yarn install
 yarn run dev
 ```
+
+
+## Burn NFT UI
+A UI for burning Solana NFTs and geting back $SOL from the associated token account.
+
+
+https://user-images.githubusercontent.com/35653371/158780601-3f17deb7-55e9-488f-aa44-279b11ca071a.mp4
+
+
+
+## Create SPL-Tokens UI
+A UI to create SPL-Tokens with one click.
+
+
+
+https://user-images.githubusercontent.com/35653371/158780971-f7041dde-71e5-4989-ac4c-cb97fc92e533.mp4
+
+
+
+
 
 
 ## Style
