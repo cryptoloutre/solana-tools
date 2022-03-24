@@ -77,6 +77,16 @@ export const HomeView: FC = ({ }) => {
                   </div>
                 </Link>
               </li>
+              {/* <li className="mb-5">
+                <Link href="/edittoken">
+                  <div className="p-4 hover:border">
+                    <a className="mb-5 text-4xl font-bold">
+                      🧪 -- Edit SPL Token
+                    </a>
+                    <div>A UI to edit your Solana token</div>
+                  </div>
+                </Link>
+              </li> */}
             </ul>
           </div>
         </div>
