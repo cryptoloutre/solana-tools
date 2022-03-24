@@ -40,8 +40,6 @@ export const HomeView: FC = ({ }) => {
           </div>
         </div>
 
-        {/* résoudre problème qu'il faut cliquer 2 fois pour se connecter. Copier-coller le code du composant SElectandConnect et retourner null ?*/}
-
         <div className="text-center pt-2">
           <div className="hero min-h-16 py-4">
             <div className="text-center hero-content">
@@ -61,15 +59,15 @@ export const HomeView: FC = ({ }) => {
             <ul className="text-left leading-10">
               <li className="mb-5">
                 <Link href="/gallery">
-                  <div className="p-2 hover:border">
-                    <a className="text-4xl font-bold">
+                  <div className="p-4 hover:border">
+                    <a className="text-4xl font-bold mb-5">
                       🔥 -- Burn NFT
                     </a>
                     <div>A UI to burn Solana NFTs and get SOL back</div></div>
                 </Link>
 
               </li>
-              <li>
+              <li className="mb-5">
                 <Link href="/spltoken">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
