@@ -77,16 +77,16 @@ export const HomeView: FC = ({ }) => {
                   </div>
                 </Link>
               </li>
-              {/* <li className="mb-5">
-                <Link href="/edittoken">
+              <li className="mb-5">
+                <Link href="/upload">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
-                      🧪 -- Edit SPL Token
+                    🧪 -- Upload file
                     </a>
-                    <div>A UI to edit your Solana token</div>
+                    <div>A UI to upload file to Arweave</div>
                   </div>
                 </Link>
-              </li> */}
+              </li>
             </ul>
           </div>
         </div>
