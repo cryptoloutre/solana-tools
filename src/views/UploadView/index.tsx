@@ -34,11 +34,15 @@ export const UploadView: FC = ({ }) => {
 
   const metaplex = Metaplex.make(connection)
     .use(walletAdapterIdentity(wallet))
-    .use(bundlrStorage());
+    .use(bundlrStorage({
+      address: 'https://devnet.bundlr.network',
+      providerUrl: 'https://api.devnet.solana.com',
+      timeout: 60000,
+  }));
 
   let _file: MetaplexFile
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = async (e: { target: { files: File[]; }; }) => {
     setFileIsSelected(true)
     setUri('')
     setError('')
