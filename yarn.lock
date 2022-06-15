@@ -2758,7 +2758,7 @@ available-typed-arrays@^1.0.5:
 
 "avsc@https://github.com/Bundlr-Network/avsc#csp-fixes":
   version "5.4.7"
-  resolved "git+ssh://git@github.com/Bundlr-Network/avsc.git#a730cc8018b79e114b6a3381bbb57760a24c6cef"
+  resolved "https://registry.npmjs.org/Bundlr-Network/avsc"
 
 axe-core@^4.3.5:
   version "4.4.1"
