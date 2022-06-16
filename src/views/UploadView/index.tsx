@@ -42,12 +42,8 @@ export const UploadView: FC = ({ }) => {
 
   const metaplex = Metaplex.make(connection)
     .use(walletAdapterIdentity(wallet))
-    .use(bundlrStorage({
-      address: 'https://devnet.bundlr.network',
-      providerUrl: 'https://api.devnet.solana.com',
-      timeout: 60000,
-    }));
-  // à enlever le devnet
+    .use(bundlrStorage());
+    
   let _file: MetaplexFile;
 
   const handleFileChange = async (event: any) => {
