@@ -6,8 +6,8 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { ConnectWallet } from "components";
 import styles from "./index.module.css";
 
-import { Metaplex, bundlrStorage, MetaplexFile, useMetaplexFileFromBrowser, walletAdapterIdentity } from "@metaplex-foundation/js-next";
-import { LAMPORTS_PER_SOL} from '@solana/web3.js';
+import { Metaplex, bundlrStorage, MetaplexFile, useMetaplexFileFromBrowser, walletAdapterIdentity, MetaplexFileTag, Amount } from "@metaplex-foundation/js-next";
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 const walletPublicKey = "";
 
@@ -25,12 +25,20 @@ export const UploadView: FC = ({ }) => {
   };
 
   const [fileIsSelected, setFileIsSelected] = useState(false)
-  const [file, setFile] = useState()
-  const [fileName, setFileName] = useState('')
-  const [uri, setUri] = useState('')
-  const [uploading, setUploading] = useState(false)
-  const [uploadCost, setUploadCost] = useState()
-  const [error, setError] = useState('')
+  const [file, setFile] = useState<Readonly<{
+    buffer: Buffer;
+    fileName: string;
+    displayName: string;
+    uniqueName: string;
+    contentType: string | null;
+    extension: string | null;
+    tags: MetaplexFileTag[];
+  }>>()
+  const [fileName, setFileName] = useState('');
+  const [uri, setUri] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadCost, setUploadCost] = useState<number>();
+  const [error, setError] = useState('');
 
   const metaplex = Metaplex.make(connection)
     .use(walletAdapterIdentity(wallet))
@@ -38,40 +46,43 @@ export const UploadView: FC = ({ }) => {
       address: 'https://devnet.bundlr.network',
       providerUrl: 'https://api.devnet.solana.com',
       timeout: 60000,
-  }));
+    }));
+  // à enlever le devnet
+  let _file: MetaplexFile;
 
-  let _file: MetaplexFile
-
-  const handleFileChange = async (e: { target: { files: File[]; }; }) => {
-    setFileIsSelected(true)
-    setUri('')
-    setError('')
-    setUploading(false)
-    const browserFile: File = e.target.files[0];
-    _file = await useMetaplexFileFromBrowser(browserFile)
-    setFile(_file)
-    setFileName(_file.displayName)
-    const cost = await (await metaplex.storage().getUploadPriceForFile(_file)).basisPoints['words'][0]
-    setUploadCost(cost)
-
+  const handleFileChange = async (event: any) => {
+    setFileIsSelected(true);
+    setUri('');
+    setError('');
+    setUploading(false);
+    const browserFile = event.target.files[0];
+    _file = await useMetaplexFileFromBrowser(browserFile);
+    setFile(_file);
+    setFileName(_file.displayName);
+    const getUploadCost = await (await metaplex.storage().getUploadPriceForFile(_file)).basisPoints.toString(10)
+    const cost = parseInt(getUploadCost, 10)
+    setUploadCost(cost / LAMPORTS_PER_SOL)
   }
 
   const UploadFile = async () => {
     try {
-      setError('')
-      setUploading(true)
-      const uri = await metaplex.storage().upload(file)
-      console.log(uri)
-      if (uri) {
-        setUri(uri)
-        setFileIsSelected(false)
-        setUploading(false)
+      setError('');
+      setUploading(true);
+      if (file) {
+        const uri = await metaplex.storage().upload(file);
+        console.log(uri);
+        if (uri) {
+          setUri(uri);
+          setFileIsSelected(false);
+          setUploading(false);
+        }
+
       }
     }
     catch (error) {
-      const err = (error as any)?.message
-      setError(err)
-      setUploading(false)
+      const err = (error as any)?.message;
+      setError(err);
+      setUploading(false);
     }
   }
 
@@ -108,14 +119,14 @@ export const UploadView: FC = ({ }) => {
                   <form className="mt-[20%] mb-[3%]">
                     <label htmlFor="file" className="text-white font-semibold text-xl rounded-full shadow-xl bg-[#414e63] border px-6 py-2 h-[40px] mb-[3%] uppercase hover:bg-[#2C3B52] hover:cursor-pointer">
                       Select file
-                    <input id="file" type="file" name="file" onChange={handleFileChange} style={{display: 'none'}}/>
+                      <input id="file" type="file" name="file" onChange={handleFileChange} style={{ display: 'none' }} />
                     </label>
                   </form>
 
-                  {fileName != '' && uri == '' &&
-                  <div className="text-white font-semibold text-xl mb-[3%]">
-                    You will upload <strong>{fileName}</strong> for {uploadCost/LAMPORTS_PER_SOL} SOL
-                  </div>
+                  {fileName != '' && uri == '' && uploadCost &&
+                    <div className="text-white font-semibold text-xl mb-[3%]">
+                      You will upload <strong>{fileName}</strong> for {uploadCost} SOL
+                    </div>
                   }
 
                   {fileIsSelected && uploading == false &&
