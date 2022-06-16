@@ -81,7 +81,7 @@ export const HomeView: FC = ({ }) => {
                 <Link href="/upload">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
-                    🧪 -- Upload file
+                    📤 -- Upload file
                     </a>
                     <div>A UI to upload file to Arweave</div>
                   </div>
