@@ -35,6 +35,13 @@ A UI to create SPL-Tokens with one click.
 https://user-images.githubusercontent.com/35653371/158780971-f7041dde-71e5-4989-ac4c-cb97fc92e533.mp4
 
 
+## Upload File
+A UI to upload file to Arweave.
+
+
+
+https://user-images.githubusercontent.com/35653371/174040530-3a4a16a3-26de-4c8a-b7c8-67908c3b377d.mp4
+
 
 
 
