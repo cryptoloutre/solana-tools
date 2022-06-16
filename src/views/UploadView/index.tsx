@@ -6,7 +6,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { ConnectWallet } from "components";
 import styles from "./index.module.css";
 
-import { Metaplex, bundlrStorage, MetaplexFile, useMetaplexFileFromBrowser, walletAdapterIdentity, MetaplexFileTag, Amount } from "@metaplex-foundation/js-next";
+import { Metaplex, bundlrStorage, MetaplexFile, useMetaplexFileFromBrowser, walletAdapterIdentity, MetaplexFileTag } from "@metaplex-foundation/js-next";
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 const walletPublicKey = "";
