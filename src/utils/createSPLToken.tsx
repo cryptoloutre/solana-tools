@@ -2,10 +2,11 @@ import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, MintLayout } from
 import { Connection, PublicKey, Transaction, SystemProgram, Keypair, TransactionInstruction } from '@solana/web3.js';
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Dispatch, SetStateAction } from 'react';
+import { PROGRAM_ID, DataV2, createCreateMetadataAccountV2Instruction } from '@metaplex-foundation/mpl-token-metadata';
 
 
 
-export async function createSPLToken(owner: PublicKey, wallet: WalletContextState, connection: Connection, quantity: number, decimals: number, isChecked: boolean, setIscreating: Dispatch<SetStateAction<boolean>>, setTokenAddresss: Dispatch<SetStateAction<string>>, setQuantityCreated: Dispatch<SetStateAction<number>>, setSignature: Dispatch<SetStateAction<string>>) {
+export async function createSPLToken(owner: PublicKey, wallet: WalletContextState, connection: Connection, quantity: number, decimals: number, isChecked: boolean, tokenName: string, symbol: string, metadata: string, setIscreating: Dispatch<SetStateAction<boolean>>, setTokenAddresss: Dispatch<SetStateAction<string>>, setQuantityCreated: Dispatch<SetStateAction<number>>, setSignature: Dispatch<SetStateAction<string>>) {
     try {
         setIscreating(true)
 
@@ -14,6 +15,29 @@ export async function createSPLToken(owner: PublicKey, wallet: WalletContextStat
         const mint_account = Keypair.generate();
 
         let InitMint: TransactionInstruction
+
+        const [metadataPDA] = await PublicKey.findProgramAddress(
+            [
+                Buffer.from("metadata"),
+                PROGRAM_ID.toBuffer(),
+                mint_account.publicKey.toBuffer(),
+            ], PROGRAM_ID
+        );
+
+        const tokenMetadata: DataV2 = {
+            name: tokenName, 
+            symbol: symbol,
+            uri: metadata,
+            sellerFeeBasisPoints: 0,
+            creators: null,
+            collection: null,
+            uses: null
+          };
+
+        const args = {
+            data: tokenMetadata,
+            isMutable: true,
+        };
 
         const createMintAccountInstruction = await SystemProgram.createAccount({
             fromPubkey: owner,
@@ -68,13 +92,28 @@ export async function createSPLToken(owner: PublicKey, wallet: WalletContextStat
             quantity * 10 ** decimals
         );
 
-        const createAccountTransaction = new Transaction().add(createMintAccountInstruction, InitMint, createATAInstruction, mintInstruction);
+
+        const MetadataInstruction =  createCreateMetadataAccountV2Instruction(
+            {
+                metadata: metadataPDA,
+                mint: mint_account.publicKey,
+                mintAuthority: owner,
+                payer: owner,
+                updateAuthority: owner,
+            },
+            {
+                createMetadataAccountArgsV2: args,
+            }
+        );
+
+        const createAccountTransaction = new Transaction().add(createMintAccountInstruction, InitMint, createATAInstruction, mintInstruction, MetadataInstruction);
 
         const createAccountSignature = await wallet.sendTransaction(createAccountTransaction, connection, { signers: [mint_account] });
 
-        const createAccountconfirmed = await connection.confirmTransaction(createAccountSignature, 'processed');
+        const createAccountconfirmed = await connection.confirmTransaction(createAccountSignature, 'confirmed');
 
         const signature = createAccountSignature.toString()
+
         
         if (createAccountconfirmed) {
             setIscreating(false);
@@ -82,6 +121,7 @@ export async function createSPLToken(owner: PublicKey, wallet: WalletContextStat
             setQuantityCreated(quantity);
             setSignature(signature)
         }
+
     } catch (error) {
         setIscreating(false);
     }

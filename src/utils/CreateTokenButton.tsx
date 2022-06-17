@@ -11,6 +11,9 @@ type Props = {
     quantity: number;
     decimals: number;
     isChecked: boolean;
+    tokenName: string;
+    symbol: string;
+    metadata: string;
 };
 
 export const CreateTokenButton: FC<Props> = ({
@@ -19,7 +22,10 @@ export const CreateTokenButton: FC<Props> = ({
     connection,
     quantity,
     decimals,
-    isChecked
+    isChecked,
+    tokenName,
+    symbol,
+    metadata
 }) => {
 
     const { setVisible } = useWalletModal();
@@ -32,7 +38,7 @@ export const CreateTokenButton: FC<Props> = ({
     return (
         <div>
             {!iscreating && !isNaN(quantity) && !isNaN(decimals) &&
-                <button className="btn btn-primary uppercase" onClick={() => { if (publicKey) createSPLToken(publicKey, wallet, connection, quantity, decimals, isChecked, setIscreating, setTokenAddresss, setQuantityCreated, setSignature); else setVisible(true) }}>Create token</button>
+                <button className="btn btn-primary uppercase" onClick={() => { if (publicKey) createSPLToken(publicKey, wallet, connection, quantity, decimals, isChecked, tokenName, symbol, metadata, setIscreating, setTokenAddresss, setQuantityCreated, setSignature); else setVisible(true) }}>Create token</button>
             }
 
             {!iscreating && (isNaN(quantity) || isNaN(decimals)) &&

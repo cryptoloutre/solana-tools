@@ -25,6 +25,9 @@ export const SPLTokenView: FC = ({ }) => {
 
   const [quantity, setQuantity] = useState(0);
   const [decimals, setDecimals] = useState(9);
+  const [tokenName, setTokenName] = useState('')
+  const [symbol, setSymbol] = useState('')
+  const [metadata, setMetadata] = useState('')
   const [isChecked, setIsChecked] = useState(false);
 
   return (
@@ -55,11 +58,48 @@ export const SPLTokenView: FC = ({ }) => {
                 <h1 className="mb-5 text-5xl">
                   Create Solana <SolanaLogo /> token
                 </h1>
+                
                 <div>
-                  <form className="mt-[10%] mb-[5%]">
+                  <form className="mt-[3%] mb-[3%]">
+
+                    <label className="input-group input-group-vertical input-group-lg">Token Name</label>
+                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
+                      type="text"
+                      required
+                      placeholder="Token Name"
+                      onChange={(e) => setTokenName(e.target.value)}
+                      style={{
+                        borderRadius:
+                          "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                      }}
+                    />
+
+                    <label className="input-group input-group-vertical input-group-lg">Symbol</label>
+                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
+                      type="text"
+                      required
+                      placeholder="Symbol"
+                      onChange={(e) => setSymbol(e.target.value)}
+                      style={{
+                        borderRadius:
+                          "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                      }}
+                    />
+
+                    <label className="input-group input-group-vertical input-group-lg">Metadata Url</label>
+                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
+                      type="text"
+                      required
+                      placeholder="Metadata Url"
+                      onChange={(e) => setMetadata(e.target.value)}
+                      style={{
+                        borderRadius:
+                          "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                      }}
+                    />
 
                     <label className="input-group input-group-vertical input-group-lg">Number of tokens to mint</label>
-                    <input className="mb-[2%] text-black pl-1 border-2 border-black"
+                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
                       type="number"
                       min="0"
                       required
@@ -72,7 +112,7 @@ export const SPLTokenView: FC = ({ }) => {
                     />
 
                     <label className="input-group input-group-vertical input-group-lg">Number of decimals</label>
-                    <input className="mb-[2%] text-black pl-1 border-2 border-black"
+                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
                       type="number"
                       min="0"
                       required
@@ -85,13 +125,14 @@ export const SPLTokenView: FC = ({ }) => {
                     />
 
                     <label className="input-group input-group-vertical input-group-lg">Enable freeze authority</label>
-                    <input className="mb-[2%] flex items-center mx-auto "
+                    <input className="mb-[1%] flex items-center mx-auto "
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => setIsChecked(!isChecked)}
                     />
+                    
                   </form>
-                  <CreateTokenButton connection={connection} publicKey={publicKey} wallet={wallet} quantity={quantity} decimals={decimals} isChecked={isChecked} />
+                  <CreateTokenButton connection={connection} publicKey={publicKey} wallet={wallet} quantity={quantity} decimals={decimals} isChecked={isChecked} tokenName={tokenName} symbol={symbol} metadata={metadata} />
                 </div>
               </div>
             </div>
