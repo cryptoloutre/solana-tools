@@ -1,6 +1,10 @@
 # Solana-Tools
 
-A bunch of tools to help people in the Solana ecosystem. This website includes an UI to burn Solana NFTs and an UI to create SPL-Tokens. More tools are scheduled...
+A bunch of tools to help people in the Solana ecosystem. This website includes:
+- an UI to burn Solana NFTs
+- an UI to create SPL-Tokens
+- an UI to upload file to Arweave
+- More tools are scheduled...
     
 
 
