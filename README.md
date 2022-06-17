@@ -32,7 +32,11 @@ A UI to create SPL-Tokens with one click.
 
 
 
-https://user-images.githubusercontent.com/35653371/158780971-f7041dde-71e5-4989-ac4c-cb97fc92e533.mp4
+
+https://user-images.githubusercontent.com/35653371/174244099-a3338093-0d77-49ad-b372-401ec069486e.mp4
+
+
+
 
 
 ## Upload File
