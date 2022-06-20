@@ -52,7 +52,8 @@ export const NftCard: FC<Props> = ({
 
   const { connection } = useConnection();
 
-  const { publicKey } = useWallet(); 
+  const { publicKey } = useWallet();
+  console.log(tokenMintAddress)
 
   return (
     <div className={`card bordered max-w-xs compact rounded-md`}>
@@ -74,7 +75,11 @@ export const NftCard: FC<Props> = ({
       <div className="card-body">
         <h2 className="card-title text-sm text-left">{name}</h2>
       </div>
+      <div className="flex justify-around">
+
       <BurnButton tokenMintAddress={tokenMintAddress} connection={connection} publicKey={publicKey} wallet={wallet} />
+      <a className="btn bg-[#9945FF] hover:bg-[#7a37cc] uppercase w-[50%] ml-1" href={"https://solscan.io/token/" + tokenMintAddress}>Check Solscan</a>
+      </div>
     </div>
   );
 };
