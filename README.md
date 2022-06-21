@@ -4,6 +4,7 @@ A bunch of tools to help people in the Solana ecosystem. This website includes:
 - an UI to burn Solana NFTs
 - an UI to create SPL-Tokens
 - an UI to upload file to Arweave
+- an UI to send a NFT message to the owner of your desired NFT
 - More tools are scheduled...
     
 
@@ -24,7 +25,7 @@ yarn run dev
 
 
 ## Burn NFT UI
-A UI for burning Solana NFTs and geting back $SOL from the associated token account.
+An UI for burning Solana NFTs and geting back $SOL from the associated token account.
 
 
 https://user-images.githubusercontent.com/35653371/158780601-3f17deb7-55e9-488f-aa44-279b11ca071a.mp4
@@ -32,7 +33,7 @@ https://user-images.githubusercontent.com/35653371/158780601-3f17deb7-55e9-488f-
 
 
 ## Create SPL-Tokens UI
-A UI to create SPL-Tokens with one click.
+An UI to create SPL-Tokens with one click.
 
 
 
@@ -44,11 +45,21 @@ https://user-images.githubusercontent.com/35653371/174244099-a3338093-0d77-49ad-
 
 
 ## Upload File
-A UI to upload file to Arweave.
+An UI to upload file to Arweave.
 
 
 
 https://user-images.githubusercontent.com/35653371/174040530-3a4a16a3-26de-4c8a-b7c8-67908c3b377d.mp4
+
+
+## Send NFT message
+An UI to send a NFT message to the owner of your desired NFT
+
+
+
+https://user-images.githubusercontent.com/35653371/174803502-cc1fa39d-691f-4c91-b9ca-a1661b0cd1ac.mp4
+
+
 
 
 
