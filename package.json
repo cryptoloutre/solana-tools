@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@getpip/react-pip-button": "^1.0.4",
     "@heroicons/react": "^1.0.5",
+    "@metaplex-foundation/js": "^0.11.5",
     "@metaplex-foundation/js-next": "^0.10.0",
     "@metaplex-foundation/mpl-token-metadata": "^2.1.1",
     "@metaplex/js": "^4.12.0",
@@ -27,6 +29,7 @@
     "@tailwindcss/typography": "^0.4.1",
     "@types/lodash.orderby": "^4.6.6",
     "daisyui": "^1.16.2",
+    "html2canvas": "^1.4.1",
     "lodash.orderby": "^4.6.0",
     "next": "12.1.0",
     "next-compose-plugins": "^2.2.1",

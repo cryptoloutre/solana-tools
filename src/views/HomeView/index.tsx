@@ -47,7 +47,7 @@ export const HomeView: FC = ({ }) => {
                 <h1 className="mb-5 text-5xl font-bold">
                   Hello Solana <SolanaLogo /> World!
                 </h1>
-                <p className="mb-5">
+                <p className="mb-2">
                   This website includes amazing tools to help you in the solana ecosystem.
                 </p>
               </div>
@@ -55,7 +55,7 @@ export const HomeView: FC = ({ }) => {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <h1 className="mb-5 pb-8 text-5xl">Available tools :</h1>
+            <h1 className="mb-2 pb-8 text-5xl">Available tools :</h1>
             <ul className="text-left leading-10">
               <li className="mb-5">
                 <Link href="/gallery">
@@ -81,11 +81,22 @@ export const HomeView: FC = ({ }) => {
                 <Link href="/upload">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
-                    📤 -- Upload file
+                      📤 -- Upload file
                     </a>
                     <div>A UI to upload file to Arweave</div>
                   </div>
                 </Link>
+              </li>
+              <li className="mb-5">
+                <Link href="/suatmm">
+                  <div className="p-4 hover:border">
+                    <a className="text-4xl font-bold mb-5">
+                    📨 -- Send NFT message
+                    </a>
+                    <div>A UI to send a message to the desired NFT owner</div>
+                  </div>
+                </Link>
+
               </li>
             </ul>
           </div>
