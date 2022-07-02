@@ -1040,6 +1040,26 @@
     eip1193-provider "^1.0.1"
     js-sha3 "^0.8.0"
 
+"@bonfida/name-offers@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@bonfida/name-offers/-/name-offers-0.0.1.tgz#8a52700eb3031e01dd9314fab55dec0a7275a5bb"
+  integrity sha512-R0GJ/+R5OXfm4KfiKEjHx88QnQxw+kzDA8O4pHouev1voPJueOzzo5x+YLowMpk3/2maqEwkNPWiWIlSExjdug==
+  dependencies:
+    "@bonfida/spl-name-service" "^0.1.24"
+    "@solana/spl-token" "0.1.8"
+    "@solana/web3.js" "^1.30.2"
+    bn.js "^5.2.0"
+    borsh "^0.6.0"
+    bs58 "4.0.1"
+
+"@bonfida/spl-name-service@^0.1.24", "@bonfida/spl-name-service@^0.1.40":
+  version "0.1.40"
+  resolved "https://registry.yarnpkg.com/@bonfida/spl-name-service/-/spl-name-service-0.1.40.tgz#cbb5c62f19203f868517961edb9caca808d0b3e8"
+  integrity sha512-TrKad2PKPGJw4eBjYVWJ7qT591HGliT7v8Q5ukpkHOcMclbqNiowML30kOr3ka7MF4pmavRAoqL+/EzHVmYvkQ==
+  dependencies:
+    "@bonfida/name-offers" "^0.0.1"
+    "@ethersproject/sha2" "^5.5.0"
+
 "@bundlr-network/client@^0.7.3":
   version "0.7.8"
   resolved "https://registry.npmjs.org/@bundlr-network/client/-/client-0.7.8.tgz"
@@ -2081,7 +2101,7 @@
     buffer-layout "^1.2.0"
     dotenv "10.0.0"
 
-"@solana/spl-token@^0.1.8":
+"@solana/spl-token@0.1.8", "@solana/spl-token@^0.1.8":
   version "0.1.8"
   resolved "https://registry.npmjs.org/@solana/spl-token/-/spl-token-0.1.8.tgz"
   integrity sha512-LZmYCKcPQDtJgecvWOgT/cnoIQPWjdH+QVyzPcFvyDUiT0DiRjZaam4aqNUyvchLFhzgunv3d9xOoyE34ofdoQ==

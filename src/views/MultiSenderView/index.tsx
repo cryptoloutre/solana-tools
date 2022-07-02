@@ -8,6 +8,7 @@ import styles from "./index.module.css";
 
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
+import { getDomainKey, getHashedName, getNameAccountKey, NameRegistryState } from "@bonfida/spl-name-service";
 
 const walletPublicKey = "";
 
@@ -253,12 +254,32 @@ export const MultiSenderView: FC = ({ }) => {
                 publicKey,
               );
 
+              let destPubkey: PublicKey;
+
+              if (Receivers[i].includes('.sol')) {
+                const hashedName = await getHashedName(Receivers[i].replace(".sol", ""));
+                const nameAccountKey = await getNameAccountKey(
+                  hashedName,
+                  undefined,
+                  new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
+                );
+                const owner = await NameRegistryState.retrieve(
+                  connection,
+                  nameAccountKey
+                );
+                destPubkey = owner.registry.owner;
+
+              }
+              else {
+                destPubkey = new PublicKey(Receivers[i]);
+              }
+
               // determine the token account pubkey of the receiver
               const destination_account = await Token.getAssociatedTokenAddress(
                 ASSOCIATED_TOKEN_PROGRAM_ID,
                 TOKEN_PROGRAM_ID,
                 mint,
-                new PublicKey(Receivers[i])
+                destPubkey
               );
 
               // get the info of the destination account
@@ -273,7 +294,7 @@ export const MultiSenderView: FC = ({ }) => {
                   TOKEN_PROGRAM_ID,
                   mint,
                   destination_account,
-                  new PublicKey(Receivers[i]),
+                  destPubkey,
                   publicKey
                 )
 
@@ -344,18 +365,38 @@ export const MultiSenderView: FC = ({ }) => {
 
               let transferSOLIx: TransactionInstruction;
 
+              let destPubkey: PublicKey;
+
+              if (Receivers[i].includes('.sol')) {
+                const hashedName = await getHashedName(Receivers[i].replace(".sol", ""));
+                const nameAccountKey = await getNameAccountKey(
+                  hashedName,
+                  undefined,
+                  new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
+                );
+                const owner = await NameRegistryState.retrieve(
+                  connection,
+                  nameAccountKey
+                );
+                destPubkey = owner.registry.owner;
+
+              }
+              else {
+                destPubkey = new PublicKey(Receivers[i]);
+              }
+
               if (!isChecked) {
 
                 transferSOLIx = SystemProgram.transfer({
                   fromPubkey: publicKey,
-                  toPubkey: new PublicKey(Receivers[i]),
+                  toPubkey: destPubkey,
                   lamports: Amounts[i]! * LAMPORTS_PER_SOL,
                 })
               }
               else {
                 transferSOLIx = SystemProgram.transfer({
                   fromPubkey: publicKey,
-                  toPubkey: new PublicKey(Receivers[i]),
+                  toPubkey: destPubkey,
                   lamports: quantity! * LAMPORTS_PER_SOL,
                 })
               };
@@ -413,7 +454,26 @@ export const MultiSenderView: FC = ({ }) => {
         try {
           setIsSending(true)
 
-          const receiverPubKey = new PublicKey(ReceiverAddress);
+          let destPubkey: PublicKey;
+
+          if (ReceiverAddress.includes('.sol')) {
+            const hashedName = await getHashedName(ReceiverAddress.replace(".sol", ""));
+            const nameAccountKey = await getNameAccountKey(
+              hashedName,
+              undefined,
+              new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
+            );
+            const owner = await NameRegistryState.retrieve(
+              connection,
+              nameAccountKey
+            );
+            destPubkey = owner.registry.owner;
+
+          }
+          else {
+            destPubkey = new PublicKey(ReceiverAddress);
+          }
+
 
           let Tx = new Transaction()
 
@@ -437,7 +497,7 @@ export const MultiSenderView: FC = ({ }) => {
               ASSOCIATED_TOKEN_PROGRAM_ID,
               TOKEN_PROGRAM_ID,
               new PublicKey(Tokens[i]),
-              receiverPubKey
+              destPubkey
             );
 
             // get the info of the destination account
@@ -452,7 +512,7 @@ export const MultiSenderView: FC = ({ }) => {
                 TOKEN_PROGRAM_ID,
                 new PublicKey(Tokens[i]),
                 destination_account,
-                receiverPubKey,
+                destPubkey,
                 publicKey
               )
 
@@ -485,7 +545,7 @@ export const MultiSenderView: FC = ({ }) => {
           if (isSOLChecked) {
             const transferSOLIx = SystemProgram.transfer({
               fromPubkey: publicKey,
-              toPubkey: receiverPubKey,
+              toPubkey: destPubkey,
               lamports: quantity! * LAMPORTS_PER_SOL,
             })
 
@@ -549,28 +609,28 @@ export const MultiSenderView: FC = ({ }) => {
                 </h1>
 
                 {nbToken == '' &&
-                  <div className="flex justify-center mt-[4%]">
-                    <button className="mx-2 w-[400px] bg-[#2C3B52] hover:bg-[#566274] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setNbToken('one'); reset() }}>Send one token to multiple receivers</button>
-                    <button className="mx-2 w-[400px] bg-[#2C3B52] hover:bg-[#566274] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setNbToken('multi'); reset() }}>Send multiple tokens to one receiver</button>
+                  <div className="sm:flex justify-center mt-[4%]">
+                    <button className="mx-2 my-2 md:w-[400px] w-[200px] bg-[#2C3B52] hover:bg-[#566274] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setNbToken('one'); reset() }}>Send one token to multiple receivers</button>
+                    <button className="mx-2 my-2 md:w-[400px] w-[200px] bg-[#2C3B52] hover:bg-[#566274] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setNbToken('multi'); reset() }}>Send multiple tokens to one receiver</button>
                   </div>}
 
                 {nbToken != '' &&
                   <div className="flex">
-                    <button className="text-white font-semibold text-xl w-[6rem] h-[2rem] bg-[#2C3B52] hover:bg-[#566274] rounded-xl border"
+                    <button className="text-white font-semibold text-xl w-[6rem] h-[2rem] mb-2 bg-[#2C3B52] hover:bg-[#566274] rounded-xl border"
                       onClick={() => { setNbToken(''); setCurrencyType('') }}>← Back</button>
                   </div>
                 }
 
                 {nbToken == 'one' &&
                   <div>
-                    <div className="flex justify-center">
+                    <div className="sm:flex justify-center">
                       {CurrencyType == '' || CurrencyType == 'SPL' ?
-                        <button className="mx-2 w-[200px] bg-[#10c077] hover:bg-[#14f195] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setCurrencyType('SOL'); reset() }}>Send SOL</button>
-                        : <button className="mx-2 w-[200px] bg-[#14f195] rounded-full shadow-xl border text-white font-semibold text-xl">Send SOL</button>
+                        <button className="mx-2 my-2 w-[200px] bg-[#10c077] hover:bg-[#14f195] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setCurrencyType('SOL'); reset() }}>Send SOL</button>
+                        : <button className="mx-2 my-2 w-[200px] bg-[#14f195] rounded-full shadow-xl border text-white font-semibold text-xl">Send SOL</button>
                       }
                       {CurrencyType == '' || CurrencyType == 'SOL' ?
-                        <button className="mx-2 w-[200px] bg-[#9945FF] hover:bg-[#ad6aff] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setCurrencyType('SPL'); reset() }}>Send SPL-Token</button>
-                        : <button className="mx-2 w-[200px] bg-[#ad6aff] rounded-full shadow-xl border text-white font-semibold text-xl">Send SPL-Token</button>
+                        <button className="mx-2 my-2 w-[200px] bg-[#9945FF] hover:bg-[#ad6aff] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setCurrencyType('SPL'); reset() }}>Send SPL-Token</button>
+                        : <button className="mx-2 my-2 w-[200px] bg-[#ad6aff] rounded-full shadow-xl border text-white font-semibold text-xl">Send SPL-Token</button>
                       }
                     </div>
 
@@ -588,7 +648,7 @@ export const MultiSenderView: FC = ({ }) => {
                               onChange={(e) => { setIsChecked(!isChecked); setQuantity(undefined) }}
                             />
                             {isChecked &&
-                              <div>
+                              <div className="flex items-center">
                                 <input className="w-[150px] mx-4 text-black pl-1 border-2 border-black"
                                   type="number"
                                   step="any"
@@ -607,7 +667,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #1"
@@ -619,7 +679,7 @@ export const MultiSenderView: FC = ({ }) => {
                             />
 
                             {!isChecked &&
-                              <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                              <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                                 type="number"
                                 step="any"
                                 min="0"
@@ -636,7 +696,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #2"
@@ -647,7 +707,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -662,7 +722,7 @@ export const MultiSenderView: FC = ({ }) => {
                           </div>
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #3"
@@ -673,7 +733,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -689,7 +749,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #4"
@@ -700,7 +760,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -716,7 +776,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #5"
@@ -727,7 +787,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -743,7 +803,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #6"
@@ -754,7 +814,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -770,7 +830,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #7"
@@ -781,7 +841,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -797,7 +857,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #8"
@@ -808,7 +868,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -824,7 +884,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #9"
@@ -835,7 +895,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -851,7 +911,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #10"
@@ -862,7 +922,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -883,7 +943,7 @@ export const MultiSenderView: FC = ({ }) => {
                       {CurrencyType == 'SPL' &&
                         <form className="mt-[3%] mb-[2%]">
 
-                          <input className="mb-[2%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                          <input className="mb-[2%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                             type="text"
                             required
                             placeholder="Token Mint Address"
@@ -901,8 +961,8 @@ export const MultiSenderView: FC = ({ }) => {
                               onChange={(e) => setIsChecked(!isChecked)}
                             />
                             {isChecked &&
-                              <div>
-                                <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                              <div className="flex items-center">
+                                <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                                   type="number"
                                   step="any"
                                   min="0"
@@ -920,7 +980,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #1"
@@ -932,7 +992,7 @@ export const MultiSenderView: FC = ({ }) => {
                             />
 
                             {!isChecked &&
-                              <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                              <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                                 type="number"
                                 step="any"
                                 min="0"
@@ -949,7 +1009,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #2"
@@ -960,7 +1020,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -975,7 +1035,7 @@ export const MultiSenderView: FC = ({ }) => {
                           </div>
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #3"
@@ -986,7 +1046,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -1002,7 +1062,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #4"
@@ -1013,7 +1073,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -1029,7 +1089,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #5"
@@ -1040,7 +1100,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -1056,7 +1116,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #6"
@@ -1067,7 +1127,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -1083,7 +1143,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #7"
@@ -1094,7 +1154,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -1110,7 +1170,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #8"
@@ -1121,7 +1181,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -1137,7 +1197,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #9"
@@ -1148,7 +1208,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
@@ -1164,7 +1224,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                           <div>
 
-                            <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
                               placeholder="Receiver #10"
@@ -1175,7 +1235,7 @@ export const MultiSenderView: FC = ({ }) => {
                               }}
                             />
 
-                            {!isChecked && <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
                               min="0"
