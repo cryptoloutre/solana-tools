@@ -41,6 +41,22 @@ An UI to create SPL-Tokens with one click.
 https://user-images.githubusercontent.com/35653371/174244099-a3338093-0d77-49ad-b372-401ec069486e.mp4
 
 
+## Multi Sender
+
+A UI to send multiple tokens in 1 transaction (same token to different people/many tokens to one person)
+
+
+https://user-images.githubusercontent.com/35653371/177000991-3789e4f2-4e45-4c92-bee6-35b1e95be955.mp4
+
+
+
+https://user-images.githubusercontent.com/35653371/177000995-98f82aca-72ee-4f84-bcfb-2045292616fe.mp4
+
+
+
+https://user-images.githubusercontent.com/35653371/177001000-c217bf24-81a2-4de7-bfbc-318645e69166.mp4
+
+
 
 
 
