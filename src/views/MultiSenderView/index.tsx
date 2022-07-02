@@ -1277,7 +1277,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                     <form className="mt-[3%] mb-[2%]">
 
-                      <input className="mb-[2%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                      <input className="mb-[2%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                         type="text"
                         required
                         placeholder="Receiver Address"
@@ -1295,7 +1295,7 @@ export const MultiSenderView: FC = ({ }) => {
                           onChange={(e) => { setIsSOLChecked(!isSOLChecked); setQuantity(undefined) }}
                         />
                         {isSOLChecked &&
-                          <div>
+                          <div className="flex items-center">
                             <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
                               type="number"
                               step="any"
@@ -1314,7 +1314,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #1"
@@ -1325,7 +1325,7 @@ export const MultiSenderView: FC = ({ }) => {
                           }}
                         />
 
-                        <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                           type="number"
                           step="any"
                           min="0"
@@ -1342,7 +1342,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #2"
@@ -1352,7 +1352,7 @@ export const MultiSenderView: FC = ({ }) => {
                               "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
                           }}
                         />
-                        <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                           type="number"
                           step="any"
                           min="0"
@@ -1367,7 +1367,7 @@ export const MultiSenderView: FC = ({ }) => {
                       </div>
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #3"
@@ -1378,7 +1378,7 @@ export const MultiSenderView: FC = ({ }) => {
                           }}
                         />
 
-                        <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                           type="number"
                           step="any"
                           min="0"
@@ -1394,7 +1394,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #4"
@@ -1405,7 +1405,7 @@ export const MultiSenderView: FC = ({ }) => {
                           }}
                         />
 
-                        <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                           type="number"
                           step="any"
                           min="0"
@@ -1421,7 +1421,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #5"
@@ -1432,7 +1432,7 @@ export const MultiSenderView: FC = ({ }) => {
                           }}
                         />
 
-                        <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                           type="number"
                           step="any"
                           min="0"
@@ -1448,7 +1448,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #6"
@@ -1459,7 +1459,7 @@ export const MultiSenderView: FC = ({ }) => {
                           }}
                         />
 
-                        <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                           type="number"
                           step="any"
                           min="0"
@@ -1475,7 +1475,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #7"
@@ -1486,7 +1486,7 @@ export const MultiSenderView: FC = ({ }) => {
                           }}
                         />
 
-                        <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                           type="number"
                           step="any"
                           min="0"
@@ -1502,7 +1502,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #8"
@@ -1513,7 +1513,7 @@ export const MultiSenderView: FC = ({ }) => {
                           }}
                         />
 
-                        <input className="mb-[1%] w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                           type="number"
                           step="any"
                           min="0"
@@ -1529,7 +1529,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #9"
@@ -1556,7 +1556,7 @@ export const MultiSenderView: FC = ({ }) => {
 
                       <div>
 
-                        <input className="mb-[1%] w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                        <input className="sm:mb-[1%] mb-2 md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                           type="text"
                           required
                           placeholder="Token Mint Address #10"
