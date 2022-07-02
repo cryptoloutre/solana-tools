@@ -78,6 +78,17 @@ export const HomeView: FC = ({ }) => {
                 </Link>
               </li>
               <li className="mb-5">
+                <Link href="/multisender">
+                  <div className="p-4 hover:border">
+                    <a className="mb-5 text-4xl font-bold">
+                    📨 📨 📨  -- Multi Sender
+                    </a>
+                    <div>A UI to send same transactions to different people</div>
+                    {/* A UI to send multiple tokens in 1 transaction (same token to different people/many tokens to one person) */}
+                  </div>
+                </Link>
+              </li>
+              <li className="mb-5">
                 <Link href="/upload">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
