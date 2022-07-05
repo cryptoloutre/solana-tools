@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@bonfida/spl-name-service": "^0.1.40",
-    "@getpip/react-pip-button": "^1.0.4",
+    "@getpip/react-pip-button": "^1.0.12",
     "@heroicons/react": "^1.0.5",
     "@metaplex-foundation/js": "^0.11.5",
     "@metaplex-foundation/js-next": "^0.10.0",

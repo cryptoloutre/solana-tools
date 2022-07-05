@@ -1471,10 +1471,10 @@
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/strings" "^5.6.1"
 
-"@getpip/react-pip-button@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@getpip/react-pip-button/-/react-pip-button-1.0.4.tgz#243dfeefe7a395d39ba0cecaacf4ca219d36d722"
-  integrity sha512-yEv7f2VXV+Q71fzzDZ3Ysc1V+C/YeY30XSi+ayFbYJYY92AupfSemQvmo0nXi//5m+qPdaM3lBa5YjQEAvga2w==
+"@getpip/react-pip-button@^1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@getpip/react-pip-button/-/react-pip-button-1.0.12.tgz#61be4e36a74c35f3aea1dc7dae623cb2eb7531b7"
+  integrity sha512-cRkGuSeXi1Jq0VJB8MSIsT/XysM1Fy7YIx/fykMbC5uxLNyfdlBCOZLp5Del5aIJbtqKniG49S7ZheBlXMvgVw==
   dependencies:
     "@solana/pay" "^0.2.0"
     "@solana/wallet-adapter-wallets" "^0.16.1"

@@ -8,7 +8,7 @@ import styles from "./index.module.css";
 
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
-import { getDomainKey, getHashedName, getNameAccountKey, NameRegistryState } from "@bonfida/spl-name-service";
+import { getDomainKey, getHashedName, getNameAccountKey, getTwitterRegistry, NameRegistryState } from "@bonfida/spl-name-service";
 
 const walletPublicKey = "";
 
@@ -256,6 +256,7 @@ export const MultiSenderView: FC = ({ }) => {
 
               let destPubkey: PublicKey;
 
+              // check if it is a SOL domain name
               if (Receivers[i].includes('.sol')) {
                 const hashedName = await getHashedName(Receivers[i].replace(".sol", ""));
                 const nameAccountKey = await getNameAccountKey(
@@ -268,6 +269,14 @@ export const MultiSenderView: FC = ({ }) => {
                   nameAccountKey
                 );
                 destPubkey = owner.registry.owner;
+
+              }
+
+              // check if it is a twitter handle
+              else if (Receivers[i].includes('@')) {
+                const handle = Receivers[i].replace("@", "")
+                const registry = await getTwitterRegistry(connection, handle);
+                destPubkey = registry.owner;
 
               }
               else {
@@ -367,6 +376,7 @@ export const MultiSenderView: FC = ({ }) => {
 
               let destPubkey: PublicKey;
 
+              // check if it is a SOL domain name
               if (Receivers[i].includes('.sol')) {
                 const hashedName = await getHashedName(Receivers[i].replace(".sol", ""));
                 const nameAccountKey = await getNameAccountKey(
@@ -379,6 +389,14 @@ export const MultiSenderView: FC = ({ }) => {
                   nameAccountKey
                 );
                 destPubkey = owner.registry.owner;
+
+              }
+
+              // check if it is a twitter handle
+              else if (Receivers[i].includes('@')) {
+                const handle = Receivers[i].replace("@", "")
+                const registry = await getTwitterRegistry(connection, handle);
+                destPubkey = registry.owner;
 
               }
               else {
@@ -456,6 +474,7 @@ export const MultiSenderView: FC = ({ }) => {
 
           let destPubkey: PublicKey;
 
+          // check if it is a SOL domain name
           if (ReceiverAddress.includes('.sol')) {
             const hashedName = await getHashedName(ReceiverAddress.replace(".sol", ""));
             const nameAccountKey = await getNameAccountKey(
@@ -468,6 +487,13 @@ export const MultiSenderView: FC = ({ }) => {
               nameAccountKey
             );
             destPubkey = owner.registry.owner;
+
+          }
+          // check if it is a twitter handle
+          else if (ReceiverAddress.includes('@')) {
+            const handle = ReceiverAddress.replace("@", "")
+            const registry = await getTwitterRegistry(connection, handle);
+            destPubkey = registry.owner;
 
           }
           else {
@@ -607,6 +633,7 @@ export const MultiSenderView: FC = ({ }) => {
                 <h1 className="mb-5 text-5xl">
                   Multi Send Token <SolanaLogo />
                 </h1>
+                <h3 className="font-semibold text-xl" >Supports public address, .sol domain name and Twitter handle with @</h3>
 
                 {nbToken == '' &&
                   <div className="sm:flex justify-center mt-[4%]">
