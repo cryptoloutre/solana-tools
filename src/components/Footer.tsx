@@ -1,3 +1,7 @@
+import { PIPButton } from "@getpip/react-pip-button"
+
+import { PIPButtonCustom } from "./PIPButtonCustom";
+
 const Footer = () => {
 
     return (
@@ -45,9 +49,7 @@ const Footer = () => {
                 Made by
                 <a className="text-white" href="https://twitter.com/laloutre"> <strong>@laloutre</strong></a>
             </div>
-            <div className="text-center text-white text-sm pb-3">
-                You can buy me a ☕️ : <strong>6MupHwVuaZnxeXbw2DEvH96ouaWdg5TygPaSruB4H7YG</strong>
-            </div>
+            <PIPButtonCustom />
         </footer>
     );
 }

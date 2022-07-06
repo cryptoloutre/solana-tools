@@ -55,7 +55,7 @@ export const HomeView: FC = ({ }) => {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <h1 className="mb-2 pb-8 text-5xl">Available tools :</h1>
+            {/* <h1 className="mb-2 pb-8 text-5xl">Available tools :</h1> */}
             <ul className="text-left leading-10">
               <li className="mb-5">
                 <Link href="/gallery">
