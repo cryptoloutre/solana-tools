@@ -6,6 +6,7 @@ import { fetcher } from "utils/fetcher";
 
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { BurnButton } from '../../utils/BurnButton';
+import { LegitOrScam } from '../../utils/LegitOrScam';
 
 
 type Props = {
@@ -36,7 +37,6 @@ export const NftCard: FC<Props> = ({
 
 
 
-
   useEffect(() => {
     if (!error && !!data) {
       onTokenDetailsFetched(data);
@@ -46,14 +46,25 @@ export const NftCard: FC<Props> = ({
   const onImageError = () => setFallbackImage(true);
   const { image } = data ?? {};
 
-  const tokenMintAddress = details.mint; 
+  const tokenMintAddress = details.mint;
 
-  const wallet = useWallet(); 
+  const wallet = useWallet();
 
   const { connection } = useConnection();
 
   const { publicKey } = useWallet();
-  console.log(tokenMintAddress)
+
+  const creators = details.data.creators;
+
+  let firstCreator;
+
+  if (creators != undefined) {
+    firstCreator = details.data.creators[0].address;
+  }
+  else {
+    firstCreator = tokenMintAddress;
+  }
+
 
   return (
     <div className={`card bordered max-w-xs compact rounded-md`}>
@@ -62,7 +73,7 @@ export const NftCard: FC<Props> = ({
           <img
             src={image}
             onError={onImageError}
-            className="bg-gray-800 object-cover"
+            className="bg-gray-800 object-cover h-80"
           />
         ) : (
           // Fallback when preview isn't available
@@ -74,11 +85,12 @@ export const NftCard: FC<Props> = ({
       </figure>
       <div className="card-body">
         <h2 className="card-title text-sm text-left">{name}</h2>
+        <LegitOrScam firstCreator={firstCreator} />
       </div>
       <div className="flex justify-around">
 
-      <BurnButton tokenMintAddress={tokenMintAddress} connection={connection} publicKey={publicKey} wallet={wallet} />
-      <a target="_blank" className="btn bg-[#9945FF] hover:bg-[#7a37cc] uppercase w-[50%] ml-1" href={"https://solscan.io/token/" + tokenMintAddress}>Check Solscan</a>
+        <BurnButton tokenMintAddress={tokenMintAddress} connection={connection} publicKey={publicKey} wallet={wallet} />
+        <a target="_blank" className="btn bg-[#9945FF] hover:bg-[#7a37cc] uppercase w-[50%] ml-1" href={"https://solscan.io/token/" + tokenMintAddress}>Check Solscan</a>
       </div>
     </div>
   );
