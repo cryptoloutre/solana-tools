@@ -11,7 +11,7 @@ import styles from "./index.module.css";
 
 const walletPublicKey = "";
 
-export const GalleryView: FC = ({}) => {
+export const GalleryView: FC = ({ }) => {
   const { connection } = useConnection();
   const [walletToParsePublicKey, setWalletToParsePublicKey] =
     useState<string>(walletPublicKey);
@@ -21,6 +21,11 @@ export const GalleryView: FC = ({}) => {
     publicAddress: walletToParsePublicKey,
     connection,
   });
+
+  let errorMessage
+  if (error) {
+    errorMessage = error.message
+  }
 
   console.log("nfts", nfts);
 
@@ -57,7 +62,7 @@ export const GalleryView: FC = ({}) => {
                 <h1 className="mb-5 text-5xl">
                   Burn your Solana <SolanaLogo /> NFTs and get $SOL back
                 </h1>
-                
+
                 <div className="w-full min-w-full">
                   <div>
                     <div className="form-control mt-8">
@@ -84,9 +89,9 @@ export const GalleryView: FC = ({}) => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mb-auto my-10">
-                  {error ? (
+                  {error && errorMessage != "Invalid address: " ? (
                     <div>
                       <h1>Error Occures</h1>
                       {(error as any)?.message}
@@ -129,10 +134,17 @@ const NftList = ({ nfts, error }: NftListProps) => {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
-      {nfts?.map((nft) => (
-        <NftCard key={nft.mint} details={nft} onSelect={() => {}} />
-      ))}
+    <div>
+        <ul className="text-left font-semibold text-xl mb-4">
+          <li className=" mb-1"><span className='text-[#16c60c] font-semibold'>✔ Verified</span> : means the NFT does not want to drain your wallet. It does not guarantee the quality of the project. It stiil be a rug or a poor project.</li>
+          <li className=" mb-1"><span className='text-[#F03A17] font-semibold'>❗ Scam</span> : means the NFT wants to drain your wallet. <strong>Do not go on its website</strong> and burn it!</li>
+          <li className=" mb-1"><span className='text-[#ff7f00] font-semibold'><strong>?</strong> No information</span> : means not enough information about this NFT. Feel free to send to <a target="_blank" href="https://twitter.com/laloutre"><strong className="text-[#0080FF]">@laloutre</strong></a> the mint address in order to be add in one of the 2 others categories.</li>
+        </ul>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
+        {nfts?.map((nft) => (
+          <NftCard key={nft.mint} details={nft} onSelect={() => { }} />
+        ))}
+      </div>
     </div>
   );
 };
