@@ -136,7 +136,7 @@ const NftList = ({ nfts, error }: NftListProps) => {
   return (
     <div>
         <ul className="text-left font-semibold text-xl mb-4">
-          <li className=" mb-1"><span className='text-[#16c60c] font-semibold'>✔ Verified</span> : means the NFT does not want to drain your wallet. It does not guarantee the quality of the project. It stiil be a rug or a poor project.</li>
+          <li className=" mb-1"><span className='text-[#16c60c] font-semibold'>✔ Verified</span> : means the NFT does not want to drain your wallet. It does not guarantee the quality of the project. It can still be a rug or a poor project.</li>
           <li className=" mb-1"><span className='text-[#F03A17] font-semibold'>❗ Scam</span> : means the NFT wants to drain your wallet. <strong>Do not go on its website</strong> and burn it!</li>
           <li className=" mb-1"><span className='text-[#ff7f00] font-semibold'><strong>?</strong> No information</span> : means not enough information about this NFT. Feel free to send to <a target="_blank" href="https://twitter.com/laloutre"><strong className="text-[#0080FF]">@laloutre</strong></a> the mint address in order to be add in one of the 2 others categories.</li>
         </ul>
