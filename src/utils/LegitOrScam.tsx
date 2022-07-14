@@ -9,7 +9,7 @@ type Props = {
 export const LegitOrScam: FC<Props> = ({
     firstCreator,
 }) => {
-    const [isLegit, setIsLegit] = useState(false);
+    const [isVerified, setIsVerfied] = useState(false);
     const [isScam, setIsScam] = useState(false);
 
     const legitList = legitNFTlist;
@@ -19,7 +19,7 @@ export const LegitOrScam: FC<Props> = ({
     useEffect(() => {
         for (let i = 0; i < legitList.length; i++) {
             if (legitList[i] == firstCreator) {
-                setIsLegit(true)
+                setIsVerfied(true)
                 break
             }
         }
@@ -34,11 +34,11 @@ export const LegitOrScam: FC<Props> = ({
 
     return (
         <div>
-            {isLegit && <div className='text-[#16c60c] font-semibold text-base text-left mr-3'>✔ Legit</div>}
+            {isVerified && <div className='text-[#16c60c] font-semibold text-base text-left mr-3'>✔ Verified</div>}
 
             {isScam && <div className='text-[#F03A17] font-semibold text-base text-left mr-3'>❗ Scam</div>}
 
-            {!isLegit && !isScam && <div className='text-[#ff7f00] font-semibold text-base text-left mr-3'><strong>?</strong> No information</div>}
+            {!isVerified && !isScam && <div className='text-[#ff7f00] font-semibold text-base text-left mr-3'><strong>?</strong> No information</div>}
         </div>
     );
 };
