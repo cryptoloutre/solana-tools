@@ -5,46 +5,77 @@ import { Dispatch, SetStateAction } from 'react';
 
 
 
-export async function burnTokenAndCloseAccount(tokenMintAddress: string, owner: PublicKey, wallet: WalletContextState, connection: Connection, amount:number, setAmount: Dispatch<SetStateAction<number>>, setIsburning: Dispatch<SetStateAction<boolean>>) {
+export async function burnTokenAndCloseAccount(NFTstoBurn: string[], owner: PublicKey, wallet: WalletContextState, connection: Connection, setIsburning: Dispatch<SetStateAction<boolean>>, setMessage: Dispatch<SetStateAction<string>>, setRefresh: Dispatch<SetStateAction<boolean>>) {
     try {
-        setIsburning(true)
-        const mintPublickey = new PublicKey(tokenMintAddress);
+        if (NFTstoBurn[0] != undefined) {
 
-        const associatedAddress = await Token.getAssociatedTokenAddress(
-            ASSOCIATED_TOKEN_PROGRAM_ID,
-            TOKEN_PROGRAM_ID,
-            mintPublickey,
-            owner,
-        );
+            setMessage('')
+            setIsburning(true)
 
-        const burnInstruction = await Token.createBurnInstruction(
-            TOKEN_PROGRAM_ID,
-            mintPublickey,
-            associatedAddress,
-            owner,
-            [],
-            amount
-        );
+            // Create a transaction
+            let Tx = new Transaction()
 
-        const closeInstruction = await Token.createCloseAccountInstruction(
-            TOKEN_PROGRAM_ID,
-            associatedAddress,
-            owner,
-            owner,
-            []
-        );
+            // for each NFT selected
+            for (let i in NFTstoBurn) {
 
-        const BurnandCloseTransaction = new Transaction().add(burnInstruction, closeInstruction);
+                // get the publickey of the NFT
+                const mintPublickey = new PublicKey(NFTstoBurn[i]);
 
-        const BurnandCloseSignature = await wallet.sendTransaction(BurnandCloseTransaction, connection);
 
-        const confirmed = await connection.confirmTransaction(BurnandCloseSignature, 'processed');
+                // determine the associated token account of the NFT
+                const associatedAddress = await Token.getAssociatedTokenAddress(
+                    ASSOCIATED_TOKEN_PROGRAM_ID,
+                    TOKEN_PROGRAM_ID,
+                    mintPublickey,
+                    owner,
+                );
 
-        if (confirmed) {
-            setAmount(0)
+                // determine the balance and decimals of the token to burn
+                const getbalance = await connection.getTokenAccountBalance(associatedAddress)
+                const decimals = getbalance.value.decimals
+                const balance = getbalance.value.uiAmount
+
+                // create the burn instruction
+                const burnInstruction = await Token.createBurnInstruction(
+                    TOKEN_PROGRAM_ID,
+                    mintPublickey,
+                    associatedAddress,
+                    owner,
+                    [],
+                    balance! * 10 ** decimals
+                );
+
+                // create the close account instruction
+                const closeInstruction = await Token.createCloseAccountInstruction(
+                    TOKEN_PROGRAM_ID,
+                    associatedAddress,
+                    owner,
+                    owner,
+                    []
+                );
+
+                // add the instructions to the transaction
+                Tx.add(burnInstruction, closeInstruction)
+            }
+
+
+            const signature = await wallet.sendTransaction(Tx, connection);
+
+            const confirmed = await connection.confirmTransaction(signature, 'processed');
+
+            if (confirmed) {
+                setIsburning(false)
+                setRefresh(true)
+                setRefresh(false)
+
+            }
+        }
+        else {
+            setMessage('Please, select first at least one NFT to burn')
         }
     } catch (error) {
         setIsburning(false)
     }
+
 
 }
