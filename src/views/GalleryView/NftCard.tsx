@@ -75,7 +75,7 @@ export const NftCard: FC<Props> = ({
           <img
             src={image}
             onError={onImageError}
-            className="bg-gray-800 object-cover lg:h-80"
+            className="bg-gray-800 object-cover h-40 lg:h-80"
           />
         ) : (
           // Fallback when preview isn't available
