@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { legitNFTlist } from './firstCreatorNFTList/legitNFTlist';
-import { scamNFTlist } from './firstCreatorNFTList/scamNFTlist'
+import { scamNFTlist } from './firstCreatorNFTList/scamNFTlist';
 
 type Props = {
     firstCreator: string;
@@ -14,7 +14,6 @@ export const LegitOrScam: FC<Props> = ({
 
     const legitList = legitNFTlist;
     const scamList = scamNFTlist;
-
 
     useEffect(() => {
         for (let i = 0; i < legitList.length; i++) {

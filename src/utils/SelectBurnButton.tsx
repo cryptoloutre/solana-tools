@@ -1,9 +1,6 @@
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { WalletContextState } from "@solana/wallet-adapter-react";
 import { FC, useEffect, useState } from 'react';
-import { burnTokenAndCloseAccount } from './burnTokenAndCloseAccount';
-import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 type Props = {
     tokenMintAddress: string;
@@ -53,6 +50,7 @@ export const SelectBurnButton: FC<Props> = ({
     }, []);
 
     const [isSelected, setIsSelected] = useState(false);
+
 
     return (
         <div>
