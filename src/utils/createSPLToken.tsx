@@ -6,9 +6,10 @@ import { PROGRAM_ID, DataV2, createCreateMetadataAccountV2Instruction } from '@m
 
 
 
-export async function createSPLToken(owner: PublicKey, wallet: WalletContextState, connection: Connection, quantity: number, decimals: number, isChecked: boolean, tokenName: string, symbol: string, metadata: string, setIscreating: Dispatch<SetStateAction<boolean>>, setTokenAddresss: Dispatch<SetStateAction<string>>, setQuantityCreated: Dispatch<SetStateAction<number>>, setSignature: Dispatch<SetStateAction<string>>) {
+export async function createSPLToken(owner: PublicKey, wallet: WalletContextState, connection: Connection, quantity: number, decimals: number, isChecked: boolean, tokenName: string, symbol: string, metadata: string, setIscreating: Dispatch<SetStateAction<boolean>>, setTokenAddresss: Dispatch<SetStateAction<string>>, setSignature: Dispatch<SetStateAction<string>>) {
     try {
         setIscreating(true)
+        setTokenAddresss('')
 
         const mint_rent = await Token.getMinBalanceRentForExemptMint(connection);
 
@@ -118,7 +119,6 @@ export async function createSPLToken(owner: PublicKey, wallet: WalletContextStat
         if (createAccountconfirmed) {
             setIscreating(false);
             setTokenAddresss(mint_account.publicKey.toBase58());
-            setQuantityCreated(quantity);
             setSignature(signature)
         }
 

@@ -32,13 +32,11 @@ export const CreateTokenButton: FC<Props> = ({
     const [iscreating, setIscreating] = useState(false);
     const [tokenAddresss, setTokenAddresss] = useState("");
     const [signature, setSignature] = useState("");
-    const [quantityCreated, setQuantityCreated] = useState(0);
-
 
     return (
         <div>
             {!iscreating && !isNaN(quantity) && !isNaN(decimals) &&
-                <button className="btn btn-primary uppercase" onClick={() => { if (publicKey) createSPLToken(publicKey, wallet, connection, quantity, decimals, isChecked, tokenName, symbol, metadata, setIscreating, setTokenAddresss, setQuantityCreated, setSignature); else setVisible(true) }}>Create token</button>
+                <button className="btn btn-primary uppercase" onClick={() => { if (publicKey) createSPLToken(publicKey, wallet, connection, quantity, decimals, isChecked, tokenName, symbol, metadata, setIscreating, setTokenAddresss, setSignature); else setVisible(true) }}>Create token</button>
             }
 
             {!iscreating && (isNaN(quantity) || isNaN(decimals)) &&
@@ -57,7 +55,7 @@ export const CreateTokenButton: FC<Props> = ({
                 </button>
             }
 
-            {tokenAddresss !== "" && <div className="mt-5">✅ {quantityCreated} token(s) <a href={'https://solscan.io/tx/' + signature}><strong className="underline">{tokenAddresss}</strong></a> successfully created!</div>}
+            {tokenAddresss !== "" && <div className="mt-5">✅ Successfuly created! Check it <a target="_blank" href={'https://solscan.io/tx/' + signature}><strong className="underline">here</strong></a></div>}
 
         </div>
     );
