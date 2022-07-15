@@ -5,20 +5,22 @@ import { EyeOffIcon } from "@heroicons/react/outline";
 import { fetcher } from "utils/fetcher";
 
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { BurnButton } from '../../utils/BurnButton';
 import { LegitOrScam } from '../../utils/LegitOrScam';
+import { SelectBurnButton } from '../../utils/SelectBurnButton';
 
 
 type Props = {
   details: any;
   onSelect: (id: string) => void;
   onTokenDetailsFetched?: (props: any) => unknown;
+  NFTtoBurn: any;
 };
 
 export const NftCard: FC<Props> = ({
   details,
   onSelect,
   onTokenDetailsFetched = () => { },
+  NFTtoBurn
 }) => {
   const [fallbackImage, setFallbackImage] = useState(false);
   const { name, uri } = details?.data ?? {};
@@ -73,24 +75,24 @@ export const NftCard: FC<Props> = ({
           <img
             src={image}
             onError={onImageError}
-            className="bg-gray-800 object-cover h-80"
+            className="bg-gray-800 object-cover lg:h-80"
           />
         ) : (
           // Fallback when preview isn't available
           // This could be broken image, video, or audio
-          <div className="w-auto h-48 flex items-center justify-center bg-gray-900 bg-opacity-40">
+          <div className="w-auto flex items-center justify-center bg-gray-900 bg-opacity-40">
             <EyeOffIcon className="h-16 w-16 text-white-500" />
           </div>
         )}
       </figure>
-      <div className="card-body">
+      <div className="card-body h-28 sm:h-24 mb-4">
         <h2 className="card-title text-sm text-left">{name}</h2>
         <LegitOrScam firstCreator={firstCreator} />
       </div>
-      <div className="flex justify-around">
+      <div className="sm:flex justify-center">
 
-        <BurnButton tokenMintAddress={tokenMintAddress} connection={connection} publicKey={publicKey} wallet={wallet} />
-        <a target="_blank" className="btn bg-[#9945FF] hover:bg-[#7a37cc] uppercase w-[50%] ml-1" href={"https://solscan.io/token/" + tokenMintAddress}>Check Solscan</a>
+        <SelectBurnButton tokenMintAddress={tokenMintAddress} connection={connection} publicKey={publicKey} NFTstoBurn={NFTtoBurn} />
+        <a target="_blank" className="btn text-xs bg-[#9945FF] hover:bg-[#7a37cc] uppercase sm:w-[50%] sm:ml-1 mb-2 sm:mb-4" href={"https://solscan.io/token/" + tokenMintAddress}>Check Solscan</a>
       </div>
     </div>
   );

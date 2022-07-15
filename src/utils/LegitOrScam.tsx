@@ -34,11 +34,11 @@ export const LegitOrScam: FC<Props> = ({
 
     return (
         <div>
-            {isVerified && <div className='text-[#16c60c] font-semibold text-base text-left mr-3'>✔ Verified</div>}
+            {isVerified && <div className='text-[#16c60c] font-semibold sm:text-base text-left mr-3'>✔ Verified</div>}
 
-            {isScam && <div className='text-[#F03A17] font-semibold text-base text-left mr-3'>❗ Scam</div>}
+            {isScam && <div className='text-[#F03A17] font-semibold sm:text-base text-left mr-3'>❗ Scam</div>}
 
-            {!isVerified && !isScam && <div className='text-[#ff7f00] font-semibold text-base text-left mr-3'><strong>?</strong> No information</div>}
+            {!isVerified && !isScam && <div className='text-[#ff7f00] font-semibold sm:text-base text-left mr-3'><strong>?</strong> No information</div>}
         </div>
     );
 };
