@@ -33,10 +33,10 @@ export const SPLTokenView: FC = ({ }) => {
   return (
     <div className="container mx-auto max-w-6xl p-8 2xl:px-0">
       <div className={styles.container}>
-        <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content rounded-box">
-          <div className="flex-1 px-2 mx-2">
+        <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content rounded-box flex justify-around">
+          <div className="flex-1 px-2">
             <div className="text-sm breadcrumbs">
-              <ul className="text-xl">
+              <ul className="text-xs sm:text-xl">
                 <li>
                   <Link href="/">
                     <a>SOLANA-TOOLS</a>

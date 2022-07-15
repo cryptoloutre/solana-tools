@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FC, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWalletNfts, NftTokenAccount } from "@nfteyez/sol-rayz-react";
@@ -8,6 +8,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { Loader, SolanaLogo, SelectAndConnectWalletButton } from "components";
 import { NftCard } from "./NftCard";
 import styles from "./index.module.css";
+import { BurnButton } from "utils/BurnButton";
 
 const walletPublicKey = "";
 
@@ -16,6 +17,8 @@ export const GalleryView: FC = ({ }) => {
   const [walletToParsePublicKey, setWalletToParsePublicKey] =
     useState<string>(walletPublicKey);
   const { publicKey } = useWallet();
+  
+  const [refresh, setRefresh] = useState(false)
 
   const { nfts, isLoading, error } = useWalletNfts({
     publicAddress: walletToParsePublicKey,
@@ -35,13 +38,14 @@ export const GalleryView: FC = ({ }) => {
     }
   };
 
+
   return (
     <div className="container mx-auto max-w-6xl p-8 2xl:px-0">
       <div className={styles.container}>
-        <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content rounded-box">
-          <div className="flex-1 px-2 mx-2">
+        <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content rounded-box flex justify-around">
+          <div className="flex-1 px-2">
             <div className="text-sm breadcrumbs">
-              <ul className="text-xl">
+              <ul className="text-xs sm:text-xl">
                 <li>
                   <Link href="/">
                     <a>SOLANA-TOOLS</a>
@@ -98,13 +102,15 @@ export const GalleryView: FC = ({ }) => {
                     </div>
                   ) : null}
 
-                  {!error && isLoading ? (
+                  {!error && isLoading &&
                     <div>
                       <Loader />
                     </div>
-                  ) : (
-                    <NftList nfts={nfts} error={error} />
-                  )}
+                  }
+                  {!error && !isLoading && !refresh &&
+                    <NftList nfts={nfts} error={error} setRefresh={setRefresh} />
+                  }
+                  
                 </div>
               </div>
             </div>
@@ -118,9 +124,10 @@ export const GalleryView: FC = ({ }) => {
 type NftListProps = {
   nfts: NftTokenAccount[];
   error?: Error;
+  setRefresh: Dispatch<SetStateAction<boolean>>
 };
 
-const NftList = ({ nfts, error }: NftListProps) => {
+const NftList = ({ nfts, error, setRefresh }: NftListProps) => {
   if (error) {
     return null;
   }
@@ -133,16 +140,24 @@ const NftList = ({ nfts, error }: NftListProps) => {
     );
   }
 
+  const NFTstoBurn: string[] = []
+  const { connection } = useConnection();
+  const { publicKey } = useWallet();
+  const wallet = useWallet();
+
   return (
     <div>
-        <ul className="text-left font-semibold text-base mb-4">
-          <li className=" mb-1"><span className='text-[#16c60c] font-semibold'>✔ Verified</span> : the NFT does not want to drain your wallet. It does not guarantee the quality of the project. It can still be a rug or a poor project.</li>
-          <li className=" mb-1"><span className='text-[#F03A17] font-semibold'>❗ Scam</span> : the NFT wants to drain your wallet. <strong>Do not go on its website</strong> and burn it!</li>
-          <li className=" mb-1"><span className='text-[#ff7f00] font-semibold'><strong>?</strong> No information</span> : not enough information about this NFT. Feel free to send to <a target="_blank" href="https://twitter.com/laloutre"><strong className="text-[#0080FF]">@laloutre</strong></a> the mint address in order to be add in one of the 2 others categories.</li>
-        </ul>
+      <ul className="text-left font-semibold text-base mb-4">
+        <li className=" mb-1"><span className='text-[#16c60c] font-semibold'>✔ Verified</span> : the NFT does not want to drain your wallet. It does not guarantee the quality of the project. It can still be a rug or a poor project.</li>
+        <li className=" mb-1"><span className='text-[#F03A17] font-semibold'>❗ Scam</span> : the NFT wants to drain your wallet. <strong>Do not go on its website</strong> and burn it!</li>
+        <li className=" mb-1"><span className='text-[#ff7f00] font-semibold'><strong>?</strong> No information</span> : not enough information about this NFT. Feel free to send to <a target="_blank" href="https://twitter.com/laloutre"><strong className="text-[#0080FF]">@laloutre</strong></a> the mint address in order to be add in one of the 2 others categories.</li>
+      </ul>
+
+      <BurnButton NFTstoBurn={NFTstoBurn} connection={connection} publicKey={publicKey} wallet={wallet} setRefresh={setRefresh} />
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
         {nfts?.map((nft) => (
-          <NftCard key={nft.mint} details={nft} onSelect={() => { }} />
+          <NftCard key={nft.mint} details={nft} onSelect={() => { }} NFTtoBurn={NFTstoBurn} />
         ))}
       </div>
     </div>
