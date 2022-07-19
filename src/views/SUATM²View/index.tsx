@@ -9,6 +9,7 @@ import styles from "./index.module.css";
 import { Metaplex, bundlrStorage, walletAdapterIdentity } from "@metaplex-foundation/js";
 import { PublicKey } from '@solana/web3.js';
 import html2canvas from 'html2canvas';
+import { getHashedName, getNameAccountKey, NameRegistryState } from "@bonfida/spl-name-service";
 
 const walletPublicKey = "";
 
@@ -25,9 +26,9 @@ export const SUATMMView: FC = ({ }) => {
     }
   };
 
-  const [NFTWanted, setNFTWanted] = useState('');
+  const [wanted, setWanted] = useState('');
   const [username, setUsername] = useState('')
-  const [NFTName, setNFTName] = useState('');
+  const [name, setName] = useState('');
   // const [NFTImage, setNFTImage] = useState('');
   const [isGenerated, setIsGenerated] = useState(false);
   const [sending, setSending] = useState(false);
@@ -46,7 +47,7 @@ export const SUATMMView: FC = ({ }) => {
   };
 
   const HandleMintChange = async (e: any) => {
-    setNFTWanted(e.target.value);
+    setWanted(e.target.value);
     setIsGenerated(false);
     setError('');
     setIsSent(false);
@@ -67,7 +68,7 @@ export const SUATMMView: FC = ({ }) => {
       setError('');
       const _NFTName = await getNFTName();
       // const _NFTImage = await getNFTImage();
-      setNFTName(_NFTName);
+      setName(_NFTName);
       // if (_NFTImage != undefined) {
       //   setNFTImage(_NFTImage)
       // }
@@ -82,9 +83,15 @@ export const SUATMMView: FC = ({ }) => {
 
   // Get the name of the wanted NFT
   const getNFTName = async () => {
-    const mint = new PublicKey(NFTWanted);
-    const nft = await metaplex.nfts().findByMint(mint);
-    const name = nft.name;
+    let name
+    if (wanted.includes('.sol')) {
+      name = wanted
+    }
+    else {
+      const mint = new PublicKey(wanted);
+      const nft = await metaplex.nfts().findByMint(mint);
+      name = nft.name;
+    }
     return name;
   };
   // // Get the image of the wanted NFT
@@ -102,8 +109,8 @@ export const SUATMMView: FC = ({ }) => {
       setSending(true)
       const image = await generateImg();
       console.log(image);
-      const name = "SUATM² " + NFTName;
-      const description = "I want to buy your " + NFTName + ", please contact me on twitter @" + username + " ( Made with https://solanatools.vercel.app/suatmm)";
+      const _name = "SUATM² " + name;
+      const description = "I want to buy your " + _name + ", please contact me on twitter @" + username + " ( Made with https://solanatools.vercel.app/suatmm)";
       const { uri } = await metaplex.nfts().uploadMetadata({
         name: name,
         description: description,
@@ -117,15 +124,32 @@ export const SUATMMView: FC = ({ }) => {
         let data: any;
         let owner: string;
 
-        const largestAccounts = await connection.getTokenLargestAccounts(
-          new PublicKey(NFTWanted)
-        );
-        const largestAccountInfo = await connection.getParsedAccountInfo(
-          largestAccounts.value[0].address
-        );
+        if (wanted.includes('.sol')) {
+          const hashedName = await getHashedName(wanted.replace(".sol", ""));
+                const nameAccountKey = await getNameAccountKey(
+                  hashedName,
+                  undefined,
+                  new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
+                );
+                const _owner = await NameRegistryState.retrieve(
+                  connection,
+                  nameAccountKey
+                );
+                owner = _owner.registry.owner.toBase58();
+        }
 
-        data = largestAccountInfo.value?.data;
-        owner = data.parsed.info.owner;
+        else {
+          const largestAccounts = await connection.getTokenLargestAccounts(
+            new PublicKey(wanted)
+          );
+          const largestAccountInfo = await connection.getParsedAccountInfo(
+            largestAccounts.value[0].address
+          );
+  
+          data = largestAccountInfo.value?.data;
+          owner = data.parsed.info.owner;
+        }
+
 
         const { nft } = await metaplex.nfts().create({
           uri: uri,
@@ -145,6 +169,9 @@ export const SUATMMView: FC = ({ }) => {
       const err = (error as any)?.message;
       if (err.includes('could not find mint')) {
         setError('The mint address seems to be wrong, verify it');
+      }
+      else if(err.includes('Invalid name account provided')) {
+        setError('This solana domain name does not exist')
       }
     }
   };
@@ -175,7 +202,7 @@ export const SUATMMView: FC = ({ }) => {
             <div className="text-center hero-content w-full">
               <div className="w-full">
                 <h1 className="mb-5 text-5xl">
-                  Send a NFT Message to the desired NFT owner
+                  Send a NFT Message to the desired NFT or .sol domain name owner
                 </h1>
 
                 <div>
@@ -185,7 +212,7 @@ export const SUATMMView: FC = ({ }) => {
                     <input className="mb-[1%] text-black pl-1 border-2 border-black sm:w-[520px] w-[100%] text-center"
                       type="text"
                       required
-                      placeholder="Desired NFT mint address"
+                      placeholder="NFT mint address/.sol domain name"
                       onChange={HandleMintChange}
                       style={{
                         borderRadius:
@@ -206,7 +233,7 @@ export const SUATMMView: FC = ({ }) => {
 
 
                   </form>
-                  {NFTWanted != '' && username != '' &&
+                  {wanted != '' && username != '' &&
                     <button className="text-white font-semibold text-xl rounded-full px-2 py-1 ml-2 bg-[#9945FF]"
                       onClick={GenerateNFT}>Generate message</button>
                   }
@@ -214,7 +241,7 @@ export const SUATMMView: FC = ({ }) => {
                   {isGenerated &&
                     <div className="flex justify-center mt-4">
                       <div className="sm:w-[250px] sm:h-[250px] w-[150px] h-[150px] bg-[#FF0000]" id="canvas">
-                        <p className="mt-[25%] text-sm sm:text-lg">I want to buy your <br /> <strong>{NFTName}</strong></p>
+                        <p className="mt-[25%] text-sm sm:text-lg">I want to buy your <br /> <strong>{name}</strong></p>
                         <p className="mt-[5%] text-sm sm:text-lg">Contact me on Twitter <br /><strong>@{username}</strong></p>
                       </div>
                     </div>
