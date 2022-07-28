@@ -110,9 +110,9 @@ export const SUATMMView: FC = ({ }) => {
       const image = await generateImg();
       console.log(image);
       const _name = "SUATM² " + name;
-      const description = "I want to buy your " + _name + ", please contact me on twitter @" + username + " ( Made with https://solanatools.vercel.app/suatmm)";
+      const description = "I want to buy your " + name + ", please contact me on twitter @" + username + " ( Made with https://solanatools.vercel.app/suatmm)";
       const { uri } = await metaplex.nfts().uploadMetadata({
-        name: name,
+        name: _name,
         description: description,
         image: image,
         external_url: "https://solanatools.vercel.app/"
