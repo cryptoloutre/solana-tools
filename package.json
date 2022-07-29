@@ -20,6 +20,7 @@
     "@project-serum/anchor": "^0.19.1-beta.1",
     "@solana/buffer-layout": "^4.0.0",
     "@solana/spl-token": "^0.1.8",
+    "@solana/spl-token-registry": "^0.2.4574",
     "@solana/wallet-adapter-base": "^0.7.0",
     "@solana/wallet-adapter-phantom": "^0.7.0",
     "@solana/wallet-adapter-react": "^0.13.1",

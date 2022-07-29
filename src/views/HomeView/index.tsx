@@ -68,6 +68,26 @@ export const HomeView: FC = ({ }) => {
 
               </li>
               <li className="mb-5">
+                <Link href="/burnSPL">
+                  <div className="p-4 hover:border">
+                    <a className="text-4xl font-bold mb-5">
+                      🔥 -- Burn SPL token
+                    </a>
+                    <div>A UI to burn SPL tokens and get SOL back</div></div>
+                </Link>
+
+              </li>
+              {/* <li className="mb-5">
+                <Link href="/closeaccount">
+                  <div className="p-4 hover:border">
+                    <a className="text-4xl font-bold mb-5">
+                      🔥 -- Close empty account
+                    </a>
+                    <div>A UI to close empty account of unused token and get SOL back</div></div>
+                </Link>
+
+              </li> */}
+              <li className="mb-5">
                 <Link href="/spltoken">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
@@ -103,7 +123,7 @@ export const HomeView: FC = ({ }) => {
                     <a className="text-4xl font-bold mb-5">
                     📨 -- Send NFT message
                     </a>
-                    <div>A UI to send a message to the desired NFT owner</div>
+                    <div>A UI to send a message to the owner of the NFT or the .sol domain name you want</div>
                   </div>
                 </Link>
 

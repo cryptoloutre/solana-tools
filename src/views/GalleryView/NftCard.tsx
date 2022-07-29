@@ -8,19 +8,20 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LegitOrScam } from '../../utils/LegitOrScam';
 import { SelectBurnButton } from '../../utils/SelectBurnButton';
 
+import proxy from '../../utils/proxy.png'
 
 type Props = {
   details: any;
   onSelect: (id: string) => void;
   onTokenDetailsFetched?: (props: any) => unknown;
-  NFTtoBurn: any;
+  toBurn: any;
 };
 
 export const NftCard: FC<Props> = ({
   details,
   onSelect,
   onTokenDetailsFetched = () => { },
-  NFTtoBurn
+  toBurn
 }) => {
   const [fallbackImage, setFallbackImage] = useState(false);
   const { name, uri } = details?.data ?? {};
@@ -91,7 +92,7 @@ export const NftCard: FC<Props> = ({
       </div>
       <div className="sm:flex justify-center">
 
-        <SelectBurnButton tokenMintAddress={tokenMintAddress} connection={connection} publicKey={publicKey} NFTstoBurn={NFTtoBurn} />
+        <SelectBurnButton tokenMintAddress={tokenMintAddress} connection={connection} publicKey={publicKey} toBurn={toBurn} />
         <a target="_blank" className="btn text-xs bg-[#9945FF] hover:bg-[#7a37cc] uppercase sm:w-[50%] sm:ml-1 mb-2 sm:mb-4" href={"https://solscan.io/token/" + tokenMintAddress}>Check Solscan</a>
       </div>
     </div>

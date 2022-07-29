@@ -4,19 +4,19 @@ import { FC, useEffect, useState } from 'react';
 
 type Props = {
     tokenMintAddress: string;
-    NFTstoBurn: any;
+    toBurn: any;
     publicKey: PublicKey | null;
-    connection: Connection
+    connection: Connection;
 };
 
 export const SelectBurnButton: FC<Props> = ({
     tokenMintAddress,
-    NFTstoBurn,
+    toBurn,
     publicKey,
-    connection
+    connection,
 }) => {
 
-    const [amount, setAmount] = useState(0);
+    const [accountExist, setAccountExist] = useState<boolean>();
 
     useEffect(() => {
 
@@ -36,13 +36,14 @@ export const SelectBurnButton: FC<Props> = ({
                     const getbalance = await connection.getTokenAccountBalance(associatedAddress)
 
                     const quantity = getbalance.value.amount;
-                    setAmount(parseInt(quantity, 10))
+                    setAccountExist(true)
                 }
             }
             catch (error) {
                 const err = (error as any)?.message;
+                console.log(err)
                 if (err.includes('could not find account')) {
-                    setAmount(0)
+                    setAccountExist(false)
                 }
             }
         }
@@ -54,14 +55,14 @@ export const SelectBurnButton: FC<Props> = ({
 
     return (
         <div>
-            {!isSelected && amount != 0 &&
-                <button className="btn bg-[#55268e] hover:bg-[#3d1b66] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(true); NFTstoBurn.push(tokenMintAddress) }}>select</button>
+            {!isSelected && accountExist == true &&
+                <button className="btn bg-[#55268e] hover:bg-[#3d1b66] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(true); toBurn.push(tokenMintAddress) }}>select</button>
             }
-            {isSelected && amount != 0 &&
-                <button className="btn bg-[#3d1b66] hover:bg-[#55268e] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(false); NFTstoBurn.splice(NFTstoBurn.indexOf(tokenMintAddress), 1) }}>unselect</button>
+            {isSelected && accountExist == true &&
+                <button className="btn bg-[#3d1b66] hover:bg-[#55268e] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(false); toBurn.splice(toBurn.indexOf(tokenMintAddress), 1) }}>unselect</button>
             }
 
-            {amount == 0 &&
+            {accountExist == false &&
                 <button className="btn btn-primary uppercase mb-2 sm:mb-4 sm:mr-1" disabled>success!</button>
             }
 
