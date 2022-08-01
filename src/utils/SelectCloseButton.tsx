@@ -41,7 +41,7 @@ export const SelectCloseButton: FC<Props> = ({
             catch (error) {
                 setAccountExist(false)
                 const err = (error as any)?.message;
-                console.log('loioi', err)
+                console.log(err)
             }
         }
         BalanceIsNull();
@@ -53,7 +53,7 @@ export const SelectCloseButton: FC<Props> = ({
     return (
         <div>
             {!isSelected && accountExist == true &&
-                <button className="btn bg-[#55268e] hover:bg-[#3d1b66] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(true); toClose.push(tokenAccount), console.log(tokenAccount) }}>select</button>
+                <button className="btn bg-[#55268e] hover:bg-[#3d1b66] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(true); toClose.push(tokenAccount) }}>select</button>
             }
             {isSelected && accountExist == true &&
                 <button className="btn bg-[#3d1b66] hover:bg-[#55268e] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(false); toClose.splice(toClose.indexOf(tokenAccount), 1) }}>unselect</button>
