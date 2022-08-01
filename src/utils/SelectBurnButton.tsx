@@ -49,7 +49,7 @@ export const SelectBurnButton: FC<Props> = ({
             catch (error) {
                 setAccountExist(false)
                 const err = (error as any)?.message;
-                console.log('loioi', err)
+                console.log(err)
             }
         }
         BalanceIsNull();
