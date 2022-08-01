@@ -1,29 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { IconFT } from './IconFT';
+import { IconFTEA } from './IconFTEA';
 import { Metaplex } from "@metaplex-foundation/js";
 import { Connection, PublicKey } from "@solana/web3.js";
+import proxy from './proxy.png'
 
-export const TokenIcon = (props: { mint: string }) => {
+export const TokenIconEA = (props: { account: string, connection: Connection, metaplex: Metaplex }) => {
 
   const [isNFT, setIsNFT] = useState<boolean>()
+  const [isClosed, setIsClosed] = useState<boolean>(false)
   const [uri, setURI] = useState('')
 
   useEffect(() => {
 
     async function isNFT() {
-      // define the mint publickey address
-      const mintPublickey = new PublicKey(props.mint);
+      const account = props.account
+      const connection = props.connection
+      const accountPubKey = new PublicKey(account);
 
-      // define the connection
-      const connection = new Connection("https://ssc-dao.genesysgo.net");
+      // get the token account info of the token account
+      const accountInfo = await connection.getParsedAccountInfo(accountPubKey);
 
-      // create an entry point to Metaplex SDK
-      const metaplex = new Metaplex(connection);
+      let data: any
+
+      // get the data of the token account
+      data = accountInfo.value?.data
+
 
       try {
+        // get the mint address associated to the token account
+        const _mint = data.parsed.info.mint
+        const mintPublickey = new PublicKey(_mint);
+        const metaplex = props.metaplex;
 
         // get the nft object with the mint publickey address
         const nft = await metaplex.nfts().findByMint(mintPublickey);
+
         // get the logo of the nft object
         const logo = nft.metadata.image
 
@@ -45,6 +56,9 @@ export const TokenIcon = (props: { mint: string }) => {
         if (err.includes('No Metadata account could be found for the provided mint address')) {
           setIsNFT(false)
         }
+        else {
+          setIsClosed(true)
+        }
       }
     }
     isNFT();
@@ -53,10 +67,13 @@ export const TokenIcon = (props: { mint: string }) => {
   return (
     <div>
       {isNFT == false &&
-        <IconFT mint={props.mint} />
+        <IconFTEA account={props.account} connection={props.connection} />
       }
       {isNFT == true &&
         <img className="bg-gray-800 object-cover h-40 lg:h-60" src={uri} />
+      }
+      {isClosed == true &&
+        <img className="bg-gray-800 object-cover h-40 lg:h-60" src={proxy.src} />
       }
 
     </div>

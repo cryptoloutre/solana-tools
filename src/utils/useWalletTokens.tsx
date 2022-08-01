@@ -3,6 +3,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { AccountLayout, ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { isValidSolanaAddress } from "@nfteyez/sol-rayz";
 import { getParsedTokensbyUser } from './getParsedTokensbyUser'
+import { getParsedEmptyAccountsbyUser } from './getParsedEmptyAccountsbyUser'
 
 type Options = {
     publicAddress: string;
@@ -31,6 +32,7 @@ export const useWalletTokens = ({
 
     const fetchTokensAccounts = async () => {
 
+        // check if the address provided is a valid one
         const isValidAddress: boolean = isValidSolanaAddress(publicAddress);
 
         if (!isValidAddress) {
@@ -43,8 +45,14 @@ export const useWalletTokens = ({
         setError(undefined);
 
         try {
-            const tokens = await getParsedTokensbyUser({ publicAddress, connection, type })
-            setTokens(tokens as any);
+            if (type == 'spl') {
+                const tokens = await getParsedTokensbyUser({ publicAddress, connection})
+                setTokens(tokens as any);
+            }
+            else if (type == 'empty') {
+                const tokens = await getParsedEmptyAccountsbyUser({ publicAddress, connection})
+                setTokens(tokens as any);
+            }
         } catch (error) {
             const err = (error as any).message
             console.log(

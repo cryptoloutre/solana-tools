@@ -1,4 +1,4 @@
-import { Connection, PublicKey, AccountInfo, ParsedAccountData } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 
 type Options = {
     publicAddress: string;
@@ -7,7 +7,7 @@ type Options = {
 }
 
 
-export const getParsedTokensbyUser = async ({
+export const getParsedEmptyAccountsbyUser = async ({
     publicAddress,
     connection,
     limit = 5000,
@@ -23,21 +23,19 @@ export const getParsedTokensbyUser = async ({
         }
     );
 
-    // We assume tokens is SPL token with decimals !== 0 and amount !==0
-    // At this point we filter out other SPL tokens, like NFT e.g.
-    const nftAccounts = splAccounts
+    // We assume empty accounts is SPL token with amount == 0
+    const EmptyAccounts = splAccounts
         .filter((t) => {
             const amount = t.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
-            const decimals = t.account?.data?.parsed?.info?.tokenAmount?.decimals;
-            return decimals !== 0 && amount != 0;
+            return amount == 0;
         })
         .map((t) => {
-            const address = t.account?.data?.parsed?.info?.mint;
+            const address = t.pubkey.toBase58();
             return address;
         });
 
-    // if user have tons of tokens return first N
-    const accountsSlice = nftAccounts?.slice(0, limit);
+    // if user have tons of empty accounts return first N
+    const accountsSlice = EmptyAccounts?.slice(0, limit);
 
     return accountsSlice
 

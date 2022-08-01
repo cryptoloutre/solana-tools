@@ -10,11 +10,11 @@ import { FetchTokensButton } from "components/FetchTokensButton";
 import { useWalletTokens} from "../../utils/useWalletTokens"
 
 import { TokenCard } from "./TokenCard";
-import { BurnButton } from "utils/BurnButton";
+import { CloseButton } from "utils/CloseButton";
 
 const walletPublicKey = "";
 
-export const BurnSPLView: FC = ({ }) => {
+export const CloseAccountView: FC = ({ }) => {
   const { connection } = useConnection();
 
   const [walletToParsePublicKey, setWalletToParsePublicKey] =
@@ -33,15 +33,15 @@ export const BurnSPLView: FC = ({ }) => {
   const { tokens, isLoading, error } = useWalletTokens({
     publicAddress: walletToParsePublicKey,
     connection,
-    type : 'spl'
+    type : 'empty'
   });
+
+  console.log(tokens)
 
   let errorMessage
   if (error) {
     errorMessage = error.message
   }
-
-
 
   return (
     <div className="container mx-auto max-w-6xl p-8 2xl:px-0">
@@ -69,7 +69,7 @@ export const BurnSPLView: FC = ({ }) => {
             <div className="text-center hero-content w-full">
               <div className="w-full">
                 <h1 className="mb-5 text-5xl">
-                Burn your SPL <SolanaLogo /> tokens and get $SOL back
+                Close empty account and get $SOL back
                 </h1>
                 <div className="w-full min-w-full">
                   <div>
@@ -113,7 +113,7 @@ export const BurnSPLView: FC = ({ }) => {
                     </div>
                   }
                   {!error && !isLoading && !refresh &&
-                    <TokenList tokens={tokens} error={error} setRefresh={setRefresh} />
+                    <AccountList accounts={tokens} error={error} setRefresh={setRefresh} />
                   }
 
                 </div>
@@ -127,26 +127,26 @@ export const BurnSPLView: FC = ({ }) => {
   );
 };
 
-type TokenListProps = {
-  tokens: string[] | undefined;
+type AccountListProps = {
+  accounts: string[] | undefined;
   error?: Error;
   setRefresh: Dispatch<SetStateAction<boolean>>;
 };
 
-const TokenList = ({ tokens, error, setRefresh}: TokenListProps) => {
+const AccountList = ({ accounts, error, setRefresh}: AccountListProps) => {
   if (error) {
     return null;
   }
 
-  if (!tokens?.length) {
+  if (!accounts?.length) {
     return (
       <div className="text-center text-2xl pt-16">
-        No token found in this wallet
+        No empty account found in this wallet
       </div>
     );
   }
 
-  const TokenstoBurn: string[] = []
+  const AccountstoClose: string[] = []
   const { connection } = useConnection();
   const { publicKey } = useWallet();
   const wallet = useWallet();
@@ -154,11 +154,11 @@ const TokenList = ({ tokens, error, setRefresh}: TokenListProps) => {
   return (
     <div>
 
-      <BurnButton toBurn={TokenstoBurn} connection={connection} publicKey={publicKey} wallet={wallet} setRefresh={setRefresh} />
+      <CloseButton toClose={AccountstoClose} connection={connection} publicKey={publicKey} wallet={wallet} setRefresh={setRefresh} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
-        {tokens?.map((token) => (
-          <TokenCard key={token} mint={token} toBurn={TokenstoBurn}/>
+        {accounts?.map((token) => (
+          <TokenCard key={token} account={token} toClose={AccountstoClose} />
         ))}
       </div>
     </div>

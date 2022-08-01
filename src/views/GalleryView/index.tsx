@@ -153,7 +153,7 @@ const NftList = ({ nfts, error, setRefresh }: NftListProps) => {
         <li className=" mb-1"><span className='text-[#ff7f00] font-semibold'><strong>?</strong> No information</span> : not enough information about this NFT. Feel free to send to <a target="_blank" href="https://twitter.com/laloutre"><strong className="text-[#0080FF]">@laloutre</strong></a> the mint address in order to be add in one of the 2 others categories.</li>
       </ul>
 
-      <BurnButton toBurn={NFTstoBurn} type='spl' connection={connection} publicKey={publicKey} wallet={wallet} setRefresh={setRefresh} />
+      <BurnButton toBurn={NFTstoBurn} connection={connection} publicKey={publicKey} wallet={wallet} setRefresh={setRefresh} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
         {nfts?.map((nft) => (

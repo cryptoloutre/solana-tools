@@ -1,22 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { NameFT } from './NameFT';
+import { NameFTEA } from './NameFTEA';
 import { Metaplex } from "@metaplex-foundation/js";
 import { Connection, PublicKey } from "@solana/web3.js";
 
-export const TokenName = (props: { mint: string }) => {
+export const TokenNameEA = (props: { account: string, connection: Connection, metaplex: Metaplex }) => {
 
   const [isNFT, setIsNFT] = useState<boolean>()
+  const [isClosed, setIsClosed] = useState<boolean>(false)
   const [name, setName] = useState('')
 
   useEffect(() => {
 
     async function isNFT() {
-      const mintPublickey = new PublicKey(props.mint);
-      const connection = new Connection("https://ssc-dao.genesysgo.net");
-      // create an entry point to Metaplex SDK
-      const metaplex = new Metaplex(connection);
+      const account = props.account
+      const connection = props.connection
+      const metaplex = props.metaplex
+      const accountPubKey = new PublicKey(account);
+
+      // get the token account info of the token account
+      const accountInfo = await connection.getParsedAccountInfo(accountPubKey);
+
+      let data: any
+
+      // get the data of the token account
+      data = accountInfo.value?.data
+
 
       try {
+        // get the mint address associated to the token account
+        const _mint = data.parsed.info.mint
+        const mintPublickey = new PublicKey(_mint);
+
         // get the nft object with the mint publickey address
         const nft = await metaplex.nfts().findByMint(mintPublickey);
 
@@ -41,6 +55,9 @@ export const TokenName = (props: { mint: string }) => {
         if (err.includes('No Metadata account could be found for the provided mint address')) {
           setIsNFT(false)
         }
+        else {
+          setIsClosed(true)
+        }
       }
     }
     isNFT();
@@ -49,10 +66,13 @@ export const TokenName = (props: { mint: string }) => {
   return (
     <div>
       {isNFT == false &&
-        <NameFT mint={props.mint} />
+        <NameFTEA account={props.account} connection={props.connection} />
       }
       {isNFT == true &&
         <div>{name}</div>
+      }
+      {isClosed == true &&
+        <div>Unknown token</div>
       }
 
     </div>

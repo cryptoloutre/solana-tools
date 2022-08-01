@@ -1,14 +1,14 @@
-import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Connection, PublicKey, Transaction } from '@solana/web3.js';
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Dispatch, SetStateAction } from 'react';
 
 
 
-export async function burnTokenAndCloseAccount(NFTstoBurn: string[], owner: PublicKey, wallet: WalletContextState, connection: Connection, setIsburning: Dispatch<SetStateAction<boolean>>, setMessage: Dispatch<SetStateAction<string>>, setRefresh: Dispatch<SetStateAction<boolean>>, setCurrentTx: Dispatch<SetStateAction<number | undefined>>, setTotalTx: Dispatch<SetStateAction<number | undefined>>) {
+export async function CloseAccount(AccountstoClose: string[], owner: PublicKey, wallet: WalletContextState, connection: Connection, setIsburning: Dispatch<SetStateAction<boolean>>, setMessage: Dispatch<SetStateAction<string>>, setRefresh: Dispatch<SetStateAction<boolean>>, setCurrentTx: Dispatch<SetStateAction<number | undefined>>, setTotalTx: Dispatch<SetStateAction<number | undefined>>) {
     try {
-        if (NFTstoBurn[0] != undefined) {
-
+        if (AccountstoClose[0] != undefined) {
+            
             setMessage('')
             setIsburning(true)
 
@@ -17,11 +17,11 @@ export async function burnTokenAndCloseAccount(NFTstoBurn: string[], owner: Publ
 
             // calculate the number of Tx to do
             let nbTx: number
-            if (NFTstoBurn.length % 10 == 0) {
-                nbTx = NFTstoBurn.length / nbPerTx
+            if (AccountstoClose.length % 10 == 0) {
+                nbTx = AccountstoClose.length / nbPerTx
             }
             else {
-                nbTx = Math.floor(NFTstoBurn.length / nbPerTx) + 1;
+                nbTx = Math.floor(AccountstoClose.length / nbPerTx) + 1;
             }
 
             setTotalTx(nbTx)
@@ -34,7 +34,7 @@ export async function burnTokenAndCloseAccount(NFTstoBurn: string[], owner: Publ
                 let bornSup: number
 
                 if (i == nbTx - 1) {
-                    bornSup = NFTstoBurn.length
+                    bornSup = AccountstoClose.length
                 }
 
                 else {
@@ -44,38 +44,14 @@ export async function burnTokenAndCloseAccount(NFTstoBurn: string[], owner: Publ
                 // for each NFT selected
                 for (let j = 10 * i; j < bornSup; j++) {
 
-                    // get the publickey of the NFT
-                    const mintPublickey = new PublicKey(NFTstoBurn[j]);
+                    // get the publickey of the token account
+                    const accountPubKey = new PublicKey(AccountstoClose[j]);
 
-
-                    // determine the associated token account of the NFT
-                    const associatedAddress = await Token.getAssociatedTokenAddress(
-                        ASSOCIATED_TOKEN_PROGRAM_ID,
-                        TOKEN_PROGRAM_ID,
-                        mintPublickey,
-                        owner,
-                    );
-
-                    // determine the balance and decimals of the token to burn
-                    const getbalance = await connection.getTokenAccountBalance(associatedAddress)
-                    const decimals = getbalance.value.decimals
-                    const balance = getbalance.value.uiAmount
-
-                    // create the burn instruction
-                    const burnInstruction = await Token.createBurnInstruction(
-                        TOKEN_PROGRAM_ID,
-                        mintPublickey,
-                        associatedAddress,
-                        owner,
-                        [],
-                        balance! * 10 ** decimals
-                    );
-                    Tx.add(burnInstruction)
 
                     // create the close account instruction
                     const closeInstruction = await Token.createCloseAccountInstruction(
                         TOKEN_PROGRAM_ID,
-                        associatedAddress,
+                        accountPubKey,
                         owner,
                         owner,
                         []
@@ -83,8 +59,8 @@ export async function burnTokenAndCloseAccount(NFTstoBurn: string[], owner: Publ
 
                     // add the instructions to the transaction
                     Tx.add(closeInstruction)
-                }
 
+                }
 
                 // incremente the current transaction
                 setCurrentTx(i + 1)

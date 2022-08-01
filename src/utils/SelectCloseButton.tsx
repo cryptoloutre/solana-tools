@@ -1,17 +1,16 @@
-import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { FC, useEffect, useState } from 'react';
 
 type Props = {
-    tokenMintAddress: string;
-    toBurn: any;
+    tokenAccount: string;
+    toClose: any;
     publicKey: PublicKey | null;
     connection: Connection;
 };
 
-export const SelectBurnButton: FC<Props> = ({
-    tokenMintAddress,
-    toBurn,
+export const SelectCloseButton: FC<Props> = ({
+    tokenAccount,
+    toClose,
     publicKey,
     connection,
 }) => {
@@ -21,23 +20,16 @@ export const SelectBurnButton: FC<Props> = ({
     useEffect(() => {
 
         async function BalanceIsNull() {
-            const mintPublickey = new PublicKey(tokenMintAddress);
+
+            // get the publickey of the Token account
+            const accountPubKey = new PublicKey(tokenAccount)
             try {
 
                 if (publicKey) {
 
-                    // get the associated token address
-                    const associatedAddress = await Token.getAssociatedTokenAddress(
-                        ASSOCIATED_TOKEN_PROGRAM_ID,
-                        TOKEN_PROGRAM_ID,
-                        mintPublickey,
-                        publicKey,
-                    );
-
-
                     // get the SOL balance of the ATA
-                    // if this balance != 0 the ATA is not closed, it's closed otherwise 
-                    const balance = await connection.getBalance(associatedAddress)
+                    // if this balance != 0 the ATA is not closed, it's closed otherwise
+                    const balance = await connection.getBalance(accountPubKey)
                     if (balance != 0) {
                         setAccountExist(true)
                     }
@@ -61,10 +53,10 @@ export const SelectBurnButton: FC<Props> = ({
     return (
         <div>
             {!isSelected && accountExist == true &&
-                <button className="btn bg-[#55268e] hover:bg-[#3d1b66] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(true); toBurn.push(tokenMintAddress) }}>select</button>
+                <button className="btn bg-[#55268e] hover:bg-[#3d1b66] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(true); toClose.push(tokenAccount), console.log(tokenAccount) }}>select</button>
             }
             {isSelected && accountExist == true &&
-                <button className="btn bg-[#3d1b66] hover:bg-[#55268e] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(false); toBurn.splice(toBurn.indexOf(tokenMintAddress), 1) }}>unselect</button>
+                <button className="btn bg-[#3d1b66] hover:bg-[#55268e] uppercase mb-2 sm:mb-4 sm:mr-1" onClick={() => { setIsSelected(false); toClose.splice(toClose.indexOf(tokenAccount), 1) }}>unselect</button>
             }
 
             {accountExist == false &&

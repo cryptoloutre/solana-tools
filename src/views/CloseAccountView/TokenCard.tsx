@@ -1,25 +1,20 @@
 import { FC, useState, useEffect } from "react";
-import useSWR from "swr";
-import { EyeOffIcon } from "@heroicons/react/outline";
-
-import { fetcher } from "utils/fetcher";
-
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { LegitOrScam } from '../../utils/LegitOrScam';
-import { SelectBurnButton } from '../../utils/SelectBurnButton';
-import { TokenIcon } from "utils/TokenIcon";
-import { TokenName } from "utils/TokenName";
+import { SelectCloseButton } from '../../utils/SelectCloseButton';
+import { TokenIconEA } from "utils/TokenIconEA";
+import { TokenNameEA } from "utils/TokenNameEA";
+import {getMintFromTokenAccount} from "utils/getMintFromTokenAccount"
+import { Metaplex } from "@metaplex-foundation/js";
 
 
 type Props = {
-  mint: string;
-  toBurn: any;
+  account: string;
+  toClose: any;
 };
 
 export const TokenCard: FC<Props> = ({
-  mint,
-  toBurn,
-
+  account,
+  toClose,
 }) => {
 
 
@@ -28,19 +23,24 @@ export const TokenCard: FC<Props> = ({
   const { connection } = useConnection();
 
   const { publicKey } = useWallet();
+  const metaplex = new Metaplex(connection);
+
+  // get the mint address of the token account
+  const mint = getMintFromTokenAccount({account, connection})
+
 
   return (
     <div className={`card bordered max-w-xs compact rounded-md`}>
       <figure className="min-h-16 animation-pulse-color">
-        <TokenIcon mint={mint}/>
+        <TokenIconEA account={account} connection={connection} metaplex={metaplex} />
       </figure>
       <div className="card-body h-20 sm:h-16 mb-4">
         <h2 className="card-title text-sm text-left">
-          <TokenName mint={mint} />
+          <TokenNameEA account={account} connection={connection} metaplex={metaplex} />
         </h2>
       </div>
       <div className="sm:flex justify-center">
-        <SelectBurnButton tokenMintAddress={mint} connection={connection} publicKey={publicKey} toBurn={toBurn} />
+        <SelectCloseButton tokenAccount={account} connection={connection} publicKey={publicKey} toClose={toClose} />
 
         <a target="_blank" className="btn text-xs bg-[#9945FF] hover:bg-[#7a37cc] uppercase sm:w-[50%] sm:ml-1 mb-2 sm:mb-4" href={"https://solscan.io/token/" + mint}>Check Solscan</a>
       </div>
