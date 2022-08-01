@@ -77,16 +77,16 @@ export const HomeView: FC = ({ }) => {
                 </Link>
 
               </li>
-              {/* <li className="mb-5">
+              <li className="mb-5">
                 <Link href="/closeaccount">
                   <div className="p-4 hover:border">
                     <a className="text-4xl font-bold mb-5">
-                      🔥 -- Close empty account
+                      🔒 -- Close empty account
                     </a>
                     <div>A UI to close empty account of unused token and get SOL back</div></div>
                 </Link>
 
-              </li> */}
+              </li>
               <li className="mb-5">
                 <Link href="/spltoken">
                   <div className="p-4 hover:border">
