@@ -35,9 +35,10 @@ export const SelectBurnButton: FC<Props> = ({
                     );
 
 
-                    // get the SOL balance of the ATA
+                    // get the token balance 
                     // if this balance != 0 the ATA is not closed, it's closed otherwise 
-                    const balance = await connection.getBalance(associatedAddress)
+                    const getBalance = await connection.getTokenAccountBalance(associatedAddress)
+                    const balance = getBalance.value.uiAmount
                     if (balance != 0) {
                         setAccountExist(true)
                     }
