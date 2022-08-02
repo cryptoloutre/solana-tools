@@ -7,7 +7,7 @@ import { ConnectWallet } from "components";
 import styles from "./index.module.css";
 
 import { Metaplex, bundlrStorage, MetaplexFile, useMetaplexFileFromBrowser, walletAdapterIdentity, MetaplexFileTag } from "@metaplex-foundation/js-next";
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, Connection } from '@solana/web3.js';
 
 const walletPublicKey = "";
 
@@ -43,7 +43,7 @@ export const UploadView: FC = ({ }) => {
   const metaplex = Metaplex.make(connection)
     .use(walletAdapterIdentity(wallet))
     .use(bundlrStorage());
-    
+
   let _file: MetaplexFile;
 
   const handleFileChange = async (event: any) => {
@@ -144,8 +144,8 @@ export const UploadView: FC = ({ }) => {
                     <div className="font-semibold text-xl mb-[2%]">
                       ✅ Successfuly uploaded! <br />Don't forget to copy the following link:
                     </div>}
-                  <div className="font-semibold text-xl">
-                    <a href={uri}> {uri}</a>
+                  <div className="font-semibold text-xl underline">
+                    <a target="_blank" rel="noreferrer" href={uri}> {uri}</a>
                   </div>
 
                 </div>
