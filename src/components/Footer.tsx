@@ -47,7 +47,7 @@ const Footer = () => {
 
             <div className="text-center text-white text-sm pb-3">
                 Made by
-                <a className="text-white" href="https://twitter.com/laloutre"> <strong>@laloutre</strong></a>
+                <a target="_blank" rel="noreferrer" className="text-white" href="https://twitter.com/laloutre"> <strong>@laloutre</strong></a>
             </div>
             <PIPButtonCustom />
         </footer>
