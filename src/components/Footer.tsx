@@ -9,7 +9,7 @@ const Footer = () => {
             <div className="w-100 pb-6">
                 <div className="flex justify-center">
 
-                    <a target="_blank" href="https://twitter.com/laloutre" type="button" className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-50 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1">
+                    <a target="_blank" rel="noreferrer" href="https://twitter.com/laloutre" type="button" className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-50 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1">
                         <svg aria-hidden="true"
                             focusable="false"
                             data-prefix="fab"
@@ -26,7 +26,7 @@ const Footer = () => {
                         </svg>
                     </a>
 
-                    <a target="_blank" href="https://github.com/cryptoloutre/solana-tools" type="button" className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-50 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1">
+                    <a target="_blank" rel="noreferrer" href="https://github.com/cryptoloutre/solana-tools" type="button" className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-50 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1">
                         <svg aria-hidden="true"
                             focusable="false"
                             data-prefix="fab"
