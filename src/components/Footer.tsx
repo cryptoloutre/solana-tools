@@ -6,7 +6,7 @@ const Footer = () => {
 
     return (
         <footer className="text-center text-white">
-            <div className="w-100 pb-6">
+            <div className="w-100 pb-2">
                 <div className="flex justify-center">
 
                     <a target="_blank" rel="noreferrer" href="https://twitter.com/laloutre" type="button" className="rounded-full border-2 border-white text-white leading-normal uppercase hover:bg-black hover:bg-opacity-50 focus:outline-none focus:ring-0 transition duration-150 ease-in-out w-9 h-9 m-1">
@@ -45,7 +45,11 @@ const Footer = () => {
                 </div>
             </div>
 
-            <div className="text-center text-white text-sm pb-3">
+            <div className="text-center text-white pb-2">
+                Try on
+                <a target="_blank" rel="noreferrer" className="text-white" href="https://solanatools-devnet.vercel.app/"> <strong className="underline">Devnet</strong></a>
+            </div>
+            <div className="text-center text-white text-sm pb-2">
                 Made by
                 <a target="_blank" rel="noreferrer" className="text-white" href="https://twitter.com/laloutre"> <strong>@laloutre</strong></a>
             </div>
