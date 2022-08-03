@@ -9,8 +9,8 @@ import styles from "./index.module.css";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, SystemProgram, Connection } from '@solana/web3.js';
 import { getHashedName, getNameAccountKey, getTwitterRegistry, NameRegistryState } from "@bonfida/spl-name-service";
-import { getParsedAllTokensbyUser } from "utils/getParsedAllTokensbyUser";
-import { useWalletTokens } from "utils/useWalletTokens";
+// import { getParsedAllTokensbyUser } from "utils/getParsedAllTokensbyUser";
+// import { useWalletTokens } from "utils/useWalletTokens";
 
 const walletPublicKey = "";
 
