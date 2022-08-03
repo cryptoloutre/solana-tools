@@ -7,13 +7,15 @@ import { SolanaLogo, ConnectWallet } from "components";
 import styles from "./index.module.css";
 
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
-import { getDomainKey, getHashedName, getNameAccountKey, getTwitterRegistry, NameRegistryState } from "@bonfida/spl-name-service";
+import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, SystemProgram, Connection } from '@solana/web3.js';
+import { getHashedName, getNameAccountKey, getTwitterRegistry, NameRegistryState } from "@bonfida/spl-name-service";
+import { getParsedAllTokensbyUser } from "utils/getParsedAllTokensbyUser";
+import { useWalletTokens } from "utils/useWalletTokens";
 
 const walletPublicKey = "";
 
 export const MultiSenderView: FC = ({ }) => {
-  const { connection } = useConnection();
+  const connection = new Connection("https://solana-mainnet.phantom.tech/")
   const wallet = useWallet();
   const [walletToParsePublicKey, setWalletToParsePublicKey] =
     useState<string>(walletPublicKey);
@@ -32,7 +34,7 @@ export const MultiSenderView: FC = ({ }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [isSOLChecked, setIsSOLChecked] = useState(false);
 
-  const [error, setError] = useState('');
+  const [Error, setError] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [signature, setSignature] = useState('')
 
@@ -1294,7 +1296,7 @@ export const MultiSenderView: FC = ({ }) => {
                       }
 
 
-                      {error != '' && <div className="mt-4 font-semibold text-xl">❌ {error}</div>}
+                      {Error != '' && <div className="mt-4 font-semibold text-xl">❌ {Error}</div>}
                     </div>
                   </div>
                 }
@@ -1607,6 +1609,8 @@ export const MultiSenderView: FC = ({ }) => {
                           }}
                         />
                       </div>
+
+
                     </form>
 
                     {!isSending &&
@@ -1626,7 +1630,7 @@ export const MultiSenderView: FC = ({ }) => {
                       </div>
                     }
 
-                    {error != '' && <div className="mt-4 font-semibold text-xl">❌ {error}</div>}
+                    {Error != '' && <div className="mt-4 font-semibold text-xl">❌ {Error}</div>}
                   </div>}
 
               </div>
