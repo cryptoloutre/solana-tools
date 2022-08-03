@@ -15,7 +15,7 @@ import { getHashedName, getNameAccountKey, getTwitterRegistry, NameRegistryState
 const walletPublicKey = "";
 
 export const MultiSenderView: FC = ({ }) => {
-  const connection = new Connection("https://solana-mainnet.phantom.tech/")
+  const connection = new Connection("https://api.mainnet-beta.solana.com")
   const wallet = useWallet();
   const [walletToParsePublicKey, setWalletToParsePublicKey] =
     useState<string>(walletPublicKey);
