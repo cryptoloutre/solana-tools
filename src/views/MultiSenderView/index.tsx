@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
@@ -9,13 +9,11 @@ import styles from "./index.module.css";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, SystemProgram, Connection } from '@solana/web3.js';
 import { getHashedName, getNameAccountKey, getTwitterRegistry, NameRegistryState } from "@bonfida/spl-name-service";
-// import { getParsedAllTokensbyUser } from "utils/getParsedAllTokensbyUser";
-// import { useWalletTokens } from "utils/useWalletTokens";
 
 const walletPublicKey = "";
 
 export const MultiSenderView: FC = ({ }) => {
-  const connection = new Connection("https://api.mainnet-beta.solana.com")
+  const { connection } = useConnection();
   const wallet = useWallet();
   const [walletToParsePublicKey, setWalletToParsePublicKey] =
     useState<string>(walletPublicKey);
@@ -33,7 +31,6 @@ export const MultiSenderView: FC = ({ }) => {
   const [ReceiverAddress, setReceiverAddress] = useState('');
   const [isChecked, setIsChecked] = useState(false);
   const [isSOLChecked, setIsSOLChecked] = useState(false);
-
   const [Error, setError] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [signature, setSignature] = useState('')
@@ -71,6 +68,7 @@ export const MultiSenderView: FC = ({ }) => {
   const [token8, setToken8] = useState('');
   const [token9, setToken9] = useState('');
   const [token10, setToken10] = useState('');
+
 
   // allow to reset the states
   const reset = () => {
@@ -635,649 +633,697 @@ export const MultiSenderView: FC = ({ }) => {
                 <h1 className="mb-5 text-5xl">
                   Multi Send Token <SolanaLogo />
                 </h1>
-                <h3 className="font-semibold text-xl" >Supports public address, .sol domain name and Twitter handle with @</h3>
+                <h3 className="font-semibold text-xl pb-5" >Supports public address, .sol domain name and Twitter handle with @</h3>
 
                 {nbToken == '' &&
-                  <div className="sm:flex justify-center mt-[4%]">
-                    <button className="mx-2 my-2 md:w-[400px] w-[200px] bg-[#2C3B52] hover:bg-[#566274] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setNbToken('one'); reset() }}>Send one token to multiple receivers</button>
-                    <button className="mx-2 my-2 md:w-[400px] w-[200px] bg-[#2C3B52] hover:bg-[#566274] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setNbToken('multi'); reset() }}>Send multiple tokens to one receiver</button>
-                  </div>}
+                  <div>
+                    <div className="max-w-4xl mx-auto">
+                      <ul className="text-left leading-10">
+                        <li className="m-5" onClick={() => { setNbToken('one'); reset() }}>
+                          <div className="p-4 hover:border">
+                            <a className="text-4xl font-bold mb-5">
+                              1 token - Multiple receivers
+                            </a>
+                            <div>Send one token to multiple receivers</div>
+                          </div>
+                        </li>
 
-                {nbToken != '' &&
+                        <li className="m-5" onClick={() => { setNbToken('multi'); reset()}}>
+                          <div className="p-4 hover:border">
+                            <a className="text-4xl font-bold mb-5">
+                              Multiple token - 1 receiver
+                            </a>
+                            <div>Send multiple tokens to one receiver</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                }
+
+                {nbToken != '' && CurrencyType == '' &&
                   <div className="flex">
                     <button className="text-white font-semibold text-xl w-[6rem] h-[2rem] mb-2 bg-[#2C3B52] hover:bg-[#566274] rounded-xl border"
                       onClick={() => { setNbToken(''); setCurrencyType('') }}>← Back</button>
                   </div>
                 }
+                {CurrencyType != '' &&
+                  <div className="flex">
+                    <button className="text-white font-semibold text-xl w-[6rem] h-[2rem] mb-2 bg-[#2C3B52] hover:bg-[#566274] rounded-xl border"
+                      onClick={() => { setCurrencyType('') }}>← Back</button>
+                  </div>
+                }
 
                 {nbToken == 'one' &&
                   <div>
-                    <div className="sm:flex justify-center">
-                      {CurrencyType == '' || CurrencyType == 'SPL' ?
-                        <button className="mx-2 my-2 w-[200px] bg-[#10c077] hover:bg-[#14f195] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setCurrencyType('SOL'); reset() }}>Send SOL</button>
-                        : <button className="mx-2 my-2 w-[200px] bg-[#14f195] rounded-full shadow-xl border text-white font-semibold text-xl">Send SOL</button>
-                      }
-                      {CurrencyType == '' || CurrencyType == 'SOL' ?
-                        <button className="mx-2 my-2 w-[200px] bg-[#9945FF] hover:bg-[#ad6aff] rounded-full shadow-xl border text-white font-semibold text-xl" onClick={() => { setCurrencyType('SPL'); reset() }}>Send SPL-Token</button>
-                        : <button className="mx-2 my-2 w-[200px] bg-[#ad6aff] rounded-full shadow-xl border text-white font-semibold text-xl">Send SPL-Token</button>
-                      }
-                    </div>
+                    {CurrencyType == '' &&
+                      <div className="max-w-4xl mx-auto">
+                        <ul className="text-left leading-10">
+                          <li className="m-5" onClick={() => { setCurrencyType('SOL'); reset() }}>
+                            <div className="p-4 hover:border">
+                              <a className="text-4xl font-bold mb-5">
+                                SOL sending
+                              </a>
+                              <div>Send SOL to multiple receivers</div>
+                            </div>
+                          </li>
+
+                          <li className="m-5" onClick={() => { setCurrencyType('SPL'); reset() }}>
+                            <div className="p-4 hover:border">
+                              <a className="text-4xl font-bold mb-5">
+                                SPL token sending
+                              </a>
+                              <div>Send one SPL token type to multiple receivers</div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    }
 
                     <div>
 
                       {/* form when SOL is selected */}
                       {CurrencyType == 'SOL' &&
-                        <form className="mt-[3%] mb-[2%]">
+                        <div>
 
-                          <div className="flex justify-center mb-[2%]">
-                            <div className="my-auto mx-2">Send same amount</div>
-                            <input className="my-auto mx-2"
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => { setIsChecked(!isChecked); setQuantity(undefined) }}
-                            />
-                            {isChecked &&
-                              <div className="flex items-center">
-                                <input className="w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                                  type="number"
-                                  step="any"
-                                  min="0"
-                                  required
-                                  placeholder="Amount"
-                                  onChange={(e) => setQuantity(parseFloat(e.target.value))}
-                                  style={{
-                                    borderRadius:
-                                      "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                                  }}
-                                /></div>
-                            }
+                          <h1 className="font-bold mb-5 text-3xl uppercase">SOL sending</h1>
+                          <form className="mt-[3%] mb-[2%]">
 
-                          </div>
+                            <div className="flex justify-center mb-[2%]">
+                              <div className="my-auto mx-2">Send same amount</div>
+                              <input className="my-auto mx-2"
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={(e) => { setIsChecked(!isChecked); setQuantity(undefined) }}
+                              />
+                              {isChecked &&
+                                <div className="flex items-center">
+                                  <input className="w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                    type="number"
+                                    step="any"
+                                    min="0"
+                                    required
+                                    placeholder="Amount"
+                                    onChange={(e) => setQuantity(parseFloat(e.target.value))}
+                                    style={{
+                                      borderRadius:
+                                        "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                    }}
+                                  /></div>
+                              }
 
-                          <div>
+                            </div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #1"
-                              onChange={(e) => setReceiver1(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                            <div>
 
-                            {!isChecked &&
-                              <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                                type="number"
-                                step="any"
-                                min="0"
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
                                 required
-                                placeholder="Amount #1"
-                                onChange={(e) => setQuantity1(parseFloat(e.target.value))}
+                                placeholder="Receiver #1"
+                                onChange={(e) => setReceiver1(e.target.value)}
                                 style={{
                                   borderRadius:
                                     "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
                                 }}
-                              />}
+                              />
 
-                          </div>
-
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #2"
-                              onChange={(e) => setReceiver2(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #2"
-                              onChange={(e) => setQuantity2(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #3"
-                              onChange={(e) => setReceiver3(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #3"
-                              onChange={(e) => setQuantity3(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #4"
-                              onChange={(e) => setReceiver4(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #4"
-                              onChange={(e) => setQuantity4(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #5"
-                              onChange={(e) => setReceiver5(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #5"
-                              onChange={(e) => setQuantity5(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #6"
-                              onChange={(e) => setReceiver6(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #6"
-                              onChange={(e) => setQuantity6(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #7"
-                              onChange={(e) => setReceiver7(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #7"
-                              onChange={(e) => setQuantity7(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #8"
-                              onChange={(e) => setReceiver8(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #8"
-                              onChange={(e) => setQuantity8(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #9"
-                              onChange={(e) => setReceiver9(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #9"
-                              onChange={(e) => setQuantity9(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-
-                          <div>
-
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #10"
-                              onChange={(e) => setReceiver10(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
-
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #10"
-                              onChange={(e) => setQuantity10(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-
-
-                        </form>}
-
-                      {/* form when SPL is selected */}
-                      {CurrencyType == 'SPL' &&
-                        <form className="mt-[3%] mb-[2%]">
-
-                          <input className="mb-[2%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                            type="text"
-                            required
-                            placeholder="Token Mint Address"
-                            onChange={(e) => setMintAddress(e.target.value)}
-                            style={{
-                              borderRadius:
-                                "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                            }}
-                          />
-                          <div className="flex justify-center mb-[2%]">
-                            <div className="my-auto mx-2">Send same amount</div>
-                            <input className="my-auto mx-2"
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => setIsChecked(!isChecked)}
-                            />
-                            {isChecked &&
-                              <div className="flex items-center">
+                              {!isChecked &&
                                 <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                                   type="number"
                                   step="any"
                                   min="0"
                                   required
-                                  placeholder="Amount"
-                                  onChange={(e) => setQuantity(parseFloat(e.target.value))}
+                                  placeholder="Amount #1"
+                                  onChange={(e) => setQuantity1(parseFloat(e.target.value))}
                                   style={{
                                     borderRadius:
                                       "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
                                   }}
-                                /></div>
-                            }
+                                />}
 
-                          </div>
+                            </div>
 
-                          <div>
+                            <div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #1"
-                              onChange={(e) => setReceiver1(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #2"
+                                onChange={(e) => setReceiver2(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                            {!isChecked &&
-                              <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
                                 type="number"
                                 step="any"
                                 min="0"
                                 required
-                                placeholder="Amount #1"
-                                onChange={(e) => setQuantity1(parseFloat(e.target.value))}
+                                placeholder="Amount #2"
+                                onChange={(e) => setQuantity2(parseFloat(e.target.value))}
                                 style={{
                                   borderRadius:
                                     "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
                                 }}
                               />}
+                            </div>
+                            <div>
 
-                          </div>
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #3"
+                                onChange={(e) => setReceiver3(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                          <div>
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #3"
+                                onChange={(e) => setQuantity3(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #4"
+                                onChange={(e) => setReceiver4(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #4"
+                                onChange={(e) => setQuantity4(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #5"
+                                onChange={(e) => setReceiver5(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #5"
+                                onChange={(e) => setQuantity5(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #6"
+                                onChange={(e) => setReceiver6(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #6"
+                                onChange={(e) => setQuantity6(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #7"
+                                onChange={(e) => setReceiver7(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #7"
+                                onChange={(e) => setQuantity7(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #8"
+                                onChange={(e) => setReceiver8(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #8"
+                                onChange={(e) => setQuantity8(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #9"
+                                onChange={(e) => setReceiver9(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #9"
+                                onChange={(e) => setQuantity9(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #10"
+                                onChange={(e) => setReceiver10(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #10"
+                                onChange={(e) => setQuantity10(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+
+                          </form>
+                        </div>
+                      }
+
+                      {/* form when SPL is selected */}
+                      {CurrencyType == 'SPL' &&
+                        <div>
+
+                          <h1 className="font-bold mb-5 text-3xl uppercase">SPL token sending</h1>
+                          <form className="mt-[3%] mb-[2%]">
+
+                            <input className="mb-[2%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
                               type="text"
                               required
-                              placeholder="Receiver #2"
-                              onChange={(e) => setReceiver2(e.target.value)}
+                              placeholder="Token Mint Address"
+                              onChange={(e) => setMintAddress(e.target.value)}
                               style={{
                                 borderRadius:
                                   "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
                               }}
                             />
+                            <div className="flex justify-center mb-[2%]">
+                              <div className="my-auto mx-2">Send same amount</div>
+                              <input className="my-auto mx-2"
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={(e) => setIsChecked(!isChecked)}
+                              />
+                              {isChecked &&
+                                <div className="flex items-center">
+                                  <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                    type="number"
+                                    step="any"
+                                    min="0"
+                                    required
+                                    placeholder="Amount"
+                                    onChange={(e) => setQuantity(parseFloat(e.target.value))}
+                                    style={{
+                                      borderRadius:
+                                        "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                    }}
+                                  /></div>
+                              }
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #2"
-                              onChange={(e) => setQuantity2(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-                          <div>
+                            </div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #3"
-                              onChange={(e) => setReceiver3(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                            <div>
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #3"
-                              onChange={(e) => setQuantity3(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #1"
+                                onChange={(e) => setReceiver1(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                          <div>
+                              {!isChecked &&
+                                <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                  type="number"
+                                  step="any"
+                                  min="0"
+                                  required
+                                  placeholder="Amount #1"
+                                  onChange={(e) => setQuantity1(parseFloat(e.target.value))}
+                                  style={{
+                                    borderRadius:
+                                      "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                  }}
+                                />}
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #4"
-                              onChange={(e) => setReceiver4(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                            </div>
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #4"
-                              onChange={(e) => setQuantity4(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
+                            <div>
 
-                          <div>
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #2"
+                                onChange={(e) => setReceiver2(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #5"
-                              onChange={(e) => setReceiver5(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #2"
+                                onChange={(e) => setQuantity2(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+                            <div>
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #5"
-                              onChange={(e) => setQuantity5(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #3"
+                                onChange={(e) => setReceiver3(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                          <div>
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #3"
+                                onChange={(e) => setQuantity3(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #6"
-                              onChange={(e) => setReceiver6(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                            <div>
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #6"
-                              onChange={(e) => setQuantity6(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #4"
+                                onChange={(e) => setReceiver4(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                          <div>
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #4"
+                                onChange={(e) => setQuantity4(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #7"
-                              onChange={(e) => setReceiver7(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                            <div>
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #7"
-                              onChange={(e) => setQuantity7(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #5"
+                                onChange={(e) => setReceiver5(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                          <div>
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #5"
+                                onChange={(e) => setQuantity5(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #8"
-                              onChange={(e) => setReceiver8(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                            <div>
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #8"
-                              onChange={(e) => setQuantity8(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #6"
+                                onChange={(e) => setReceiver6(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                          <div>
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #6"
+                                onChange={(e) => setQuantity6(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #9"
-                              onChange={(e) => setReceiver9(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                            <div>
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #9"
-                              onChange={(e) => setQuantity9(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #7"
+                                onChange={(e) => setReceiver7(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
 
-                          <div>
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #7"
+                                onChange={(e) => setQuantity7(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
 
-                            <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
-                              type="text"
-                              required
-                              placeholder="Receiver #10"
-                              onChange={(e) => setReceiver10(e.target.value)}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />
+                            <div>
 
-                            {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
-                              type="number"
-                              step="any"
-                              min="0"
-                              required
-                              placeholder="Amount #10"
-                              onChange={(e) => setQuantity10(parseFloat(e.target.value))}
-                              style={{
-                                borderRadius:
-                                  "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                              }}
-                            />}
-                          </div>
-                        </form>}
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #8"
+                                onChange={(e) => setReceiver8(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #8"
+                                onChange={(e) => setQuantity8(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #9"
+                                onChange={(e) => setReceiver9(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #9"
+                                onChange={(e) => setQuantity9(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+
+                            <div>
+
+                              <input className="mb-[1%] md:w-[480px] text-center mx-4 text-black pl-1 border-2 border-black"
+                                type="text"
+                                required
+                                placeholder="Receiver #10"
+                                onChange={(e) => setReceiver10(e.target.value)}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />
+
+                              {!isChecked && <input className="sm:mb-[1%] mb-2 w-[150px] mx-4 text-black pl-1 border-2 border-black"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                placeholder="Amount #10"
+                                onChange={(e) => setQuantity10(parseFloat(e.target.value))}
+                                style={{
+                                  borderRadius:
+                                    "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
+                                }}
+                              />}
+                            </div>
+                          </form>
+                        </div>}
 
                       {!isSending && CurrencyType != '' &&
                         <button className="text-white font-semibold text-xl bg-[#414e63] hover:bg-[#2C3B52] w-[160px] rounded-full shadow-xl border" onClick={SendOnClick}>Send</button>
