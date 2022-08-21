@@ -1656,6 +1656,16 @@
     "@metaplex-foundation/beet" ">=0.1.0"
     "@solana/web3.js" "^1.31.0"
 
+"@metaplex-foundation/beet-solana@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/beet-solana/-/beet-solana-0.3.0.tgz#28180e1f31a94fe0e926f3728c8a25d8f02ec562"
+  integrity sha512-7kl9E7PWKshYCKVAE/EB6s0wXPmqyubwMbfuRHlgECQoX7RM+4OlnC156WUThOsHBy8GeZxSwc6te6PkgqED4A==
+  dependencies:
+    "@metaplex-foundation/beet" ">=0.1.0"
+    "@solana/web3.js" "^1.44.0"
+    bs58 "^5.0.0"
+    debug "^4.3.4"
+
 "@metaplex-foundation/beet@>=0.1.0", "@metaplex-foundation/beet@^0.2.0":
   version "0.2.0"
   resolved "https://registry.npmjs.org/@metaplex-foundation/beet/-/beet-0.2.0.tgz"
@@ -1669,6 +1679,15 @@
   version "0.1.4"
   resolved "https://registry.npmjs.org/@metaplex-foundation/beet/-/beet-0.1.4.tgz"
   integrity sha512-gUlgl4h9XzSvSx7lUDvYQuy1eMxu4UXbt5MSR9K/dYIHHd3gcCxm8/6vn0VnUXMvpwVHS8tezxlsaKu+TIu6zQ==
+  dependencies:
+    ansicolors "^0.3.2"
+    bn.js "^5.2.0"
+    debug "^4.3.3"
+
+"@metaplex-foundation/beet@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/beet/-/beet-0.4.0.tgz#eb2a0a6eb084bb25d67dd9bed2f7387ee7e63a55"
+  integrity sha512-2OAKJnLatCc3mBXNL0QmWVQKAWK2C7XDfepgL0p/9+8oSx4bmRAFHFqptl1A/C0U5O3dxGwKfmKluW161OVGcA==
   dependencies:
     ansicolors "^0.3.2"
     bn.js "^5.2.0"
@@ -1795,13 +1814,26 @@
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.31.0"
 
-"@metaplex-foundation/mpl-token-metadata@^2.1.1", "@metaplex-foundation/mpl-token-metadata@^2.1.2":
+"@metaplex-foundation/mpl-token-metadata@^2.1.2":
   version "2.1.2"
   resolved "https://registry.npmjs.org/@metaplex-foundation/mpl-token-metadata/-/mpl-token-metadata-2.1.2.tgz"
   integrity sha512-q8mxPwErwC+6USguiCqZX4aHhswoSEw9oh9MBYvuNtFp03+SVzcOyUOdX1zN2oJzEsGk8ymIyzPbgzi9O5rJZQ==
   dependencies:
     "@metaplex-foundation/beet" "^0.1.0"
     "@metaplex-foundation/beet-solana" "^0.1.1"
+    "@metaplex-foundation/cusper" "^0.0.2"
+    "@solana/spl-token" "^0.2.0"
+    "@solana/web3.js" "^1.35.1"
+    bn.js "^5.2.0"
+    debug "^4.3.3"
+
+"@metaplex-foundation/mpl-token-metadata@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-token-metadata/-/mpl-token-metadata-2.2.3.tgz#099472aade1643f546d54667b47738661f1e8bff"
+  integrity sha512-42QiGLXuOj2d7N5KUrzqHDe0QKGHzIF12CRZaGsD6C0EAJpCyOAn2Gu8HTZQioexPP0u2xEWfiCK+zo7UAtatQ==
+  dependencies:
+    "@metaplex-foundation/beet" "^0.4.0"
+    "@metaplex-foundation/beet-solana" "^0.3.0"
     "@metaplex-foundation/cusper" "^0.0.2"
     "@solana/spl-token" "^0.2.0"
     "@solana/web3.js" "^1.35.1"
