@@ -96,5 +96,6 @@ export const legitNFTlist = [
     "5PUq4VZSbm5ZwrQMh2bHNLM8ca6UieguKiaLRJqp3d75",
     "AsbhrsY4posEBmZ8vyAooKtpvyJoWQWTqsSnnZpDmChn",
     "4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN",
-    'GZ9dKMp357jjMohEXrMcd2RJH9fGYq3boeJ2wttpQMuk'
+    'GZ9dKMp357jjMohEXrMcd2RJH9fGYq3boeJ2wttpQMuk',
+    "6e4pFfZfoJaPvCAgZpXTdKZtE6XhFqXR2Rp2x5oFLZkA"
 ]
