@@ -866,5 +866,21 @@ export const scamNFTlist = [
     'G4nd367czJG7kKZqnh63TGHr6JH1U9CkvVGm1TDabMen',
     'Etkjoe6bDw27vnmE2HGMmuEaUUm9RRX1s2VM7m8PA1cS',
     'GpTyks11Y2MN3vi1PzF46T9AePP7WBGr5QUQSmJDwJqK',
-    'GgKv4ttFVq31rNarkBdQsaWw6m3cKLJkQHnrwpRLpWp8'
+    'GgKv4ttFVq31rNarkBdQsaWw6m3cKLJkQHnrwpRLpWp8',
+    "113nwopEf7kHTw19wkvfh2XW97ThKjk7maWTexfAfUZ",
+    "3fxjUNkPwbd2aL4P96bvPGr9ynff71K18TadJWcjRcCf",
+    "Ek4HgKDwKBkUfKVURS71ru8VczvbfpDSzTH349QKxruj",
+    "AAkKyjFjRPC9fEosdqaRmg9b4QEFsy6jkp5HNDfiDn3a",
+    "E76jHv1t8Dta68hmfPshyo2tPCR4ZU2dxQJuMeQ1HXq1",
+    "73ycsc1LTcMhLwDqNgcVhxyPHqiENKJEMdpenAYkzXg4",
+    "B6wsu3bjw3RHgNJXkR1pSKeivKQdfRBsn8dU9jbQ4egd",
+    "EsiLz7YW7jdXVXEAkminLCqW4joBPxiYMmVeS17R2VQM",
+    "11gPiEZon4QDD2kTGmaAQfXFRuQCGFxzP4K6L9QCtSd",
+    "BingDRoiATKzG3TtPGvzDVAaVe7DP2ffL5m9SvWjpFA7",
+    "bvGei7ikbs7vyszAaZaoVu9Gx94j1Xch8LzADerKddc",
+    "9PCPdmrJxZacKmnGMfLDYZNC5RCGZGn3bCTGNiPFsKqr",
+    "6HTHJ4E8zo8SNJsyXeeXhWYaBwzxo8uZAueP3NSitobC",
+    "DaV9GDbtBkRDc2NU3gpLKj4r9FMZHgnuAJ9Tqqe51w66",
+    "CHEGnSLuU4VPq9jpb4CsDSipfoekAxAeukuaov2hVz6z",
+    "Bj3AU64Fx35VQhLw3nPUe2MotPydH2D8YGt4xWePwnC3"
 ]
