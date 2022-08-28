@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
-import { SolanaLogo, ConnectWallet, Loader } from "components";
+import { ConnectWallet, Loader } from "components";
 import styles from "./index.module.css";
 import { FetchTokensButton } from "components/FetchTokensButton";
 
@@ -36,7 +36,6 @@ export const CloseAccountView: FC = ({ }) => {
     type : 'empty'
   });
 
-  console.log(tokens)
 
   let errorMessage
   if (error) {
