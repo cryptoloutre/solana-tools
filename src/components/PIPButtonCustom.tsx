@@ -20,7 +20,7 @@ export const PIPButtonCustom: FC = ({ }) => {
 
     <div>
       <button className="w-[169px] h-[50px] bg-[#1149ff] mb-[10px] hover:bg-[#0e3ed9] rounded-xl shadow-xl font-semibold text-lg" onClick={() => setIsClicked(true)}>
-        <div>Support me</div>
+        <div>Support us</div>
         <div className="flex justify-center">
           <p className="text-xs font-semibold">Powered by</p>
           <svg width="46" height="17" viewBox="0 0 46 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M9.13691 0C3.87752 0 0.160156 3.78525 0.160156 8.85376V22.7252C0.160156 22.9657 0.191823 23 0.435517 23H2.42156H4.40759C4.64853 23 4.68295 22.9684 4.68295 22.7252V17.7075H8.95793C14.4941 17.7075 18.1825 13.958 18.1825 8.92384C18.1825 3.78524 14.355 0 9.13691 0ZM9.13691 4.1672C11.9896 4.1672 13.6597 6.21165 13.6597 8.88811C13.6597 11.5618 11.9896 13.5417 8.96206 13.5417H4.68295V8.85376C4.68295 6.21577 6.24563 4.1672 9.13691 4.1672ZM36.8079 0C31.5486 0 27.8312 3.78525 27.8312 8.85376V22.7252C27.8312 22.9657 27.8629 23 28.1065 23H30.0926H32.0786C32.3196 23 32.354 22.9684 32.354 22.7252V17.7075H36.629C42.1651 17.7075 45.8535 13.958 45.8535 8.92383C45.8535 3.78524 42.026 0 36.8079 0ZM36.8079 4.1672C39.6607 4.1672 41.3307 6.21165 41.3307 8.88811C41.3307 11.5618 39.6607 13.5417 36.6331 13.5417H32.354V8.85376C32.354 6.21577 33.9167 4.1672 36.8079 4.1672ZM20.2597 5.65527C20.2597 5.48959 20.394 5.35527 20.5597 5.35527H24.5031C24.6688 5.35527 24.8031 5.48959 24.8031 5.65527V17.4209C24.8031 17.5865 24.6688 17.7209 24.5031 17.7209H20.5597C20.394 17.7209 20.2597 17.5865 20.2597 17.4209V5.65527ZM22.5314 0C21.2794 0 20.2597 1.01498 20.2597 2.26702C20.2597 3.51907 21.2794 4.53405 22.5314 4.53405C23.7834 4.53405 24.8031 3.51907 24.8031 2.26702C24.8031 1.01498 23.7834 0 22.5314 0Z" fill="#0D1942"></path></svg>
@@ -55,10 +55,10 @@ export const PIPButtonCustom: FC = ({ }) => {
 
               <div className="flex justify-center mt-[2px]">
                 <PIPButton
-                  receiver="6MupHwVuaZnxeXbw2DEvH96ouaWdg5TygPaSruB4H7YG"
+                  receiver="STJ7LxTepj3V3YrW1Qz4oT3F1ZK2B4wYKnYpUZyUnUp"
                   amount={tipAmount}
                   currency={currency}
-                  label="TIP ME"
+                  label="SUPPORT US"
                   onPayment={() => setMessage('Thanks for the support ❤️')}
                 />
               </div>
