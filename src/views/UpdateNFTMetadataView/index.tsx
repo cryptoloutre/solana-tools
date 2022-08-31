@@ -182,6 +182,16 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
           type: "image/" + imageFormat
         })
       }
+      else {
+        const currentfiles = jsonMetadata.properties?.files
+        if (currentfiles != undefined) {
+          for (let i = 0; i < currentfiles.length; i++) {
+            if (currentfiles[i]['type']?.includes('image/')) {
+              newFiles.push(currentfiles[i])
+            }
+          }
+        }
+      }
 
       if (newAnimationURI != '') {
         newMetadata['animation_url'] = newAnimationURI + '?ext=' + animationFormat
@@ -199,6 +209,16 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
           uri: newAnimationURI + '?ext=' + animationFormat,
           type: animationType + animationFormat
         })
+      }
+      else {
+        const currentfiles = jsonMetadata.properties?.files
+        if (currentfiles != undefined) {
+          for (let i = 0; i < currentfiles.length; i++) {
+            if (currentfiles[i]['type']?.includes('video/') || currentfiles[i]['type']?.includes('model/')) {
+              newFiles.push(currentfiles[i])
+            }
+          }
+        }
       }
 
       if (newExternalURL != '') {
