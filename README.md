@@ -7,6 +7,7 @@ A bunch of tools to help people in the Solana ecosystem. This website includes:
 - a multi sender (a UI to send multiple tokens in 1 transaction (same token to different people/many tokens to one person/transfer solana domain name)
 - a UI to create SPL-Tokens
 - a UI to upload file to Arweave
+- a UI to update the metadata of your NFT
 - a UI to send a NFT message to the owner of your desired NFT or solana domain name
 - More tools are scheduled...
     
@@ -91,6 +92,12 @@ An UI to upload file to Arweave.
 
 
 https://user-images.githubusercontent.com/35653371/174040530-3a4a16a3-26de-4c8a-b7c8-67908c3b377d.mp4
+
+## Update NFT metadata UI
+An UI to update the metadata of your NFT
+
+
+https://user-images.githubusercontent.com/35653371/187655100-f4c3cd97-070a-4614-acca-132b40f8719b.mp4
 
 
 ## Send NFT message
