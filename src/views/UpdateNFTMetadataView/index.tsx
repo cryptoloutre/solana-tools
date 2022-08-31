@@ -192,7 +192,7 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
         }
 
         else if (animationFormat == 'glb' || animationFormat == 'gltf') {
-          animationType = "vr/"
+          animationType = "model/"
         }
 
         newFiles.push({
