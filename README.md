@@ -82,7 +82,8 @@ https://user-images.githubusercontent.com/35653371/174040530-3a4a16a3-26de-4c8a-
 An UI to update the metadata of your NFT
 
 
-https://user-images.githubusercontent.com/35653371/187655100-f4c3cd97-070a-4614-acca-132b40f8719b.mp4
+https://user-images.githubusercontent.com/35653371/187695118-2d2e90f2-0b78-48ea-8096-b9729dc9c1c9.mp4
+
 
 
 ## Send NFT message
