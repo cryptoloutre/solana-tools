@@ -10,6 +10,8 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/sp
 import { PublicKey, Transaction, TransactionInstruction, LAMPORTS_PER_SOL, SystemProgram, Connection } from '@solana/web3.js';
 import { getDomainKey, getHashedName, getNameAccountKey, getTwitterRegistry, NameRegistryState, transferNameOwnership } from "@bonfida/spl-name-service";
 
+import Papa from "papaparse";
+
 const walletPublicKey = "";
 
 export const MultiSenderView: FC = ({ }) => {
@@ -69,6 +71,15 @@ export const MultiSenderView: FC = ({ }) => {
   const [token9, setToken9] = useState('');
   const [token10, setToken10] = useState('');
 
+  const [csvFileName, setCsvFileName] = useState('')
+  const [csvFileIsUploaded, setCsvFileIsUploaded] = useState(false)
+  const [csvData, setCsvData] = useState<any[]>([]);
+  const [csvHeaders, setCsvHeaders] = useState([]);
+  const [csvSendingSuccess, setCsvSendingSuccess] = useState(false)
+
+  const [currentTx, setCurrentTx] = useState<number>(0);
+  const [totalTx, setTotalTx] = useState<number>(0);
+
 
   // allow to reset the states
   const reset = () => {
@@ -108,6 +119,11 @@ export const MultiSenderView: FC = ({ }) => {
     setToken8('');
     setToken9('');
     setToken10('');
+    setCsvFileName('');
+    setCsvFileIsUploaded(false);
+    setCurrentTx(0);
+    setTotalTx(0);
+    setCsvSendingSuccess(false);
   }
 
 
@@ -122,7 +138,7 @@ export const MultiSenderView: FC = ({ }) => {
     if (CurrencyType == 'SPL') {
       const mint = new PublicKey(mintAddress);
 
-      // get the owner's token account of the token to send in order to get the number of decimals
+      // get the owner's token account of the token to send in order to get the token balance
       const ownerTokenAccount = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
@@ -187,6 +203,83 @@ export const MultiSenderView: FC = ({ }) => {
     }
     return true
 
+
+  }
+
+  const checkBalanceCsv = async (CsvData: any[], CsvHeaders: never[]) => {
+    try {
+
+      // list that includes all the different tokens that the user wants to send
+      const TokenList: string[] = []
+      // list that includes the corresponding amount to send
+      const CorrespondingAmount: number[] = []
+
+      for (let i = 0; i < CsvData.length; i++) {
+
+
+        const tokenAddress = CsvHeaders[1]
+        const amount = CsvHeaders[2]
+        if (TokenList.includes(CsvData[i][tokenAddress])) {
+          const indice = TokenList.indexOf(CsvData[i][tokenAddress])
+          CorrespondingAmount[indice] += parseFloat(CsvData[i][amount])
+        }
+        else {
+          TokenList.push(CsvData[i][tokenAddress])
+          CorrespondingAmount.push(parseFloat(CsvData[i][amount]))
+        }
+      }
+      console.log(TokenList)
+      console.log(CorrespondingAmount)
+
+      for (let i = 0; i < TokenList.length; i++) {
+        const token = TokenList[i]
+        const amountToSend = CorrespondingAmount[i]
+        if (token != 'So11111111111111111111111111111111111111112' && !token.includes('.sol')) {
+          const mint = new PublicKey(token);
+
+          // get the owner's token account of the token to send in order to get balance
+          const ownerTokenAccount = await Token.getAssociatedTokenAddress(
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+            TOKEN_PROGRAM_ID,
+            mint,
+            publicKey!,
+          );
+
+          // determine the balance of the token to send
+          const getBalance = await connection.getTokenAccountBalance(ownerTokenAccount);
+          const Balance = getBalance.value.uiAmount;
+
+          if (Balance! < amountToSend) {
+            setError('You do not have enough ' + token)
+            return false
+          }
+
+        }
+
+        else if (token.includes('.sol')) {
+          return checkDomainOwnership([token])
+        }
+
+        else {
+          const Balance = (await connection.getBalance(publicKey!)) / LAMPORTS_PER_SOL;
+          if (Balance! < amountToSend) {
+            setError("You do not have enough SOL")
+            return false
+          }
+        }
+
+      }
+
+      return true
+    }
+    catch (error) {
+      const err = (error as any)?.message;
+      console.log(err)
+      if (err.includes('Invalid public key input')) {
+        setError("Invalid address! Please verify the token addresses and receiver's addresses")
+      }
+
+    }
 
   }
 
@@ -629,6 +722,7 @@ export const MultiSenderView: FC = ({ }) => {
     }
   }
 
+  // allow to multi send solana domains
   const SendOnClickDomain = async () => {
     if (publicKey) {
       setError('');
@@ -718,6 +812,242 @@ export const MultiSenderView: FC = ({ }) => {
     }
   }
 
+  // allow to multi send tokens using a CSV file
+  const SendOnClickCsv = async () => {
+    const enoughToken = await checkBalanceCsv(csvData, csvHeaders)
+    if (publicKey) {
+      if (enoughToken) {
+
+        try {
+          setCurrentTx(0);
+          setTotalTx(0);
+          setIsSending(true);
+          setError('');
+          setCsvSendingSuccess(false);
+          // define the number of transfers done in one Tx
+          const nbPerTx = 10
+
+          // calculate the number of Tx to do
+          let nbTx: number
+          if (csvData.length % 10 == 0) {
+            nbTx = csvData.length / nbPerTx
+          }
+          else {
+            nbTx = Math.floor(csvData.length / nbPerTx) + 1;
+          }
+
+          setTotalTx(nbTx);
+
+          for (let i = 0; i < nbTx; i++) {
+
+            // Create a transaction
+            let Tx = new Transaction()
+
+            let bornSup: number
+
+            if (i == nbTx - 1) {
+              bornSup = csvData.length
+            }
+
+            else {
+              bornSup = 10 * (i + 1)
+            }
+
+            // for each csv line
+            for (let j = 10 * i; j < bornSup; j++) {
+
+
+              const destAddress = csvData[j][csvHeaders[0]]
+
+              let destPubkey: PublicKey;
+              // check if it is a SOL domain name
+              if (destAddress.includes('.sol')) {
+                const hashedName = await getHashedName(destAddress.replace(".sol", ""));
+                const nameAccountKey = await getNameAccountKey(
+                  hashedName,
+                  undefined,
+                  new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
+                );
+                const owner = await NameRegistryState.retrieve(
+                  connection,
+                  nameAccountKey
+                );
+                destPubkey = owner.registry.owner;
+              }
+              // check if it is a twitter handle
+              else if (destAddress.includes('@')) {
+                const handle = destAddress.replace("@", "")
+                const registry = await getTwitterRegistry(connection, handle);
+                destPubkey = registry.owner;
+
+              }
+              else {
+                destPubkey = new PublicKey(destAddress);
+              }
+
+              const token = csvData[j][csvHeaders[1]]
+              const amount = parseFloat(csvData[j][csvHeaders[2]])
+
+              if (token == 'So11111111111111111111111111111111111111112') {
+                const transferSOLIx = SystemProgram.transfer({
+                  fromPubkey: publicKey,
+                  toPubkey: destPubkey,
+                  lamports: amount * LAMPORTS_PER_SOL,
+
+                })
+
+                Tx.add(transferSOLIx)
+
+              }
+
+              else if (token.includes('.sol')) {
+                const ix = await transferNameOwnership(
+                  connection,
+                  token.replace(".sol", ""),
+                  destPubkey,
+                  undefined,
+                  new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
+                );
+
+                Tx.add(ix)
+              }
+              else {
+
+                const mint = new PublicKey(token)
+                // determine the token account pubkey of the user
+                const source_account = await Token.getAssociatedTokenAddress(
+                  ASSOCIATED_TOKEN_PROGRAM_ID,
+                  TOKEN_PROGRAM_ID,
+                  mint,
+                  publicKey,
+                );
+
+                // determine the number of decimals of the token to send
+                const balance = await connection.getTokenAccountBalance(source_account)
+                const decimals = balance.value.decimals
+                // determine the token account pubkey of the receiver
+                const destination_account = await Token.getAssociatedTokenAddress(
+                  ASSOCIATED_TOKEN_PROGRAM_ID,
+                  TOKEN_PROGRAM_ID,
+                  mint,
+                  destPubkey
+                );
+
+                // get the info of the destination account
+                const account = await connection.getAccountInfo(destination_account)
+
+                if (account == null) {
+                  // if account == null it means that it doesn't exist
+                  // we have to create it
+                  // create associate token account instruction
+                  const createIx = Token.createAssociatedTokenAccountInstruction(
+                    ASSOCIATED_TOKEN_PROGRAM_ID,
+                    TOKEN_PROGRAM_ID,
+                    mint,
+                    destination_account,
+                    destPubkey,
+                    publicKey
+                  )
+
+                  // create transfer token instruction
+                  const transferIx = Token.createTransferInstruction(
+                    TOKEN_PROGRAM_ID,
+                    source_account,
+                    destination_account,
+                    publicKey,
+                    [],
+                    amount * 10 ** decimals
+                  )
+
+                  // Add the instructions in a transaction
+                  Tx.add(createIx, transferIx);
+                }
+
+                else {
+                  // create transfer token instruction
+                  const transferIx = Token.createTransferInstruction(
+                    TOKEN_PROGRAM_ID,
+                    source_account,
+                    destination_account,
+                    publicKey,
+                    [],
+                    amount * 10 ** decimals
+                  )
+                  // Add the instructions in a transaction
+                  Tx.add(transferIx);
+                }
+              }
+
+            }
+
+            // incremente the current transaction
+            setCurrentTx(i + 1)
+
+            // send the transaction
+            const signature = await wallet.sendTransaction(Tx, connection);
+
+            // get the confirmation of the transaction
+            const confirmed = await connection.confirmTransaction(signature, 'processed');
+            console.log('success')
+
+          }
+          setIsSending(false)
+          setCsvSendingSuccess(true)
+        }
+        catch (error) {
+          setIsSending(false)
+          const err = (error as any)?.message;
+          console.log(err)
+          if (err.includes('Invalid public key input')) {
+            setError("Invalid address! Please verify the token addresses and receiver's addresses")
+          }
+          else {
+            setError(err)
+          }
+        }
+      }
+
+    }
+
+  }
+
+  const handleFileChange = async (event: any) => {
+    setError('')
+    setCsvSendingSuccess(false)
+    const csvFile = event.target.files[0];
+    const fileName = csvFile['name']
+    setCsvFileName(fileName)
+    const fileType = csvFile['type']
+
+    if (fileType != 'text/csv') {
+      setError('It is not a CSV file!')
+    }
+    else {
+      setCsvFileIsUploaded(true)
+      Papa.parse(event.target.files[0], {
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          const rowsArray: any = [];
+
+
+          // Iterating data to get column name
+          results.data.map((d: any) => {
+            rowsArray.push(Object.keys(d));
+          });
+
+          // Parsed Data Response in array format
+          // @ts-ignore
+          setCsvData(results.data);
+
+          // get the headers of the CSV file
+          setCsvHeaders(rowsArray[0]);
+        },
+      });
+    }
+  }
+
+
 
   return (
     <div className="container mx-auto max-w-6xl p-8 2xl:px-0">
@@ -776,6 +1106,14 @@ export const MultiSenderView: FC = ({ }) => {
                               Domains transfer
                             </a>
                             <div>Transfer multiple Solana domains name to one receiver</div>
+                          </div>
+                        </li>
+                        <li className="m-5" onClick={() => { setCurrencyType('csv'); reset() }}>
+                          <div className="p-4 hover:border">
+                            <a className="text-4xl font-bold mb-5">
+                              Upload CSV file
+                            </a>
+                            <div>Use a CSV file to multi send tokens and solana domains</div>
                           </div>
                         </li>
                       </ul>
@@ -1964,6 +2302,53 @@ export const MultiSenderView: FC = ({ }) => {
                       <div className="font-semibold text-xl mt-4">
                         ✅ Successfuly sent! Check it <a target="_blank" href={'https://solscan.io/tx/' + signature + '?cluster=devnet'}><strong className="underline">here</strong></a>
                       </div>
+                    }
+
+                    {Error != '' && <div className="mt-4 font-semibold text-xl">❌ {Error}</div>}
+                  </div>}
+
+                {CurrencyType == 'csv' &&
+                  <div>
+
+                    <h1 className="font-bold mb-5 text-3xl uppercase">Upload CSV file</h1>
+                    <div className="font-semibold text-xl">The file has to respect the following order:<br/> <strong>receiver's address, token address, amount to send</strong></div>
+                    <form className="mt-[5%] mb-4">
+                      <label htmlFor="file" className="text-white font-semibold text-xl rounded-full shadow-xl bg-[#414e63] border px-6 py-2 h-[40px] mb-[3%] uppercase hover:bg-[#2C3B52] hover:cursor-pointer">
+                        Select file
+                        <input
+                          id="file"
+                          type="file"
+                          name="file"
+                          accept=".csv"
+                          onChange={handleFileChange}
+                          style={{ display: 'none' }} />
+                      </label>
+                    </form>
+
+                    {csvFileName != '' &&
+                      <div className="text-white font-semibold text-xl mb-2">{csvFileName} uploaded!</div>
+                    }
+
+                    {!isSending && csvFileIsUploaded &&
+                      <button className="mt-4 text-white font-semibold text-xl bg-[#414e63] hover:bg-[#2C3B52] w-[160px] rounded-full shadow-xl border" onClick={SendOnClickCsv}>Send</button>
+                    }
+                    {isSending &&
+                      <button className="mt-4 text-white font-semibold text-xl bg-[#414e63] hover:bg-[#2C3B52] w-[160px] rounded-full shadow-xl border">
+                        <svg role="status" className="inline mr-3 w-4 h-4 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB" />
+                          <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor" />
+                        </svg>Sending</button>}
+
+
+                    {csvSendingSuccess &&
+                      <div className="font-semibold text-xl mt-4">
+                        ✅ Successfuly sent!
+                      </div>
+                    }
+
+                    {isSending && currentTx != 0 && totalTx != 0 &&
+                      <div className='font-semibold mt-4 mb-2 text-xl'>Please confirm Tx: {currentTx}/{totalTx}</div>
+
                     }
 
                     {Error != '' && <div className="mt-4 font-semibold text-xl">❌ {Error}</div>}
