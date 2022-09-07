@@ -7,6 +7,7 @@ import { SolanaLogo, ConnectWallet } from "components";
 import styles from "./index.module.css";
 
 import { CreateTokenButton } from '../../utils/CreateTokenButton';
+import { MetaplexFileTag, useMetaplexFileFromBrowser } from "@metaplex-foundation/js";
 
 const walletPublicKey = "";
 
@@ -27,8 +28,27 @@ export const SPLTokenView: FC = ({ }) => {
   const [decimals, setDecimals] = useState(9);
   const [tokenName, setTokenName] = useState('')
   const [symbol, setSymbol] = useState('')
-  const [metadata, setMetadata] = useState('')
+  const [metadataURL, setMetadataURL] = useState('')
   const [isChecked, setIsChecked] = useState(false);
+  const [metadataMethod, setMetadataMethod] = useState('url')
+  const [tokenDescription, setTokenDescription] = useState('')
+  const [file, setFile] = useState<Readonly<{
+    buffer: Buffer;
+    fileName: string;
+    displayName: string;
+    uniqueName: string;
+    contentType: string | null;
+    extension: string | null;
+    tags: MetaplexFileTag[];
+  }>>()
+  const [fileName, setFileName] = useState('')
+
+  const handleFileChange = async (event: any) => {
+    const browserFile = event.target.files[0];
+    const _file = await useMetaplexFileFromBrowser(browserFile);
+    setFile(_file);
+    setFileName(_file.fileName)
+  }
 
   return (
     <div className="container mx-auto max-w-6xl p-8 2xl:px-0">
@@ -58,81 +78,105 @@ export const SPLTokenView: FC = ({ }) => {
                 <h1 className="mb-5 text-5xl">
                   Create Solana <SolanaLogo /> token
                 </h1>
-                
-                <div>
-                  <form className="mt-[3%] mb-[3%]">
 
-                    <label className="input-group input-group-vertical input-group-lg">Token Name</label>
-                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
+                <div className="md:w-[600px] mx-auto">
+                  <div className="md:w-[480px] flex flex-col m-auto">
+
+                    <div className="my-2 uppercase underline flex font-bold text-2xl">Token infos</div>
+                    <label className="underline flex font-bold">Token Name</label>
+                    <input className="my-[1%] md:w-[480px] text-left text-black pl-1 border-2 rounded-2xl border-black"
                       type="text"
-                      required
                       placeholder="Token Name"
                       onChange={(e) => setTokenName(e.target.value)}
-                      style={{
-                        borderRadius:
-                          "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                      }}
                     />
 
-                    <label className="input-group input-group-vertical input-group-lg">Symbol</label>
-                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
+                    <label className="underline flex font-bold">Symbol</label>
+                    <input className="my-[1%] md:w-[480px] text-left text-black pl-1 border-2 rounded-2xl border-black"
                       type="text"
-                      required
                       placeholder="Symbol"
                       onChange={(e) => setSymbol(e.target.value)}
-                      style={{
-                        borderRadius:
-                          "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                      }}
                     />
 
-                    <label className="input-group input-group-vertical input-group-lg">Metadata Url</label>
-                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
-                      type="text"
-                      required
-                      placeholder="Metadata Url"
-                      onChange={(e) => setMetadata(e.target.value)}
-                      style={{
-                        borderRadius:
-                          "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                      }}
-                    />
-
-                    <label className="input-group input-group-vertical input-group-lg">Number of tokens to mint</label>
-                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
+                    <label className="underline flex font-bold">Number of tokens to mint</label>
+                    <input className="my-[1%] md:w-[480px] text-left text-black pl-1 border-2 rounded-2xl border-black"
                       type="number"
                       min="0"
-                      required
                       value={quantity}
                       onChange={(e) => setQuantity(parseInt(e.target.value))}
-                      style={{
-                        borderRadius:
-                          "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                      }}
                     />
 
-                    <label className="input-group input-group-vertical input-group-lg">Number of decimals</label>
-                    <input className="mb-[1%] text-black pl-1 border-2 border-black"
+                    <label className="underline flex font-bold">Number of decimals</label>
+                    <input className="my-[1%] md:w-[480px] text-left text-black pl-1 border-2 rounded-2xl border-black"
                       type="number"
                       min="0"
-                      required
                       value={decimals}
                       onChange={(e) => setDecimals(parseInt(e.target.value))}
-                      style={{
-                        borderRadius:
-                          "var(--rounded-btn,.5rem) var(--rounded-btn,.5rem)",
-                      }}
                     />
 
-                    <label className="input-group input-group-vertical input-group-lg">Enable freeze authority</label>
-                    <input className="mb-[1%] flex items-center mx-auto "
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => setIsChecked(!isChecked)}
-                    />
-                    
-                  </form>
-                  <CreateTokenButton connection={connection} publicKey={publicKey} wallet={wallet} quantity={quantity} decimals={decimals} isChecked={isChecked} tokenName={tokenName} symbol={symbol} metadata={metadata} />
+
+                    <div className="mt-5 mb-2 uppercase underline flex font-bold text-2xl">Metadatas</div>
+                    <div className="flex justify-center">
+                      {metadataMethod == 'url' ?
+                        <button className="text-white mx-2  font-semibold bg-[#343e4f] md:w-[280px] rounded-full shadow-xl border">Use an existing medatata URL</button>
+                        : <button className="text-white mx-2  font-semibold bg-[#667182] md:w-[280px] rounded-full shadow-xl border" onClick={() => { setMetadataMethod('url'), setTokenDescription('') }}>Use an existing medatata URL</button>
+                      }
+                      {metadataMethod == 'upload' ?
+                        <button className="text-white mx-2 font-semibold bg-[#343e4f] md:w-[200px] rounded-full shadow-xl border">Create the metadata</button>
+                        : <button className="text-white mx-2 font-semibold bg-[#667182] md:w-[200px] rounded-full shadow-xl border" onClick={() => { setMetadataMethod('upload'), setMetadataURL(''), setFile(undefined), setFileName('') }}>Create the metadata</button>}
+                    </div>
+
+                    {metadataMethod == 'url' &&
+                      <div>
+                        <div>
+                          <label className="underline mt-2 flex font-bold">Metadata Url</label>
+                          <input className="my-[1%] md:w-[480px] text-left text-black pl-1 border-2 rounded-2xl border-black"
+                            type="text"
+                            placeholder="Metadata Url"
+                            onChange={(e) => setMetadataURL(e.target.value)}
+                          />
+                        </div>
+
+                      </div>
+                    }
+
+                    {metadataMethod == 'upload' &&
+                      <div>
+                        <div>
+                          <label className="underline mt-2 flex font-bold">Description</label>
+                          <input className="my-[1%] md:w-[480px] text-left text-black pl-1 border-2 rounded-2xl border-black"
+                            type="text"
+                            placeholder="Description of the token/project"
+                            onChange={(e) => setTokenDescription(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <label className="underline mt-2 flex font-bold">Image</label>
+                          <label htmlFor="file" className="text-white font-semibold rounded-full shadow-xl bg-[#414e63] border px-2 py-1 h-[40px] uppercase hover:bg-[#2C3B52] hover:cursor-pointer">
+                            Upload image
+                            <input
+                              id="file"
+                              type="file"
+                              name="file"
+                              accept="image/*, video/*"
+                              onChange={handleFileChange}
+                              style={{ display: 'none' }} />
+                          </label>
+                          {fileName != '' && <div className="mt-2" >{fileName}</div>}
+                        </div>
+                      </div>
+                    }
+
+                    <div className="mt-5 mb-2 uppercase underline flex font-bold text-2xl">Authority</div>
+                    <div className="flex justify-center mb-4">
+                      <label className="mx-2">Enable freeze authority</label>
+                      <input className="mx-2"
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) => setIsChecked(!isChecked)}
+                      />
+                    </div>
+                  </div>
+                  <CreateTokenButton connection={connection} publicKey={publicKey} wallet={wallet} quantity={quantity} decimals={decimals} isChecked={isChecked} tokenName={tokenName} symbol={symbol} metadataURL={metadataURL} description={tokenDescription} file={file} metadataMethod={metadataMethod}/>
                 </div>
               </div>
             </div>
