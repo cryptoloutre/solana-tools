@@ -88,6 +88,16 @@ export const HomeView: FC = ({ }) => {
 
               </li>
               <li className="mb-5">
+                <Link href="/revoke">
+                  <div className="p-4 hover:border">
+                    <a className="text-4xl font-bold mb-5">
+                    🚫 -- Revoke authority
+                    </a>
+                    <div>A UI to view the tokens you have delegated rights to and revoke them </div></div>
+                </Link>
+
+              </li>
+              <li className="mb-5">
                 <Link href="/spltoken">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
