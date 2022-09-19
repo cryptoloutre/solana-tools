@@ -943,5 +943,12 @@ export const scamNFTlist = [
     "1191tr81MQ1FcUbpwXXCcQKp5QvqdNzmrunkaGrmqyQ",
     "11oMhfk8vRgxLShyo1u3HR5v9mVcgoZqUVDBW1dLyMD",
     "11XyLAjFP8MK76uvbsr3xkxEM6pfvR9VFeB5xNeJi8i",
-    "88jpTxHzXB9CggEbTtStu175ZVK2ixYcqbkWuRpNTDcK"
+    "88jpTxHzXB9CggEbTtStu175ZVK2ixYcqbkWuRpNTDcK",
+    "Gvf54fZsiN9SzB8PFTG4DwsRqERWjiRC5ZM6h3tsk2Jf",
+    "Bx3js2Z1hqh9TXzHXcBZ6Be1utybKVK2aEWeiHzGbVus",
+    "DpAGyaFrELgGxU1CAC8Y7E8R2ubjhcy5Gw9fA3XRMPuP",
+    "4rt48ErFNGGjXaAoUEKTg9a5eMYW9dVy3ehBqB1Jy8Fg",
+    "FVcYn9Vm5N6Ybjkk64S2WxgHeoLaonpjp69Kj8EJn9pG",
+    "fCc65s61C12Cz5jENMsgaD9GAnEPo6BsBdJS6huBuV3",
+    "2AfwKSFKLviEwwARYq2VVsWu7k4jki9pcwgfDEHzSZ3L"
 ]
