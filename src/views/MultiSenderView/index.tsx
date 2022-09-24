@@ -825,11 +825,11 @@ export const MultiSenderView: FC = ({ }) => {
           setError('');
           setCsvSendingSuccess(false);
           // define the number of transfers done in one Tx
-          const nbPerTx = 10
+          const nbPerTx = 6
 
           // calculate the number of Tx to do
           let nbTx: number
-          if (csvData.length % 10 == 0) {
+          if (csvData.length % 6 == 0) {
             nbTx = csvData.length / nbPerTx
           }
           else {
@@ -850,11 +850,11 @@ export const MultiSenderView: FC = ({ }) => {
             }
 
             else {
-              bornSup = 10 * (i + 1)
+              bornSup = 6 * (i + 1)
             }
 
             // for each csv line
-            for (let j = 10 * i; j < bornSup; j++) {
+            for (let j = 6 * i; j < bornSup; j++) {
 
 
               const destAddress = csvData[j][csvHeaders[0]]

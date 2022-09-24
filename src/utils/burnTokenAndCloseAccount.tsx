@@ -16,11 +16,11 @@ export async function burnTokenAndCloseAccount(NFTstoBurn: string[], owner: Publ
             setIsburning(true)
 
             // define the number of burn/close done in one Tx
-            const nbPerTx = 10
+            const nbPerTx = 6
 
             // calculate the number of Tx to do
             let nbTx: number
-            if (NFTstoBurn.length % 10 == 0) {
+            if (NFTstoBurn.length % 6 == 0) {
                 nbTx = NFTstoBurn.length / nbPerTx
             }
             else {
@@ -45,11 +45,11 @@ export async function burnTokenAndCloseAccount(NFTstoBurn: string[], owner: Publ
                 }
 
                 else {
-                    bornSup = 10 * (i + 1)
+                    bornSup = 6 * (i + 1)
                 }
 
                 // for each NFT selected
-                for (let j = 10 * i; j < bornSup; j++) {
+                for (let j = 6 * i; j < bornSup; j++) {
 
                     // get the publickey of the NFT
                     const mintPublickey = new PublicKey(NFTstoBurn[j]);

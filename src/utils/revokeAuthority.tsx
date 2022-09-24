@@ -11,11 +11,11 @@ export async function revokeAuthority(AccountsToRevoke: string[], owner: PublicK
             setIsRevoking(true)
 
             // define the number of burn/close done in one Tx
-            const nbPerTx = 10
+            const nbPerTx = 6
 
             // calculate the number of Tx to do
             let nbTx: number
-            if (AccountsToRevoke.length % 10 == 0) {
+            if (AccountsToRevoke.length % 6 == 0) {
                 nbTx = AccountsToRevoke.length / nbPerTx
             }
             else {
@@ -36,11 +36,11 @@ export async function revokeAuthority(AccountsToRevoke: string[], owner: PublicK
                 }
 
                 else {
-                    bornSup = 10 * (i + 1)
+                    bornSup = 6 * (i + 1)
                 }
 
                 // for each tokens selected
-                for (let j = 10 * i; j < bornSup; j++) {
+                for (let j = 6 * i; j < bornSup; j++) {
 
                     // get the publickey of the token
                     const mintPublickey = new PublicKey(AccountsToRevoke[j]);
