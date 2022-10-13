@@ -4,7 +4,7 @@ import { AccountLayout, ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } f
 import { isValidSolanaAddress } from "@nfteyez/sol-rayz";
 import { getParsedTokensbyUser } from './getParsedTokensbyUser'
 import { getParsedEmptyAccountsbyUser } from './getParsedEmptyAccountsbyUser'
-import { getParsedAllTokensbyUser } from "./getParsedAllTokensbyUser";
+// import { getParsedAllTokensbyUser } from "./getParsedAllTokensbyUser";
 
 type Options = {
     publicAddress: string;
@@ -54,10 +54,10 @@ export const useWalletTokens = ({
                 const tokens = await getParsedEmptyAccountsbyUser({ publicAddress, connection})
                 setTokens(tokens as any);
             }
-            else if (type == 'all') {
-                const tokens = await getParsedAllTokensbyUser({ publicAddress, connection})
-                setTokens(tokens as any);
-            }
+            // else if (type == 'all') {
+            //     const tokens = await getParsedAllTokensbyUser({ publicAddress, connection})
+            //     setTokens(tokens as any);
+            // }
         } catch (error) {
             const err = (error as any).message
             console.log(
