@@ -12,14 +12,12 @@ export async function CloseAccount(AccountstoClose: string[], owner: PublicKey, 
             setMessage('')
             setIsburning(true)
 
-            const connection = new Connection("https://ssc-dao.genesysgo.net")
-
             // define the number of burn/close done in one Tx
             const nbPerTx = 6
 
             // calculate the number of Tx to do
             let nbTx: number
-            if (AccountstoClose.length % 6 == 0) {
+            if (AccountstoClose.length % nbPerTx == 0) {
                 nbTx = AccountstoClose.length / nbPerTx
             }
             else {
@@ -40,18 +38,18 @@ export async function CloseAccount(AccountstoClose: string[], owner: PublicKey, 
                 }
 
                 else {
-                    bornSup = 6 * (i + 1)
+                    bornSup = nbPerTx * (i + 1)
                 }
 
                 // for each NFT selected
-                for (let j = 6 * i; j < bornSup; j++) {
+                for (let j = nbPerTx * i; j < bornSup; j++) {
 
                     // get the publickey of the token account
                     const accountPubKey = new PublicKey(AccountstoClose[j]);
 
 
                     // create the close account instruction
-                    const closeInstruction = await Token.createCloseAccountInstruction(
+                    const closeInstruction = Token.createCloseAccountInstruction(
                         TOKEN_PROGRAM_ID,
                         accountPubKey,
                         owner,

@@ -12,7 +12,7 @@ export const TokenName = (props: { mint: string }) => {
 
     async function isNFT() {
       const mintPublickey = new PublicKey(props.mint);
-      const connection = new Connection("https://ssc-dao.genesysgo.net");
+      const connection = new Connection("https://solana-api.projectserum.com");
       // create an entry point to Metaplex SDK
       const metaplex = new Metaplex(connection);
 

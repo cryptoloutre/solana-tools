@@ -15,7 +15,7 @@ export const TokenIcon = (props: { mint: string }) => {
       const mintPublickey = new PublicKey(props.mint);
 
       // define the connection
-      const connection = new Connection("https://ssc-dao.genesysgo.net");
+      const connection = new Connection("https://solana-api.projectserum.com");
 
       // create an entry point to Metaplex SDK
       const metaplex = new Metaplex(connection);
