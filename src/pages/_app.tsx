@@ -11,8 +11,8 @@ import "../styles/App.css";
 // const endpoint = "https://explorer-api.devnet.solana.com";
 // const endpoint = "http://127.0.0.1:8899";
 // const endpoint = "https://ssc-dao.genesysgo.net";
-// const endpoint = "https://solana-api.projectserum.com";
-const endpoint = "https://api.mainnet-beta.solana.com";
+const endpoint = "https://solana-api.projectserum.com";
+// const endpoint = "https://api.mainnet-beta.solana.com";
 // const endpoint = "https://try-rpc.mainnet.solana.blockdaemon.tech";
 
 const WalletProvider = dynamic(
