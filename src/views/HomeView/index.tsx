@@ -108,6 +108,16 @@ export const HomeView: FC = ({ }) => {
                 </Link>
               </li>
               <li className="mb-5">
+                <Link href="/createNFTcollection">
+                  <div className="p-4 hover:border">
+                    <a className="mb-5 text-4xl font-bold">
+                      🧪 -- Create NFT Collection
+                    </a>
+                    <div>A UI to create and migrate NFTs to a Collection</div>
+                  </div>
+                </Link>
+              </li>
+              <li className="mb-5">
                 <Link href="/multisender">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">

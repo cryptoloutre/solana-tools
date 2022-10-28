@@ -7,7 +7,7 @@ import { SolanaLogo, ConnectWallet } from "components";
 import styles from "./index.module.css";
 
 import { CreateTokenButton } from '../../utils/CreateTokenButton';
-import { MetaplexFileTag, useMetaplexFileFromBrowser } from "@metaplex-foundation/js";
+import { MetaplexFileTag, toMetaplexFileFromBrowser } from "@metaplex-foundation/js";
 
 const walletPublicKey = "";
 
@@ -45,7 +45,7 @@ export const SPLTokenView: FC = ({ }) => {
 
   const handleFileChange = async (event: any) => {
     const browserFile = event.target.files[0];
-    const _file = await useMetaplexFileFromBrowser(browserFile);
+    const _file = await toMetaplexFileFromBrowser(browserFile);
     setFile(_file);
     setFileName(_file.fileName)
   }

@@ -57,14 +57,14 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
     try {
       const mintPublickey = new PublicKey(NFTAddress);
       //get the nft object of the NFT
-      const nft = await metaplex.nfts().findByMint(mintPublickey)
+      const nft = await metaplex.nfts().findByMint({ mintAddress: mintPublickey })
       //get the update authority of the NFT
-      const authority = nft.updateAuthority.toBase58()
+      const authority = nft.updateAuthorityAddress.toBase58()
       // get the current NFT name
       const name = nft.name
       setNFTName(name)
       // get the current NFT description
-      const description = nft.metadata.description
+      const description = nft.json?.description
       if (description != undefined && description != '') {
         setNFTDescription(description)
       }
@@ -73,7 +73,7 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
       }
 
       // get the current NFT image
-      const image = nft.metadata.image
+      const image = nft.json?.image
       if (image != undefined) {
         setNFTImage(image)
       }
@@ -144,8 +144,8 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
       setError('')
       const mintPublickey = new PublicKey(NFTAddress);
       // get the current NFT metadata
-      const nft = await metaplex.nfts().findByMint(mintPublickey)
-      const jsonMetadata = nft.metadata
+      const nft = await metaplex.nfts().findByMint({ mintAddress: mintPublickey })
+      const jsonMetadata = nft.json
 
       // define the object which contains the current NFT metadata
       const newMetadata = { ...jsonMetadata }
@@ -183,7 +183,7 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
         })
       }
       else {
-        const currentfiles = jsonMetadata.properties?.files
+        const currentfiles = jsonMetadata!.properties?.files
         if (currentfiles != undefined) {
           for (let i = 0; i < currentfiles.length; i++) {
             if (currentfiles[i]['type']?.includes('image/')) {
@@ -211,7 +211,7 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
         })
       }
       else {
-        const currentfiles = jsonMetadata.properties?.files
+        const currentfiles = jsonMetadata!.properties?.files
         if (currentfiles != undefined) {
           for (let i = 0; i < currentfiles.length; i++) {
             if (currentfiles[i]['type']?.includes('video/') || currentfiles[i]['type']?.includes('model/')) {
@@ -256,9 +256,9 @@ export const UpdateNFTMetadataView: FC = ({ }) => {
       }
 
       // update the NFT metadata with the new uri
-      const { nft: updatedNft } = await metaplex
+      const updatedNft = await metaplex
         .nfts()
-        .update(nft, newOnChainData);
+        .update(newOnChainData);
 
       if (updatedNft) {
         fetchMetadata()

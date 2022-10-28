@@ -89,7 +89,7 @@ export const SUATMMView: FC = ({ }) => {
     }
     else {
       const mint = new PublicKey(wanted);
-      const nft = await metaplex.nfts().findByMint(mint);
+      const nft = await metaplex.nfts().findByMint({ mintAddress: mint });
       name = nft.name;
     }
     return name;
@@ -126,16 +126,16 @@ export const SUATMMView: FC = ({ }) => {
 
         if (wanted.includes('.sol')) {
           const hashedName = await getHashedName(wanted.replace(".sol", ""));
-                const nameAccountKey = await getNameAccountKey(
-                  hashedName,
-                  undefined,
-                  new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
-                );
-                const _owner = await NameRegistryState.retrieve(
-                  connection,
-                  nameAccountKey
-                );
-                owner = _owner.registry.owner.toBase58();
+          const nameAccountKey = await getNameAccountKey(
+            hashedName,
+            undefined,
+            new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
+          );
+          const _owner = await NameRegistryState.retrieve(
+            connection,
+            nameAccountKey
+          );
+          owner = _owner.registry.owner.toBase58();
         }
 
         else {
@@ -145,15 +145,17 @@ export const SUATMMView: FC = ({ }) => {
           const largestAccountInfo = await connection.getParsedAccountInfo(
             largestAccounts.value[0].address
           );
-  
+
           data = largestAccountInfo.value?.data;
           owner = data.parsed.info.owner;
         }
 
 
         const { nft } = await metaplex.nfts().create({
+          name: _name,
           uri: uri,
-          owner: new PublicKey(owner),
+          sellerFeeBasisPoints: 0,
+          tokenOwner: new PublicKey(owner),
         });
 
         if (nft) {
@@ -170,7 +172,7 @@ export const SUATMMView: FC = ({ }) => {
       if (err.includes('could not find mint')) {
         setError('The mint address seems to be wrong, verify it');
       }
-      else if(err.includes('Invalid name account provided')) {
+      else if (err.includes('Invalid name account provided')) {
         setError('This solana domain name does not exist')
       }
     }

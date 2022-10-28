@@ -32,10 +32,10 @@ export const TokenNameEA = (props: { account: string, connection: Connection, me
         const mintPublickey = new PublicKey(_mint);
 
         // get the nft object with the mint publickey address
-        const nft = await metaplex.nfts().findByMint(mintPublickey);
+        const nft = await metaplex.nfts().findByMint({ mintAddress: mintPublickey });
 
         // get the name of the nft object
-        const name = nft.metadata.name
+        const name = nft.name
 
         // test if the name is defined
         // if it is, it means it is the token is an nft so we set its name

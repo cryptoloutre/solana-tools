@@ -33,10 +33,10 @@ export const TokenIconEA = (props: { account: string, connection: Connection, me
         const metaplex = props.metaplex;
 
         // get the nft object with the mint publickey address
-        const nft = await metaplex.nfts().findByMint(mintPublickey);
+        const nft = await metaplex.nfts().findByMint({ mintAddress: mintPublickey });
 
         // get the logo of the nft object
-        const logo = nft.metadata.image
+        const logo = nft.json?.image
 
         // test if the logo is defined
         // if it is, it means it is the token is an nft so we set its URI
