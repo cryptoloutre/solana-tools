@@ -91,7 +91,7 @@ export const HomeView: FC = ({ }) => {
                 <Link href="/revoke">
                   <div className="p-4 hover:border">
                     <a className="text-4xl font-bold mb-5">
-                    🚫 -- Revoke authority
+                      🚫 -- Revoke authority
                     </a>
                     <div>A UI to view the tokens you have delegated rights to and revoke them </div></div>
                 </Link>
@@ -111,7 +111,7 @@ export const HomeView: FC = ({ }) => {
                 <Link href="/createNFTcollection">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
-                      🧪 -- Create NFT Collection
+                      🖼️ -- Create NFT Collection
                     </a>
                     <div>A UI to create and migrate NFTs to a Collection</div>
                   </div>
@@ -121,22 +121,22 @@ export const HomeView: FC = ({ }) => {
                 <Link href="/multisender">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
-                    📨 📨 📨  -- Multi Sender
+                      📨 📨 📨  -- Multi Sender
                     </a>
                     <div>A UI to send multiple tokens in 1 transaction (same token to different people/many tokens to one person)</div>
                   </div>
                 </Link>
               </li>
-              <li className="mb-5">
+              {/* <li className="mb-5">
                 <Link href="/updateNFTmetadata">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
-                    ✍️ -- Update NFT metadata
+                      ✍️ -- Update NFT metadata
                     </a>
                     <div>A UI to update the metadata of your NFT</div>
                   </div>
                 </Link>
-              </li>
+              </li> */}
               <li className="mb-5">
                 <Link href="/upload">
                   <div className="p-4 hover:border">
@@ -151,7 +151,7 @@ export const HomeView: FC = ({ }) => {
                 <Link href="/suatmm">
                   <div className="p-4 hover:border">
                     <a className="text-4xl font-bold mb-5">
-                    📨 -- Send NFT message
+                      📨 -- Send NFT message
                     </a>
                     <div>A UI to send a message to the owner of the NFT or the .sol domain name you want</div>
                   </div>
