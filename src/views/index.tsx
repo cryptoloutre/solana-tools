@@ -8,3 +8,4 @@ export { BurnSPLView } from "./BurnSPLView"
 export { CloseAccountView } from "./CloseAccountView"
 export { UpdateNFTMetadataView } from "./UpdateNFTMetadataView";
 export { RevokeView } from "./RevokeView";
+export { CreateNFTCollectionView } from "./CreateNFTCollectionView";
