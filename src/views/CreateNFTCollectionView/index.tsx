@@ -232,7 +232,7 @@ export const CreateNFTCollectionView: FC = ({ }) => {
     const [masterEditionCollectionPDA, _bump2] = PublicKey.findProgramAddressSync([seed1, seed2, seed3, seed4], PROGRAM_ID);
 
     // define the number of migration done in one Tx
-    const nbPerTx = 10
+    const nbPerTx = 5
 
     // calculate the number of Tx to do
     let nbTx: number
