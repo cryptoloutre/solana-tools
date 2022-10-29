@@ -127,7 +127,7 @@ export const HomeView: FC = ({ }) => {
                   </div>
                 </Link>
               </li>
-              {/* <li className="mb-5">
+              <li className="mb-5">
                 <Link href="/updateNFTmetadata">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
@@ -136,7 +136,7 @@ export const HomeView: FC = ({ }) => {
                     <div>A UI to update the metadata of your NFT</div>
                   </div>
                 </Link>
-              </li> */}
+              </li>
               <li className="mb-5">
                 <Link href="/upload">
                   <div className="p-4 hover:border">
