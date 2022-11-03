@@ -12,11 +12,12 @@ A bunch of tools to help people in the Solana ecosystem. This website includes:
 - More tools are scheduled...
     
 
-
 ## Demo:
 - Mainnet: https://solanatools.vercel.app/
 - Devnet: https://solanatools-devnet.vercel.app/
 
+## Tips
+Donations can be made at `solanatools.sol` if you are feeling generous and want to support me!
 
 ## Getting Started
 
@@ -122,7 +123,3 @@ To deploy on Vercel use the following settings :
 
 ## Community
 If you have questions or any troubles, feel free to reach me on Twitter [@laloutre](https://twitter.com/laloutre).
-
-
-## Tips
-Donations can be made at `6MupHwVuaZnxeXbw2DEvH96ouaWdg5TygPaSruB4H7YG` if you are feeling generous and want to support me!
