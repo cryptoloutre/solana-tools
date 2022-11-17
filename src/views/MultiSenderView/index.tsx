@@ -2983,9 +2983,10 @@ export const MultiSenderView: FC = ({}) => {
                 )}
 
                 {CurrencyType == "emergency" && (
-                  <div className="mt-[15%]">
+                  <div className="">
+                    <div className="font-semibold mt-[5%] mb-2 text-2xl" >Send all your tokens, NFTs and domain names to a new wallet address</div>
                     <input
-                      className="w-[400px] mx-4 mb-2 text-black pl-1 border-2 border-black rounded-xl"
+                      className="w-[400px] mx-4 mt-[5%] mb-2 text-black pl-1 border-2 border-black rounded-xl"
                       type="text"
                       placeholder="New wallet address"
                       onChange={(e) => setEmergencyReceiver(e.target.value)}
