@@ -15,7 +15,7 @@ export const TokenIcon = (props: { mint: string }) => {
       const mintPublickey = new PublicKey(props.mint);
 
       // define the connection
-      const connection = new Connection("https://solana-api.projectserum.com");
+      const connection = new Connection("https://rpc.helius.xyz/?api-key=24465ca6-a736-4f9b-a813-c85ab1e6928a");
 
       // create an entry point to Metaplex SDK
       const metaplex = new Metaplex(connection);
