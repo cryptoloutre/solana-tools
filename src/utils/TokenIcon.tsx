@@ -41,10 +41,8 @@ export const TokenIcon = (props: { mint: string }) => {
       }
       catch (error) {
         const err = (error as any)?.message;
-        // the token is not an nft if there is no metadata account associated
-        if (err.includes('No Metadata account could be found for the provided mint address')) {
-          setIsNFT(false)
-        }
+        console.log(err);
+        setIsNFT(false);
       }
     }
     isNFT();

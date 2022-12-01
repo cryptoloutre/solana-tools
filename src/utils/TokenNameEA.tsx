@@ -51,12 +51,13 @@ export const TokenNameEA = (props: { account: string, connection: Connection, me
       }
       catch (error) {
         const err = (error as any)?.message;
+        console.log(err);
         // the token is not an nft if there is no metadata account associated
-        if (err.includes('No Metadata account could be found for the provided mint address')) {
-          setIsNFT(false)
+        if (err.includes('Account not found')) {
+          setIsNFT(false);
         }
         else {
-          setIsClosed(true)
+          setIsClosed(true);
         }
       }
     }
