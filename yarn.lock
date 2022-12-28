@@ -1708,6 +1708,16 @@
     "bs58" "^5.0.0"
     "debug" "^4.3.4"
 
+"@metaplex-foundation/beet-solana@^0.4.0":
+  "integrity" "sha512-B1L94N3ZGMo53b0uOSoznbuM5GBNJ8LwSeznxBxJ+OThvfHQ4B5oMUqb+0zdLRfkKGS7Q6tpHK9P+QK0j3w2cQ=="
+  "resolved" "https://registry.npmjs.org/@metaplex-foundation/beet-solana/-/beet-solana-0.4.0.tgz"
+  "version" "0.4.0"
+  dependencies:
+    "@metaplex-foundation/beet" ">=0.1.0"
+    "@solana/web3.js" "^1.56.2"
+    "bs58" "^5.0.0"
+    "debug" "^4.3.4"
+
 "@metaplex-foundation/beet@^0.2.0", "@metaplex-foundation/beet@>=0.1.0":
   "integrity" "sha512-H570hkJxmx/FxET1OggPPLkPL7psYQa71rNI9NJjYRM8WXdrEvmI/IRIEUW2KR6RqwWWN3FvlRHnKoQUV/lQtA=="
   "resolved" "https://registry.npmjs.org/@metaplex-foundation/beet/-/beet-0.2.0.tgz"
@@ -2015,6 +2025,19 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     "fastq" "^1.6.0"
+
+"@onsol/tldparser@^0.4.2":
+  "integrity" "sha512-xBnfaXb5j9Buxp69EF9b0OyTZ3s1HFfpqUl/pO2XtdqMA2E8Wc6O0l88ZqzaYozs2ezdiM1xPJrEfj5HdR51Sg=="
+  "resolved" "https://registry.npmjs.org/@onsol/tldparser/-/tldparser-0.4.2.tgz"
+  "version" "0.4.2"
+  dependencies:
+    "@metaplex-foundation/beet-solana" "^0.4.0"
+    "@solana/buffer-layout" "^4.0.0"
+    "@solana/web3.js" "^1.66.0"
+    "bigint-buffer" "^1.1.5"
+    "bn.js" "^5.2.0"
+    "borsh" "^0.7.0"
+    "buffer" "6.0.1"
 
 "@pedrouid/environment@^1.0.1":
   "integrity" "sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug=="
@@ -2542,7 +2565,7 @@
     "@solana/wallet-adapter-tokenpocket" "^0.4.2"
     "@solana/wallet-adapter-torus" "^0.11.10"
 
-"@solana/web3.js@^1.12.0", "@solana/web3.js@^1.17.0", "@solana/web3.js@^1.2.0", "@solana/web3.js@^1.20.0", "@solana/web3.js@^1.21.0", "@solana/web3.js@^1.30.2", "@solana/web3.js@^1.31.0", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.35.0", "@solana/web3.js@^1.35.1", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.37.1", "@solana/web3.js@^1.43.3", "@solana/web3.js@^1.43.4", "@solana/web3.js@^1.44.0", "@solana/web3.js@^1.47.4", "@solana/web3.js@^1.5.0", "@solana/web3.js@^1.56.2", "@solana/web3.js@^1.61.0", "@solana/web3.js@^1.63.1":
+"@solana/web3.js@^1.12.0", "@solana/web3.js@^1.17.0", "@solana/web3.js@^1.2.0", "@solana/web3.js@^1.20.0", "@solana/web3.js@^1.21.0", "@solana/web3.js@^1.30.2", "@solana/web3.js@^1.31.0", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.35.0", "@solana/web3.js@^1.35.1", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.37.1", "@solana/web3.js@^1.43.3", "@solana/web3.js@^1.43.4", "@solana/web3.js@^1.44.0", "@solana/web3.js@^1.47.4", "@solana/web3.js@^1.5.0", "@solana/web3.js@^1.56.2", "@solana/web3.js@^1.61.0", "@solana/web3.js@^1.63.1", "@solana/web3.js@^1.66.0":
   "integrity" "sha512-RyaHMR2jGmaesnYP045VLeBGfR/gAW3cvZHzMFGg7bkO+WOYOYp1nEllf0/la4U4qsYGKCsO9eEevR5fhHiVHg=="
   "resolved" "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.66.2.tgz"
   "version" "1.66.2"
@@ -3420,8 +3443,7 @@
   "version" "1.0.5"
 
 "avsc@https://github.com/Bundlr-Network/avsc#csp-fixes":
-  version "5.4.7"
-  resolved "https://github.com/Bundlr-Network/avsc#a730cc8018b79e114b6a3381bbb57760a24c6cef"
+  "version" "5.4.7"
 
 "axe-core@^4.3.5":
   "integrity" "sha512-gd1kmb21kwNuWr6BQz8fv6GNECPBnUasepcoLbekws23NVBLODdsClRZ+bQ8+9Uomf3Sm3+Vwn0oYG9NvwnJCw=="

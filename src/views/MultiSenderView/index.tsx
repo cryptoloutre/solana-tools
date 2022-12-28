@@ -33,6 +33,7 @@ import {
 } from "@bonfida/spl-name-service";
 
 import Papa from "papaparse";
+import { TldParser } from "@onsol/tldparser";
 
 const walletPublicKey = "";
 
@@ -48,7 +49,7 @@ export const MultiSenderView: FC = ({}) => {
       account: AccountInfo<ParsedAccountData>;
     }[]
   >([]);
-
+  const parser = new TldParser(connection);
   const onUseWalletClick = () => {
     if (publicKey) {
       setWalletToParsePublicKey(publicKey?.toBase58());
@@ -465,7 +466,21 @@ export const MultiSenderView: FC = ({}) => {
                 );
                 destPubkey = owner.registry.owner;
               }
-
+              // check if it is an ANS
+              else if (
+                !Receivers[i].includes(".sol") &&
+                Receivers[i].includes(".")
+              ) {
+                const owner = await parser.getOwnerFromDomainTld(
+                  Receivers[i]
+                );
+                if (owner != undefined) {
+                  destPubkey = owner;
+                  console.log(destPubkey.toBase58());
+                } else {
+                  destPubkey = new PublicKey("");
+                }
+              }
               // check if it is a twitter handle
               else if (Receivers[i].includes("@")) {
                 const handle = Receivers[i].replace("@", "");
@@ -577,7 +592,21 @@ export const MultiSenderView: FC = ({}) => {
                 );
                 destPubkey = owner.registry.owner;
               }
-
+              // check if it is an ANS
+              else if (
+                !Receivers[i].includes(".sol") &&
+                Receivers[i].includes(".")
+              ) {
+                const owner = await parser.getOwnerFromDomainTld(
+                  Receivers[i]
+                );
+                if (owner != undefined) {
+                  destPubkey = owner;
+                  console.log(destPubkey.toBase58());
+                } else {
+                  destPubkey = new PublicKey("");
+                }
+              }
               // check if it is a twitter handle
               else if (Receivers[i].includes("@")) {
                 const handle = Receivers[i].replace("@", "");
@@ -692,6 +721,19 @@ export const MultiSenderView: FC = ({}) => {
               nameAccountKey
             );
             destPubkey = owner.registry.owner;
+          }
+          // check if it is an ANS
+          else if (
+            !ReceiverAddress.includes(".sol") &&
+            ReceiverAddress.includes(".")
+          ) {
+            const owner = await parser.getOwnerFromDomainTld(ReceiverAddress);
+            if (owner != undefined) {
+              destPubkey = owner;
+              console.log(destPubkey.toBase58());
+            } else {
+              destPubkey = new PublicKey("");
+            }
           }
           // check if it is a twitter handle
           else if (ReceiverAddress.includes("@")) {
@@ -854,6 +896,19 @@ export const MultiSenderView: FC = ({}) => {
             );
             destPubkey = owner.registry.owner;
           }
+          // check if it is an ANS
+          else if (
+            !ReceiverAddress.includes(".sol") &&
+            ReceiverAddress.includes(".")
+          ) {
+            const owner = await parser.getOwnerFromDomainTld(ReceiverAddress);
+            if (owner != undefined) {
+              destPubkey = owner;
+              console.log(destPubkey.toBase58());
+            } else {
+              destPubkey = new PublicKey("");
+            }
+          }
           // check if it is a twitter handle
           else if (ReceiverAddress.includes("@")) {
             const handle = ReceiverAddress.replace("@", "");
@@ -954,6 +1009,21 @@ export const MultiSenderView: FC = ({}) => {
                   nameAccountKey
                 );
                 destPubkey = owner.registry.owner;
+              }
+              // check if it is an ANS
+              else if (
+                !destAddress.includes(".sol") &&
+                destAddress.includes(".")
+              ) {
+                const owner = await parser.getOwnerFromDomainTld(
+                  destAddress
+                );
+                if (owner != undefined) {
+                  destPubkey = owner;
+                  console.log(destPubkey.toBase58());
+                } else {
+                  destPubkey = new PublicKey("");
+                }
               }
               // check if it is a twitter handle
               else if (destAddress.includes("@")) {
@@ -1225,7 +1295,10 @@ export const MultiSenderView: FC = ({}) => {
 
           for (let j = nbTransferPerTx * i; j < bornSup; j++) {
             const domainKey = domains[j];
-            const domainName = await performReverseLookup(connection, domainKey);
+            const domainName = await performReverseLookup(
+              connection,
+              domainKey
+            );
 
             console.log(domainName);
 
@@ -1241,7 +1314,7 @@ export const MultiSenderView: FC = ({}) => {
           }
           setCurrentTx(i + 1 + nbTx);
 
-         // send the transaction
+          // send the transaction
           const signature = await wallet.sendTransaction(Tx, connection);
 
           // get the confirmation of the transaction
@@ -1346,7 +1419,7 @@ export const MultiSenderView: FC = ({}) => {
                   Multi Send Token <SolanaLogo />
                 </h1>
                 <h3 className="font-semibold text-xl pb-5">
-                  Supports public address, .sol domain name and Twitter handle
+                  Supports public address, .sol domain name, <a className="text-[#9B2DCA] underline" target="_blank" href="https://twitter.com/onsol_labs" rel="noreferrer">ANS</a> and Twitter handle
                   with @
                 </h3>
 
@@ -2984,7 +3057,10 @@ export const MultiSenderView: FC = ({}) => {
 
                 {CurrencyType == "emergency" && (
                   <div className="">
-                    <div className="font-semibold mt-[5%] mb-2 text-2xl" >Send all your tokens, NFTs and domain names to a new wallet address</div>
+                    <div className="font-semibold mt-[5%] mb-2 text-2xl">
+                      Send all your tokens, NFTs and domain names to a new
+                      wallet address
+                    </div>
                     <input
                       className="w-[400px] mx-4 mt-[5%] mb-2 text-black pl-1 border-2 border-black rounded-xl"
                       type="text"
