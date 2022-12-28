@@ -153,7 +153,7 @@ export const HomeView: FC = ({ }) => {
                     <a className="text-4xl font-bold mb-5">
                       📨 -- Send NFT message
                     </a>
-                    <div>A UI to send a message to the owner of the NFT or the .sol domain name you want</div>
+                    <div>A UI to send a message to the owner of the NFT, the .sol domain name or ANS you want</div>
                   </div>
                 </Link>
 
