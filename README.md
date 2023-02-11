@@ -10,6 +10,8 @@ A bunch of tools to help people in the Solana ecosystem. This website includes:
 - a UI to update the metadata of your NFT
 - a UI to send a NFT message to the owner of your desired NFT or solana domain name
 - More tools are scheduled...
+
+Download our xNFT [here](https://test.xnft.gg/app/621U7cWfav4ypS7e7uxdXcZTjTFgkeXW48sRReoFewg9). Find the source code of our xNFT just [here](https://github.com/cryptoloutre/solana-tools-xnft).
     
 
 ## Demo:
