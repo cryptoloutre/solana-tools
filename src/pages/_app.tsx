@@ -13,7 +13,7 @@ import "../styles/App.css";
 // const endpoint = "https://ssc-dao.genesysgo.net";
 // const endpoint = "https://solana-api.projectserum.com";
 //  const endpoint = "https://api.mainnet-beta.solana.com";
- const endpoint = "https://rpc.helius.xyz/?api-key=24465ca6-a736-4f9b-a813-c85ab1e6928a";
+ const endpoint = "https://rpc.helius.xyz/?api-key=fe8eb42f-5a2c-4b9f-b0e6-92a8e1af948a";
 // const endpoint = "https://try-rpc.mainnet.solana.blockdaemon.tech";
 
 const WalletProvider = dynamic(
