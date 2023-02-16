@@ -206,11 +206,11 @@ function OneToken() {
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [token, setToken] = useState<string>("");
   const [receiverList, setReceiverList] = useState([
-    { receiver: "", amount: "" },
-    { receiver: "", amount: "" },
-    { receiver: "", amount: "" },
-    { receiver: "", amount: "" },
-    { receiver: "", amount: "" },
+    { receiver: "", amount: "1" },
+    { receiver: "", amount: "1" },
+    { receiver: "", amount: "1" },
+    { receiver: "", amount: "1" },
+    { receiver: "", amount: "1" },
   ]);
   const [isSending, setIsSending] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -596,11 +596,11 @@ function OneReceiver() {
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [receiver, setReceiver] = useState<string>("");
   const [tokensList, setTokenList] = useState([
-    { token: "", amount: "" },
-    { token: "", amount: "" },
-    { token: "", amount: "" },
-    { token: "", amount: "" },
-    { token: "", amount: "" },
+    { token: "", amount: "1" },
+    { token: "", amount: "1" },
+    { token: "", amount: "1" },
+    { token: "", amount: "1" },
+    { token: "", amount: "1" },
   ]);
   const [isSending, setIsSending] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
