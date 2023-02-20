@@ -43,8 +43,13 @@ export const getTokensMetadata = async (
         if (_logoURI != undefined && _logoURI != "") {
           logoURI = _logoURI;
         } else {
-          logoURI =
-            "https://arweave.net/WCMNR4N-4zKmkVcxcO2WImlr2XBAlSWOOKBRHLOWXNA";
+          const _token = tokenMap.get(mint);
+          if (!_token || !_token.logoURI) {
+            logoURI =
+              "https://arweave.net/WCMNR4N-4zKmkVcxcO2WImlr2XBAlSWOOKBRHLOWXNA";
+          } else {
+            logoURI = _token.logoURI;
+          }
         }
       } catch (error) {
         const token = tokenMap.get(mint);
