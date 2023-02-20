@@ -1,5 +1,5 @@
 export { HomeView } from "./HomeView";
-export { GalleryView } from "./GalleryView";
+export { BurnNFTView } from "./BurnNFTView";
 export { SPLTokenView } from "./SPLTokenView";
 export { UploadView } from "./UploadView";
 export { SUATMMView } from "./SUATM²View";

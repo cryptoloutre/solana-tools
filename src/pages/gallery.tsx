@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { GalleryView } from "../views";
+import { BurnNFTView } from "../views";
 import Footer from "components/Footer";
 
 const Home: NextPage = (props) => {
@@ -10,7 +10,7 @@ const Home: NextPage = (props) => {
         <title>SOLANA TOOLS</title>
         <meta name="description" content="Solana tools to help you in the solana ecosystem" />
       </Head>
-      <GalleryView />
+      <BurnNFTView />
       <Footer/>
     </div>
   );
