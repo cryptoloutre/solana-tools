@@ -175,6 +175,7 @@ export const BurnNFTView: FC = ({}) => {
             const isMasterEdition = toBurn[j].isMasterEdition;
             let burnAccount;
 
+            if (isMasterEdition == true){
               if (collectionMetadata) {
                 burnAccount = {
                   metadata: metadataAccount,
@@ -202,7 +203,30 @@ export const BurnNFTView: FC = ({}) => {
   
               // add the burn instruction to the transaction
               Tx.add(burnInstruction);
+              }
+              else {
+                const getbalance = await connection.getTokenAccountBalance(tokenAccount)
+                const decimals = getbalance.value.decimals
+                const balance = getbalance.value.uiAmount
 
+                const burnInstruction = Token.createBurnInstruction(
+                  TOKEN_PROGRAM_ID,
+                  mint,
+                  tokenAccount,
+                  publickey,
+                  [],
+                  balance! * 10 ** decimals
+                );
+    
+                const closeInstruction = Token.createCloseAccountInstruction(
+                  TOKEN_PROGRAM_ID,
+                  tokenAccount,
+                  publickey,
+                  publickey,
+                  []
+                );
+                Tx.add(burnInstruction, closeInstruction);
+              }
             
 
               // const seed3 = Buffer.from(mint.toBytes());
