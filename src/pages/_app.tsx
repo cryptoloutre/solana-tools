@@ -13,7 +13,7 @@ import "../styles/App.css";
 // const endpoint = "https://ssc-dao.genesysgo.net";
 // const endpoint = "https://solana-api.projectserum.com";
 //  const endpoint = "https://api.mainnet-beta.solana.com";
- const endpoint = "https://rpc.helius.xyz/?api-key=fe8eb42f-5a2c-4b9f-b0e6-92a8e1af948a";
+ const endpoint = "https://rpc.helius.xyz/?api-key=cc778adb-f9ab-45da-ba44-b4096f663c16";
 // const endpoint = "https://try-rpc.mainnet.solana.blockdaemon.tech";
 
 const WalletProvider = dynamic(
@@ -26,7 +26,7 @@ const WalletProvider = dynamic(
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider>
+      <WalletProvider autoConnect={true}>
         <Component {...pageProps} />
       </WalletProvider>
     </ConnectionProvider>
