@@ -6,8 +6,8 @@ import { useConnection } from "@solana/wallet-adapter-react";
 
 import { Loader, SolanaLogo } from "components";
 import styles from "./index.module.css";
-import { Metaplex } from "@metaplex-foundation/js";
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { Metaplex, toBigNumber } from "@metaplex-foundation/js";
+import { PublicKey, Transaction, SystemProgram, SYSVAR_INSTRUCTIONS_PUBKEY } from "@solana/web3.js";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
@@ -18,8 +18,9 @@ import {
   createBurnNftInstruction,
   PROGRAM_ADDRESS,
   PROGRAM_ID,
+  createBurnInstruction,
 } from "@metaplex-foundation/mpl-token-metadata";
-import { utils } from "@project-serum/anchor";
+import { BN, utils } from "@project-serum/anchor";
 
 export const BurnNFTView: FC = ({}) => {
   const { connection } = useConnection();
@@ -174,35 +175,59 @@ export const BurnNFTView: FC = ({}) => {
             const collectionMetadata = toBurn[j].collectionMetadata;
             const isMasterEdition = toBurn[j].isMasterEdition;
             let burnAccount;
+            const tokenRecord = metaplex.nfts().pdas().tokenRecord({ mint: mint, token: tokenAccount});
 
             if (isMasterEdition == true){
-              if (collectionMetadata) {
-                burnAccount = {
-                  metadata: metadataAccount,
-                  owner: publickey,
-                  mint: mint,
-                  tokenAccount: tokenAccount,
-                  masterEditionAccount: masterEditionPDA,
-                  splTokenProgram: TOKEN_PROGRAM_ID,
-                  collectionMetadata: new PublicKey(collectionMetadata),
-                };
-              } else {
-                burnAccount = {
-                  metadata: metadataAccount,
-                  owner: publickey,
-                  mint: mint,
-                  tokenAccount: tokenAccount,
-                  masterEditionAccount: masterEditionPDA,
-                  splTokenProgram: TOKEN_PROGRAM_ID,
-                };
+
+              const tokenRecordInfo = await connection.getAccountInfo(tokenRecord);
+              if (tokenRecordInfo) {
+
+                const burn = createBurnInstruction({
+                  authority: publickey, // oui
+                  metadata: metadataAccount, // oui
+                  edition: masterEditionPDA, // oui
+                  mint: mint, // oui
+                  token: tokenAccount, // oui
+                  tokenRecord: tokenRecord, // oui
+                  systemProgram: SystemProgram.programId, // oui
+                  sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY, // oui
+                  splTokenProgram: TOKEN_PROGRAM_ID, // oui
+                },
+                {burnArgs: {
+                  __kind: "V1",
+                  amount: toBigNumber(1)
+              }})
+              Tx.add(burn)
               }
-              const burnInstruction = createBurnNftInstruction(
-                burnAccount,
-                new PublicKey(PROGRAM_ADDRESS)
-              );
-  
-              // add the burn instruction to the transaction
-              Tx.add(burnInstruction);
+              else {
+                if (collectionMetadata) {
+                  burnAccount = {
+                    metadata: metadataAccount,
+                    owner: publickey,
+                    mint: mint,
+                    tokenAccount: tokenAccount,
+                    masterEditionAccount: masterEditionPDA,
+                    splTokenProgram: TOKEN_PROGRAM_ID,
+                    collectionMetadata: new PublicKey(collectionMetadata),
+                  };
+                } else {
+                  burnAccount = {
+                    metadata: metadataAccount,
+                    owner: publickey,
+                    mint: mint,
+                    tokenAccount: tokenAccount,
+                    masterEditionAccount: masterEditionPDA,
+                    splTokenProgram: TOKEN_PROGRAM_ID,
+                  };
+                  const burnInstruction = createBurnNftInstruction(
+                    burnAccount,
+                    new PublicKey(PROGRAM_ADDRESS)
+                  );
+                  // add the burn instruction to the transaction
+                  Tx.add(burnInstruction);
+                }
+              }
+
               }
               else {
                 const getbalance = await connection.getTokenAccountBalance(tokenAccount)
