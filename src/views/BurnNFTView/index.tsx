@@ -172,26 +172,31 @@ export const BurnNFTView: FC = ({}) => {
             const mint = new PublicKey(toBurn[j].mint);
             const masterEditionPDA = new PublicKey(toBurn[j].masterEditionPDA);
             const metadataAccount = new PublicKey(toBurn[j].metadataAccount);
-            const collectionMetadata = toBurn[j].collectionMetadata;
+            const _collectionMetadata = toBurn[j].collectionMetadata;
             const isMasterEdition = toBurn[j].isMasterEdition;
             let burnAccount;
             const tokenRecord = metaplex.nfts().pdas().tokenRecord({ mint: mint, token: tokenAccount});
+            let collectionMetadata: PublicKey | undefined = undefined;
 
+            if (_collectionMetadata) {
+              collectionMetadata = new PublicKey(_collectionMetadata)
+            }
             if (isMasterEdition == true){
 
               const tokenRecordInfo = await connection.getAccountInfo(tokenRecord);
               if (tokenRecordInfo) {
 
                 const burn = createBurnInstruction({
-                  authority: publickey, // oui
-                  metadata: metadataAccount, // oui
-                  edition: masterEditionPDA, // oui
-                  mint: mint, // oui
-                  token: tokenAccount, // oui
-                  tokenRecord: tokenRecord, // oui
-                  systemProgram: SystemProgram.programId, // oui
-                  sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY, // oui
-                  splTokenProgram: TOKEN_PROGRAM_ID, // oui
+                  authority: publickey,
+                  metadata: metadataAccount,
+                  collectionMetadata: collectionMetadata, 
+                  edition: masterEditionPDA, 
+                  mint: mint, 
+                  token: tokenAccount, 
+                  tokenRecord: tokenRecord, 
+                  systemProgram: SystemProgram.programId, 
+                  sysvarInstructions: SYSVAR_INSTRUCTIONS_PUBKEY, 
+                  splTokenProgram: TOKEN_PROGRAM_ID, 
                 },
                 {burnArgs: {
                   __kind: "V1",
@@ -200,7 +205,7 @@ export const BurnNFTView: FC = ({}) => {
               Tx.add(burn)
               }
               else {
-                if (collectionMetadata) {
+                if (_collectionMetadata) {
                   burnAccount = {
                     metadata: metadataAccount,
                     owner: publickey,
@@ -208,7 +213,7 @@ export const BurnNFTView: FC = ({}) => {
                     tokenAccount: tokenAccount,
                     masterEditionAccount: masterEditionPDA,
                     splTokenProgram: TOKEN_PROGRAM_ID,
-                    collectionMetadata: new PublicKey(collectionMetadata),
+                    collectionMetadata: collectionMetadata,
                   };
                 } else {
                   burnAccount = {
