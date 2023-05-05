@@ -2,7 +2,7 @@ import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, MintLayout } from
 import { Connection, PublicKey, Transaction, SystemProgram, Keypair, TransactionInstruction } from '@solana/web3.js';
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Dispatch, SetStateAction } from 'react';
-import { PROGRAM_ID, DataV2, createCreateMetadataAccountV2Instruction } from '@metaplex-foundation/mpl-token-metadata';
+import { PROGRAM_ID, DataV2, createCreateMetadataAccountV3Instruction } from '@metaplex-foundation/mpl-token-metadata';
 import { bundlrStorage, Metaplex, MetaplexFileTag, walletAdapterIdentity } from '@metaplex-foundation/js';
 
 
@@ -89,6 +89,7 @@ export async function createSPLToken(owner: PublicKey, wallet: WalletContextStat
             const args = {
                 data: tokenMetadata,
                 isMutable: true,
+                collectionDetails: null
             };
 
             const createMintAccountInstruction = await SystemProgram.createAccount({
@@ -145,7 +146,7 @@ export async function createSPLToken(owner: PublicKey, wallet: WalletContextStat
             );
 
 
-            const MetadataInstruction = createCreateMetadataAccountV2Instruction(
+            const MetadataInstruction = createCreateMetadataAccountV3Instruction(
                 {
                     metadata: metadataPDA,
                     mint: mint_account.publicKey,
@@ -154,7 +155,7 @@ export async function createSPLToken(owner: PublicKey, wallet: WalletContextStat
                     updateAuthority: owner,
                 },
                 {
-                    createMetadataAccountArgsV2: args,
+                    createMetadataAccountArgsV3: args,
                 }
             );
 
