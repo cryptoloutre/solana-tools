@@ -8,12 +8,12 @@ import "../styles/globals.css";
 import "../styles/App.css";
 
 // set custom RPC server endpoint for the final website
-// const endpoint = "https://explorer-api.devnet.solana.com";
+// const endpoint = "https://api.devnet.solana.com";
 // const endpoint = "http://127.0.0.1:8899";
 // const endpoint = "https://ssc-dao.genesysgo.net";
 // const endpoint = "https://solana-api.projectserum.com";
 //  const endpoint = "https://api.mainnet-beta.solana.com";
- const endpoint = "https://rpc.helius.xyz/?api-key=e56c9277-56b3-4ee1-9faa-0610a1a23630";
+ const endpoint = "https://rpc.helius.xyz/?api-key=634713f0-b4f2-41dc-af7f-ed7d60bd70e2";
 // const endpoint = "https://try-rpc.mainnet.solana.blockdaemon.tech";
 
 const WalletProvider = dynamic(
