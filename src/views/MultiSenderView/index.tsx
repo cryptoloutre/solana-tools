@@ -225,102 +225,90 @@ function OneToken() {
       return;
     }
 
-    const _userTokens = [{ tokenMint: "", tokenName: "Select a token" }];
-    const allTokens = [];
+    const _userTokens = [{ tokenMint: "", tokenName: "Select a token"}];
+    const allTokens:any = [];
 
-    const userNFTs = await metaplex
-      .nfts()
-      .findAllByOwner({ owner: wallet.publicKey });
-    console.log(userNFTs);
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "AwM0UoO6r1w8XNOA");
 
-    if (userNFTs[0] != undefined) {
-      for (let i = 0; i < userNFTs.length; i++) {
-        // @ts-ignore
-        const NFTmint = userNFTs[i].mintAddress.toBase58();
-        let NFTname = userNFTs[i].name.trim();
-        if (NFTname == "") {
-          const NFTloaded = await metaplex
+    const tokenResponse = await fetch(
+      "https://api.shyft.to/sol/v1/wallet/all_tokens?network=mainnet-beta&wallet=" +
+        wallet.publicKey.toBase58(),
+      { method: "GET", headers: myHeaders, redirect: "follow" }
+    );
+    const tokenInfo = (await tokenResponse.json()).result;
+
+    const tokens = tokenInfo.filter((m: any) => {
+      const balance = m.balance;
+      return balance != 0;
+    });
+
+    tokens.map((token: any) => {
+      const mint = token.address;
+      let name = token.info.name.trim();
+      if (name == "") {
+        name = mint.slice(0, 4) + "..." + mint.slice(-4);
+      }
+      allTokens.push({
+        tokenMint: mint,
+        tokenName: name,
+      });
+    });
+
+    console.log("User tokens", tokens);
+
+    const NFTresponse = await fetch(
+      "https://api.shyft.to/sol/v1/wallet/get_portfolio?network=mainnet-beta&wallet=" +
+        wallet.publicKey.toBase58(),
+      { method: "GET", headers: myHeaders, redirect: "follow" }
+    );
+    const NFTinfo = (await NFTresponse.json()).result.nfts;
+
+    await Promise.all(NFTinfo.map(async (nft:any) => {
+      const mint = nft.mintAddress;
+      let name = nft.name.trim();
+      if (name == "") {
+        const NFTloaded = await metaplex
             .nfts()
-            .findByMint({ mintAddress: new PublicKey(NFTmint) });
+            .findByMint({ mintAddress: new PublicKey(mint) });
           if (NFTloaded.json?.name && NFTloaded.json?.name != "") {
-            NFTname = NFTloaded.json?.name.trim();
+            name = NFTloaded.json?.name.trim();
           } else {
-            NFTname = NFTmint.slice(0, 4) + "..." + NFTmint.slice(-4);
+            name = mint.slice(0, 4) + "..." + mint.slice(-4);
           }
-        }
+      }
+      const index = allTokens.find((token:any) => token.tokenMint == mint);
+      if (index == undefined) {
         allTokens.push({
-          tokenMint: NFTmint,
-          tokenName: NFTname,
+          tokenMint: mint,
+          tokenName: name,
         });
       }
-    }
+    }))
+    console.log("user NFT", NFTinfo);
 
-    const { value: splAccounts } =
-      await connection.getParsedTokenAccountsByOwner(wallet.publicKey, {
-        programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
+    const domainResponse = await fetch(
+      "https://api.shyft.to/sol/v1/wallet/get_domains?network=mainnet-beta&wallet=" +
+        wallet.publicKey.toBase58(),
+      { method: "GET", headers: myHeaders, redirect: "follow" }
+    );
+    const domainInfo = (await domainResponse.json()).result;
+    domainInfo.map((domain:any) => {
+      const mint = domain.name;
+      const name = domain.name;
+      allTokens.push({
+        tokenMint: mint,
+        tokenName: name,
       });
-    const allUserTokens = splAccounts
-      .filter((m) => {
-        const amount = m.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
-        return amount != 0;
-      })
-      .map((m) => {
-        const mintAdddress = m.account?.data?.parsed?.info?.mint;
-        return mintAdddress;
-      });
+    })
+    console.log("Bonfida domain: ", domainInfo);
 
-    for (let i = 0; i < allUserTokens.length; i++) {
-      let compteur = 0;
-      for (let j = 0; j < allTokens.length; j++) {
-        if (allUserTokens[i] != allTokens[j]["tokenMint"]) {
-          compteur += 1;
-        }
-      }
-      if (compteur == allTokens.length) {
-        try {
-          const nft = await metaplex
-            .nfts()
-            .findByMint({ mintAddress: new PublicKey(allUserTokens[i]) });
-          let name = nft.name.trim();
-          if (name == "") {
-            if (nft.json?.name && nft.json?.name != "") {
-              name = nft.json?.name.trim();
-            } else {
-              name =
-                allUserTokens[i].slice(0, 4) +
-                "..." +
-                allUserTokens[i].slice(-4);
-            }
-          }
-          allTokens.push({
-            tokenMint: allUserTokens[i],
-            tokenName: name,
-          });
-        } catch (error) {
-          allTokens.push({
-            tokenMint: allUserTokens[i],
-            tokenName:
-              allUserTokens[i].slice(0, 4) + "..." + allUserTokens[i].slice(-4),
-          });
-        }
-      }
-    }
     allTokens.push({
       tokenMint: "So11111111111111111111111111111111111111112",
       tokenName: "Solana",
     });
-    const domains = await getAllDomains(connection, wallet.publicKey);
-    for (let i = 0; i < domains.length; i++) {
-      const domainName = await performReverseLookup(
-        connection,
-        new PublicKey(domains[i])
-      );
-      allTokens.push({
-        tokenMint: domainName + ".sol",
-        tokenName: domainName + ".sol",
-      });
-    }
-    allTokens.sort(function (a, b) {
+
+    allTokens.sort(function (a:any, b:any) {
       if (a.tokenName.toUpperCase() < b.tokenName.toUpperCase()) {
         return -1;
       }
@@ -616,101 +604,89 @@ function OneReceiver() {
     }
 
     const _userTokens = [{ tokenMint: "", tokenName: "Select a token" }];
-    const allTokens = [];
+    const allTokens: any = [];
 
-    const userNFTs = await metaplex
-      .nfts()
-      .findAllByOwner({ owner: wallet.publicKey });
-    console.log(userNFTs);
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "AwM0UoO6r1w8XNOA");
 
-    if (userNFTs[0] != undefined) {
-      for (let i = 0; i < userNFTs.length; i++) {
-        // @ts-ignore
-        const NFTmint = userNFTs[i].mintAddress.toBase58();
-        let NFTname = userNFTs[i].name.trim();
-        if (NFTname == "") {
-          const NFTloaded = await metaplex
+    const tokenResponse = await fetch(
+      "https://api.shyft.to/sol/v1/wallet/all_tokens?network=mainnet-beta&wallet=" +
+        wallet.publicKey.toBase58(),
+      { method: "GET", headers: myHeaders, redirect: "follow" }
+    );
+    const tokenInfo = (await tokenResponse.json()).result;
+
+    const tokens = tokenInfo.filter((m: any) => {
+      const balance = m.balance;
+      return balance != 0;
+    });
+
+    tokens.map((token: any) => {
+      const mint = token.address;
+      let name = token.info.name.trim();
+      if (name == "") {
+        name = mint.slice(0, 4) + "..." + mint.slice(-4);
+      }
+      allTokens.push({
+        tokenMint: mint,
+        tokenName: name,
+      });
+    });
+
+    console.log("User tokens", tokens);
+
+    const NFTresponse = await fetch(
+      "https://api.shyft.to/sol/v1/wallet/get_portfolio?network=mainnet-beta&wallet=" +
+        wallet.publicKey.toBase58(),
+      { method: "GET", headers: myHeaders, redirect: "follow" }
+    );
+    const NFTinfo = (await NFTresponse.json()).result.nfts;
+
+    await Promise.all(NFTinfo.map(async (nft:any) => {
+      const mint = nft.mintAddress;
+      let name = nft.name.trim();
+      if (name == "") {
+        const NFTloaded = await metaplex
             .nfts()
-            .findByMint({ mintAddress: new PublicKey(NFTmint) });
+            .findByMint({ mintAddress: new PublicKey(mint) });
           if (NFTloaded.json?.name && NFTloaded.json?.name != "") {
-            NFTname = NFTloaded.json?.name.trim();
+            name = NFTloaded.json?.name.trim();
           } else {
-            NFTname = NFTmint.slice(0, 4) + "..." + NFTmint.slice(-4);
+            name = mint.slice(0, 4) + "..." + mint.slice(-4);
           }
-        }
+      }
+      const index = allTokens.find((token:any) => token.tokenMint == mint);
+      if (index == undefined) {
         allTokens.push({
-          tokenMint: NFTmint,
-          tokenName: NFTname,
+          tokenMint: mint,
+          tokenName: name,
         });
       }
-    }
+    }))
+    console.log("user NFT", NFTinfo);
 
-    const { value: splAccounts } =
-      await connection.getParsedTokenAccountsByOwner(wallet.publicKey, {
-        programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
+    const domainResponse = await fetch(
+      "https://api.shyft.to/sol/v1/wallet/get_domains?network=mainnet-beta&wallet=" +
+        wallet.publicKey.toBase58(),
+      { method: "GET", headers: myHeaders, redirect: "follow" }
+    );
+    const domainInfo = (await domainResponse.json()).result;
+    domainInfo.map((domain:any) => {
+      const mint = domain.name;
+      const name = domain.name;
+      allTokens.push({
+        tokenMint: mint,
+        tokenName: name,
       });
-    const allUserTokens = splAccounts
-      .filter((m) => {
-        const amount = m.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
-        return amount != 0;
-      })
-      .map((m) => {
-        const mintAdddress = m.account?.data?.parsed?.info?.mint;
-        return mintAdddress;
-      });
+    })
+    console.log("Bonfida domain: ", domainInfo);
 
-    for (let i = 0; i < allUserTokens.length; i++) {
-      let compteur = 0;
-      for (let j = 0; j < allTokens.length; j++) {
-        if (allUserTokens[i] != allTokens[j]["tokenMint"]) {
-          compteur += 1;
-        }
-      }
-      if (compteur == allTokens.length) {
-        try {
-          const nft = await metaplex
-            .nfts()
-            .findByMint({ mintAddress: new PublicKey(allUserTokens[i]) });
-          let name = nft.name.trim();
-          if (name == "") {
-            if (nft.json?.name && nft.json?.name != "") {
-              name = nft.json?.name.trim();
-            } else {
-              name =
-                allUserTokens[i].slice(0, 4) +
-                "..." +
-                allUserTokens[i].slice(-4);
-            }
-          }
-          allTokens.push({
-            tokenMint: allUserTokens[i],
-            tokenName: name,
-          });
-        } catch (error) {
-          allTokens.push({
-            tokenMint: allUserTokens[i],
-            tokenName:
-              allUserTokens[i].slice(0, 4) + "..." + allUserTokens[i].slice(-4),
-          });
-        }
-      }
-    }
     allTokens.push({
       tokenMint: "So11111111111111111111111111111111111111112",
       tokenName: "Solana",
     });
-    const domains = await getAllDomains(connection, wallet.publicKey);
-    for (let i = 0; i < domains.length; i++) {
-      const domainName = await performReverseLookup(
-        connection,
-        new PublicKey(domains[i])
-      );
-      allTokens.push({
-        tokenMint: domainName + ".sol",
-        tokenName: domainName + ".sol",
-      });
-    }
-    allTokens.sort(function (a, b) {
+
+    allTokens.sort(function (a: any, b:any ) {
       if (a.tokenName.toUpperCase() < b.tokenName.toUpperCase()) {
         return -1;
       }

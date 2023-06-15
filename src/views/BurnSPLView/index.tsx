@@ -32,56 +32,56 @@ export const BurnSPLView: FC = ({}) => {
     const publickey = wallet.publicKey;
     setIsFetched(false);
 
-    const { value: splAccounts } =
-      await connection.getParsedTokenAccountsByOwner(
-        publickey,
-        {
-          programId: new PublicKey(
-            "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-          ),
-        },
-        "processed"
-      );
-    const allUserTokens = splAccounts
-      .filter((m) => {
-        const amount = m.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
-        return amount != 0;
-      })
-      .map((m) => {
-        const tokenAccountaddress = m.pubkey.toBase58();
-        const mintAdddress = m.account?.data?.parsed?.info?.mint;
-        const amount = m.account?.data?.parsed?.info?.tokenAmount?.amount;
-        return { tokenAccountaddress, mintAdddress, amount };
-      });
+    const allTokens:any = [];
 
-    const userNFTs = (
-      await metaplex.nfts().findAllByOwner({ owner: wallet.publicKey })
-    ).map((nft) => {
-      // @ts-ignore
-      const mint = nft.mintAddress.toBase58();
-      return mint;
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "AwM0UoO6r1w8XNOA");
+
+    const tokenResponse = await fetch(
+      "https://api.shyft.to/sol/v1/wallet/all_tokens?network=mainnet-beta&wallet=" +
+      publickey.toBase58(),
+      { method: "GET", headers: myHeaders, redirect: "follow" }
+    );
+    const tokenInfo = (await tokenResponse.json()).result;
+
+    console.log(tokenInfo)
+
+    const tokens = tokenInfo.filter((m: any) => {
+      const balance = m.balance;
+      return balance != 0;
     });
 
-    const userSPL: any = [];
-    allUserTokens.map((token) => {
-      // @ts-ignore
-      const mint = token.mintAdddress;
-      if (!userNFTs.includes(mint)) {
-        const tokenAccountaddress = token.tokenAccountaddress;
-        const amount = token.amount;
-        userSPL.push({
-          tokenAccountaddress: tokenAccountaddress,
-          mintAdddress: mint,
-          amount: amount,
-        });
+    tokens.map((token: any) => {
+      const mint = token.address;
+      const logoURI = token.info.image != "" ? token.info.image : "https://arweave.net/WCMNR4N-4zKmkVcxcO2WImlr2XBAlSWOOKBRHLOWXNA";
+      const tokenAccount = token.associated_account;
+      const amount = token.balance;
+      let name = token.info.name.trim();
+      if (name == "") {
+        name = mint.slice(0, 4) + "..." + mint.slice(-4);
       }
+      allTokens.push({
+        name: name,
+        logoURI: logoURI,
+        tokenAccount: tokenAccount,
+        mint: mint,
+        amount: amount
+      });
     });
 
-    const userSPLMetadata = await getTokensMetadata(userSPL, connection);
+    allTokens.sort(function (a:any, b:any) {
+      if (a.name.toUpperCase() < b.name.toUpperCase()) {
+        return -1;
+      }
+      if (a.name.toUpperCase() > b.name.toUpperCase()) {
+        return 1;
+      }
+      return 0;
+    });
 
-    setUserSPL(userSPLMetadata);
+    setUserSPL(allTokens);
     setIsFetched(true);
-    console.log("user SPL tokens", userSPLMetadata);
+    console.log("user SPL tokens", allTokens);
   }
 
   useEffect(() => {

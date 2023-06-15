@@ -36,6 +36,41 @@ export const CloseAccountView: FC = ({}) => {
     const publickey = wallet.publicKey;
     setIsFetched(false);
 
+    const allTokens:any = [];
+
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "AwM0UoO6r1w8XNOA");
+
+    const tokenResponse = await fetch(
+      "https://api.shyft.to/sol/v1/wallet/all_tokens?network=mainnet-beta&wallet=" +
+      publickey.toBase58(),
+      { method: "GET", headers: myHeaders, redirect: "follow" }
+    );
+    const tokenInfo = (await tokenResponse.json()).result;
+
+    const tokens = tokenInfo.filter((m: any) => {
+      const balance = m.balance;
+      return balance == 0;
+    });
+
+    tokens.map((token: any) => {
+      const mint = token.address;
+      const logoURI = token.info.image != "" ? token.info.image : "https://arweave.net/WCMNR4N-4zKmkVcxcO2WImlr2XBAlSWOOKBRHLOWXNA";
+      const tokenAccount = token.associated_account;
+      const amount = token.balance;
+      let name = token.info.name.trim();
+      if (name == "") {
+        name = mint.slice(0, 4) + "..." + mint.slice(-4);
+      }
+      allTokens.push({
+        name: name,
+        logoURI: logoURI,
+        tokenAccount: tokenAccount,
+        mint: mint,
+        amount: amount
+      });
+    });
+
     const { value: splAccounts } =
       await connection.getParsedTokenAccountsByOwner(
         publickey,
@@ -46,7 +81,10 @@ export const CloseAccountView: FC = ({}) => {
         },
         "processed"
       );
-    const myEmptyAccounts = splAccounts
+
+      const myNFTEmptyAccounts:any = []
+
+    const _myNFTEmptyAccounts = splAccounts
       .filter((m) => {
         const amount = m.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
         return amount == 0;
@@ -54,14 +92,31 @@ export const CloseAccountView: FC = ({}) => {
       .map((m) => {
         const tokenAccountaddress = m.pubkey.toBase58();
         const mintAdddress = m.account?.data?.parsed?.info?.mint;
-        return { tokenAccountaddress, mintAdddress };
+        const _tokenAccount = allTokens.find((token: any) => token.tokenAccount == tokenAccountaddress);
+        if (_tokenAccount == undefined) {
+          myNFTEmptyAccounts.push({ tokenAccountaddress, mintAdddress });
+        }
       });
 
-    const myEmptyAccountsMetadata = await getTokensMetadata(myEmptyAccounts, connection);
+      console.log(myNFTEmptyAccounts)
 
-    setEmptyAccounts(myEmptyAccountsMetadata);
+      
+      const myNFTEmptyAccountsMetadata = await getTokensMetadata(myNFTEmptyAccounts, connection);
+      const userEmptyAccounts = allTokens.concat(myNFTEmptyAccountsMetadata)
+
+      userEmptyAccounts.sort(function (a:any, b:any) {
+        if (a.name.toUpperCase() < b.name.toUpperCase()) {
+          return -1;
+        }
+        if (a.name.toUpperCase() > b.name.toUpperCase()) {
+          return 1;
+        }
+        return 0;
+      });
+
+    setEmptyAccounts(userEmptyAccounts);
     setIsFetched(true);
-    console.log("my empty accounts", myEmptyAccountsMetadata);
+    console.log("my empty accounts", userEmptyAccounts);
   }
 
   useEffect(() => {
