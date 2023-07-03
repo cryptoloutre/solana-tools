@@ -225,8 +225,8 @@ function OneToken() {
       return;
     }
 
-    const _userTokens = [{ tokenMint: "", tokenName: "Select a token"}];
-    const allTokens:any = [];
+    const _userTokens = [{ tokenMint: "", tokenName: "Select a token" }];
+    const allTokens: any = [];
 
     const myHeaders = new Headers();
     myHeaders.append("x-api-key", "AwM0UoO6r1w8XNOA");
@@ -264,11 +264,12 @@ function OneToken() {
     );
     const NFTinfo = (await NFTresponse.json()).result.nfts;
 
-    await Promise.all(NFTinfo.map(async (nft:any) => {
-      const mint = nft.mintAddress;
-      let name = nft.name.trim();
-      if (name == "") {
-        const NFTloaded = await metaplex
+    await Promise.all(
+      NFTinfo.map(async (nft: any) => {
+        const mint = nft.mintAddress;
+        let name = nft.name.trim();
+        if (name == "") {
+          const NFTloaded = await metaplex
             .nfts()
             .findByMint({ mintAddress: new PublicKey(mint) });
           if (NFTloaded.json?.name && NFTloaded.json?.name != "") {
@@ -276,15 +277,16 @@ function OneToken() {
           } else {
             name = mint.slice(0, 4) + "..." + mint.slice(-4);
           }
-      }
-      const index = allTokens.find((token:any) => token.tokenMint == mint);
-      if (index == undefined) {
-        allTokens.push({
-          tokenMint: mint,
-          tokenName: name,
-        });
-      }
-    }))
+        }
+        const index = allTokens.find((token: any) => token.tokenMint == mint);
+        if (index == undefined) {
+          allTokens.push({
+            tokenMint: mint,
+            tokenName: name,
+          });
+        }
+      })
+    );
     console.log("user NFT", NFTinfo);
 
     const domainResponse = await fetch(
@@ -293,14 +295,14 @@ function OneToken() {
       { method: "GET", headers: myHeaders, redirect: "follow" }
     );
     const domainInfo = (await domainResponse.json()).result;
-    domainInfo.map((domain:any) => {
+    domainInfo.map((domain: any) => {
       const mint = domain.name;
       const name = domain.name;
       allTokens.push({
         tokenMint: mint,
         tokenName: name,
       });
-    })
+    });
     console.log("Bonfida domain: ", domainInfo);
 
     allTokens.push({
@@ -308,7 +310,7 @@ function OneToken() {
       tokenName: "Solana",
     });
 
-    allTokens.sort(function (a:any, b:any) {
+    allTokens.sort(function (a: any, b: any) {
       if (a.tokenName.toUpperCase() < b.tokenName.toUpperCase()) {
         return -1;
       }
@@ -385,6 +387,21 @@ function OneToken() {
               const handle = Receivers[i]["receiver"].replace("@", "");
               const registry = await getTwitterRegistry(connection, handle);
               receiverPubkey = registry.owner;
+            } else if (
+              !Receivers[i]["receiver"].includes(".") &&
+              !Receivers[i]["receiver"].includes("@") &&
+              !isValidSolanaAddress(Receivers[i]["receiver"])
+            ) {
+              const url =
+                "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
+                Receivers[i]["receiver"];
+              const response = await fetch(url);
+              const responseData = await response.json();
+              receiverPubkey = new PublicKey(
+                responseData.user.public_keys.find(
+                  (key: any) => key.blockchain == "solana"
+                ).public_key
+              );
             } else {
               receiverPubkey = new PublicKey(Receivers[i]["receiver"]);
             }
@@ -460,7 +477,15 @@ function OneToken() {
         setIsSending(false);
         setSuccess(false);
         const err = (error as any)?.message;
-        setError(err);
+        if (
+          err.includes(
+            "Cannot read properties of undefined (reading 'public_keys')"
+          )
+        ) {
+          setError("It is not a valid Backpack username");
+        } else {
+          setError(err);
+        }
       }
     }
   };
@@ -642,11 +667,12 @@ function OneReceiver() {
     );
     const NFTinfo = (await NFTresponse.json()).result.nfts;
 
-    await Promise.all(NFTinfo.map(async (nft:any) => {
-      const mint = nft.mintAddress;
-      let name = nft.name.trim();
-      if (name == "") {
-        const NFTloaded = await metaplex
+    await Promise.all(
+      NFTinfo.map(async (nft: any) => {
+        const mint = nft.mintAddress;
+        let name = nft.name.trim();
+        if (name == "") {
+          const NFTloaded = await metaplex
             .nfts()
             .findByMint({ mintAddress: new PublicKey(mint) });
           if (NFTloaded.json?.name && NFTloaded.json?.name != "") {
@@ -654,15 +680,16 @@ function OneReceiver() {
           } else {
             name = mint.slice(0, 4) + "..." + mint.slice(-4);
           }
-      }
-      const index = allTokens.find((token:any) => token.tokenMint == mint);
-      if (index == undefined) {
-        allTokens.push({
-          tokenMint: mint,
-          tokenName: name,
-        });
-      }
-    }))
+        }
+        const index = allTokens.find((token: any) => token.tokenMint == mint);
+        if (index == undefined) {
+          allTokens.push({
+            tokenMint: mint,
+            tokenName: name,
+          });
+        }
+      })
+    );
     console.log("user NFT", NFTinfo);
 
     const domainResponse = await fetch(
@@ -671,14 +698,14 @@ function OneReceiver() {
       { method: "GET", headers: myHeaders, redirect: "follow" }
     );
     const domainInfo = (await domainResponse.json()).result;
-    domainInfo.map((domain:any) => {
+    domainInfo.map((domain: any) => {
       const mint = domain.name;
       const name = domain.name;
       allTokens.push({
         tokenMint: mint,
         tokenName: name,
       });
-    })
+    });
     console.log("Bonfida domain: ", domainInfo);
 
     allTokens.push({
@@ -686,7 +713,7 @@ function OneReceiver() {
       tokenName: "Solana",
     });
 
-    allTokens.sort(function (a: any, b:any ) {
+    allTokens.sort(function (a: any, b: any) {
       if (a.tokenName.toUpperCase() < b.tokenName.toUpperCase()) {
         return -1;
       }
@@ -753,6 +780,21 @@ function OneReceiver() {
             const handle = receiver.replace("@", "");
             const registry = await getTwitterRegistry(connection, handle);
             receiverPubkey = registry.owner;
+          } else if (
+            !receiver.includes(".") &&
+            !receiver.includes("@") &&
+            !isValidSolanaAddress(receiver)
+          ) {
+            const url =
+              "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
+              receiver;
+            const response = await fetch(url);
+            const responseData = await response.json();
+            receiverPubkey = new PublicKey(
+              responseData.user.public_keys.find(
+                (key: any) => key.blockchain == "solana"
+              ).public_key
+            );
           } else {
             receiverPubkey = new PublicKey(receiver);
           }
@@ -841,7 +883,15 @@ function OneReceiver() {
         setIsSending(false);
         setSuccess(false);
         const err = (error as any)?.message;
-        setError(err);
+        if (
+          err.includes(
+            "Cannot read properties of undefined (reading 'public_keys')"
+          )
+        ) {
+          setError("It is not a valid Backpack username");
+        } else {
+          setError(err);
+        }
       }
     }
   };
@@ -1066,6 +1116,21 @@ function CSV() {
                 const handle = receiver.replace("@", "");
                 const registry = await getTwitterRegistry(connection, handle);
                 receiverPubkey = registry.owner;
+              } else if (
+                !receiver.includes(".") &&
+                !receiver.includes("@") &&
+                !isValidSolanaAddress(receiver)
+              ) {
+                const url =
+                  "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
+                  receiver;
+                const response = await fetch(url);
+                const responseData = await response.json();
+                receiverPubkey = new PublicKey(
+                  responseData.user.public_keys.find(
+                    (key: any) => key.blockchain == "solana"
+                  ).public_key
+                );
               } else {
                 receiverPubkey = new PublicKey(receiver);
               }
@@ -1155,7 +1220,15 @@ function CSV() {
         setIsSending(false);
         setSuccess(false);
         const err = (error as any)?.message;
-        setError(err);
+        if (
+          err.includes(
+            "Cannot read properties of undefined (reading 'public_keys')"
+          )
+        ) {
+          setError("It is not a valid Backpack username");
+        } else {
+          setError(err);
+        }
       }
     }
   };
@@ -1397,7 +1470,15 @@ function Emergency() {
         setIsSending(false);
         setSuccess(false);
         const err = (error as any)?.message;
-        setError(err);
+        if (
+          err.includes(
+            "Cannot read properties of undefined (reading 'public_keys')"
+          )
+        ) {
+          setError("It is not a valid Backpack username");
+        } else {
+          setError(err);
+        }
       }
     }
   }
@@ -1457,3 +1538,15 @@ function Emergency() {
     </div>
   );
 }
+
+const isValidSolanaAddress = (address: string) => {
+  try {
+    // this fn accepts Base58 character
+    // and if it pass we suppose Solana address is valid
+    new PublicKey(address);
+    return true;
+  } catch (error) {
+    // Non-base58 character or can't be used as Solana address
+    return false;
+  }
+};
