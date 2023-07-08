@@ -155,13 +155,18 @@ export const BurnSPLView: FC = ({}) => {
             const mint = new PublicKey(toBurn[j].mint);
             const amount = toBurn[j].amount;
 
+            const tokenInfo = await connection.getParsedAccountInfo(mint);
+
+            // @ts-ignore
+            const decimals = tokenInfo.value?.data.parsed.info.decimals;
+
             const burnInstruction = Token.createBurnInstruction(
               TOKEN_PROGRAM_ID,
               mint,
               account,
               publickey,
               [],
-              amount
+              amount * 10 ** decimals
             );
 
             const closeInstruction = Token.createCloseAccountInstruction(
