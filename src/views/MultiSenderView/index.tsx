@@ -1037,7 +1037,7 @@ function CSV() {
     } else {
       setIsUploaded(true);
       Papa.parse(event.target.files[0], {
-        header: true,
+        header: false,
         skipEmptyLines: true,
         complete: function (results) {
           const rowsArray: any = [];
@@ -1089,6 +1089,7 @@ function CSV() {
             setCurrentTx(i + 1);
             for (let j = nbTransferPerTx * i; j < bornSup; j++) {
               const receiver = csvData[j][csvHeaders[0]];
+              console.log(receiver)
               let receiverPubkey: PublicKey;
               if (receiver.includes(".sol")) {
                 const hashedName = await getHashedName(
