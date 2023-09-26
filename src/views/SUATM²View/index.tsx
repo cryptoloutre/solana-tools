@@ -182,10 +182,10 @@ export const SUATMMView: FC = ({}) => {
 
         // @ts-ignore
         console.log("real owner", owner);
-        // @ts-ignore
-        setToAddress(owner);
       }
-      
+      // @ts-ignore
+      setToAddress(owner);
+
       const _name = "SUATM² " + name;
       const description =
         "I want to buy your " +
