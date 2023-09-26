@@ -209,8 +209,7 @@ export const SUATMMView: FC = ({}) => {
           name: _name,
           uri: uri,
           sellerFeeBasisPoints: 0,
-          // @ts-ignore
-          tokenOwner: new PublicKey(owner),
+          tokenOwner: new PublicKey(toAddress),
         });
 
         if (nft) {
