@@ -215,6 +215,12 @@ export const BurnNFTView: FC = ({}) => {
                     splTokenProgram: TOKEN_PROGRAM_ID,
                     collectionMetadata: collectionMetadata,
                   };
+                  const burnInstruction = createBurnNftInstruction(
+                    burnAccount,
+                    new PublicKey(PROGRAM_ADDRESS)
+                  );
+                  // add the burn instruction to the transaction
+                  Tx.add(burnInstruction);
                 } else {
                   burnAccount = {
                     metadata: metadataAccount,
