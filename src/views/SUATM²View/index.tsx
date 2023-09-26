@@ -164,7 +164,7 @@ export const SUATMMView: FC = ({}) => {
           data = largestAccountInfo.value?.data;
           const _owner = data.parsed.info.owner;
           const _ownerPK = new PublicKey(_owner);
-          const isOnCurve = PublicKey.isOnCurve(_ownerPK.toBytes()); // if false _owner is a PDA = marketplace
+          const isOnCurve = PublicKey.isOnCurve(_ownerPK.toBytes()); // if false, _owner is a PDA = marketplace
           console.log(_owner);
           console.log(isOnCurve);
 
