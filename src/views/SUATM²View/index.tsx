@@ -114,6 +114,78 @@ export const SUATMMView: FC = ({}) => {
       setToAddress("");
       const image = await generateImg();
       console.log(image);
+      let data: any;
+      let owner: string;
+
+      if (wanted.includes(".sol")) {
+        const hashedName = await getHashedName(wanted.replace(".sol", ""));
+        const nameAccountKey = await getNameAccountKey(
+          hashedName,
+          undefined,
+          new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
+        );
+        const _owner = await NameRegistryState.retrieve(
+          connection,
+          nameAccountKey
+        );
+        owner = _owner.registry.owner.toBase58();
+      } else if (!wanted.includes(".sol") && wanted.includes(".")) {
+        const _owner = await parser.getOwnerFromDomainTld(wanted);
+        if (_owner != undefined) {
+          owner = _owner.toBase58();
+          console.log(owner);
+        } else {
+          owner = "";
+        }
+      } else {
+        const largestAccounts = await connection.getTokenLargestAccounts(
+          new PublicKey(wanted)
+        );
+        const largestAccountInfo = await connection.getParsedAccountInfo(
+          largestAccounts.value[0].address
+        );
+
+        data = largestAccountInfo.value?.data;
+        const _owner = data.parsed.info.owner;
+        const _ownerPK = new PublicKey(_owner);
+        const isOnCurve = PublicKey.isOnCurve(_ownerPK.toBytes()); // if false, _owner is a PDA = marketplace
+        console.log(_owner);
+        console.log(isOnCurve);
+
+        if (isOnCurve) {
+          owner = _owner;
+        } else {
+          const url =
+            "https://api.helius.xyz/v0/addresses/" +
+            wanted +
+            "/transactions?api-key=634713f0-b4f2-41dc-af7f-ed7d60bd70e2";
+          try {
+            const response = await fetch(url);
+            const data = await response.json();
+            let isAListing = false;
+            let item = 0;
+            while (!isAListing) {
+              const txInfo = data[item];
+              if (txInfo.type == "NFT_LISTING") {
+                owner = txInfo.feePayer;
+                isAListing = true;
+              } else {
+                item += 1;
+              }
+            }
+            console.log("parsed transactions: ", data);
+          } catch (error) {
+            console.log(error);
+            owner = "";
+          }
+        }
+
+        // @ts-ignore
+        console.log("real owner", owner);
+        // @ts-ignore
+        setToAddress(owner);
+      }
+      
       const _name = "SUATM² " + name;
       const description =
         "I want to buy your " +
@@ -129,78 +201,6 @@ export const SUATMMView: FC = ({}) => {
       });
       if (uri) {
         console.log(uri);
-
-        let data: any;
-        let owner: string;
-
-        if (wanted.includes(".sol")) {
-          const hashedName = await getHashedName(wanted.replace(".sol", ""));
-          const nameAccountKey = await getNameAccountKey(
-            hashedName,
-            undefined,
-            new PublicKey("58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx") // SOL TLD Authority
-          );
-          const _owner = await NameRegistryState.retrieve(
-            connection,
-            nameAccountKey
-          );
-          owner = _owner.registry.owner.toBase58();
-        } else if (!wanted.includes(".sol") && wanted.includes(".")) {
-          const _owner = await parser.getOwnerFromDomainTld(wanted);
-          if (_owner != undefined) {
-            owner = _owner.toBase58();
-            console.log(owner);
-          } else {
-            owner = "";
-          }
-        } else {
-          const largestAccounts = await connection.getTokenLargestAccounts(
-            new PublicKey(wanted)
-          );
-          const largestAccountInfo = await connection.getParsedAccountInfo(
-            largestAccounts.value[0].address
-          );
-
-          data = largestAccountInfo.value?.data;
-          const _owner = data.parsed.info.owner;
-          const _ownerPK = new PublicKey(_owner);
-          const isOnCurve = PublicKey.isOnCurve(_ownerPK.toBytes()); // if false, _owner is a PDA = marketplace
-          console.log(_owner);
-          console.log(isOnCurve);
-
-          if (isOnCurve) {
-            owner = _owner;
-          } else {
-            const url =
-              "https://api.helius.xyz/v0/addresses/" +
-              wanted +
-              "/transactions?api-key=634713f0-b4f2-41dc-af7f-ed7d60bd70e2";
-            try {
-              const response = await fetch(url);
-              const data = await response.json();
-              let isAListing = false;
-              let item = 0;
-              while (!isAListing) {
-                const txInfo = data[item];
-                if (txInfo.type == "NFT_LISTING") {
-                  owner = txInfo.feePayer;
-                  isAListing = true;
-                } else {
-                  item += 1;
-                }
-              }
-              console.log("parsed transactions: ", data);
-            } catch (error) {
-              console.log(error);
-              owner = "";
-            }
-          }
-
-          // @ts-ignore
-          console.log("real owner", owner);
-          // @ts-ignore
-          setToAddress(owner);
-        }
 
         const { nft } = await metaplex.nfts().create({
           name: _name,
