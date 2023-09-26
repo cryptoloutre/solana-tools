@@ -40,6 +40,7 @@ export const SUATMMView: FC = ({}) => {
   const [name, setName] = useState("");
   // const [NFTImage, setNFTImage] = useState('');
   const [isGenerated, setIsGenerated] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [sending, setSending] = useState(false);
   const [isSent, setIsSent] = useState(false);
   const [error, setError] = useState("");
@@ -75,48 +76,16 @@ export const SUATMMView: FC = ({}) => {
     try {
       setIsSent(false);
       setError("");
+      setIsGenerating(true);
       const _NFTName = await getNFTName();
       // const _NFTImage = await getNFTImage();
       setName(_NFTName);
       // if (_NFTImage != undefined) {
       //   setNFTImage(_NFTImage)
       // }
-      setIsGenerated(true);
-    } catch (error) {
-      const err = (error as any)?.message;
-      setError(err);
-    }
-  };
-
-  // Get the name of the wanted NFT
-  const getNFTName = async () => {
-    let name;
-    if (wanted.includes(".")) {
-      name = wanted;
-    } else {
-      const mint = new PublicKey(wanted);
-      const nft = await metaplex.nfts().findByMint({ mintAddress: mint });
-      name = nft.name;
-    }
-    return name;
-  };
-  // // Get the image of the wanted NFT
-  // const getNFTImage = async () => {
-  //   const mint = new PublicKey(NFTWanted);
-  //   const nft = await metaplex.nfts().findByMint(mint);
-  //   const image = nft.metadata.image
-  //   return image
-  // };
-
-  const CreateAndSendNFT = async () => {
-    try {
-      setSending(true);
       setToAddress("");
-      const image = await generateImg();
-      console.log(image);
       let data: any;
       let owner: string;
-
       if (wanted.includes(".sol")) {
         const hashedName = await getHashedName(wanted.replace(".sol", ""));
         const nameAccountKey = await getNameAccountKey(
@@ -185,6 +154,40 @@ export const SUATMMView: FC = ({}) => {
       }
       // @ts-ignore
       setToAddress(owner);
+      setIsGenerated(true);
+      setIsGenerating(false);
+    } catch (error) {
+      const err = (error as any)?.message;
+      setError(err);
+      setIsGenerating(false);
+    }
+  };
+
+  // Get the name of the wanted NFT
+  const getNFTName = async () => {
+    let name;
+    if (wanted.includes(".")) {
+      name = wanted;
+    } else {
+      const mint = new PublicKey(wanted);
+      const nft = await metaplex.nfts().findByMint({ mintAddress: mint });
+      name = nft.name;
+    }
+    return name;
+  };
+  // // Get the image of the wanted NFT
+  // const getNFTImage = async () => {
+  //   const mint = new PublicKey(NFTWanted);
+  //   const nft = await metaplex.nfts().findByMint(mint);
+  //   const image = nft.metadata.image
+  //   return image
+  // };
+
+  const CreateAndSendNFT = async () => {
+    try {
+      setSending(true);
+      const image = await generateImg();
+      console.log(image);
 
       const _name = "SUATM² " + name;
       const description =
@@ -292,7 +295,7 @@ export const SUATMMView: FC = ({}) => {
                       }}
                     />
                   </form>
-                  {wanted != "" && username != "" && (
+                  {wanted != "" && username != "" && !isGenerating &&(
                     <button
                       className="text-white font-semibold text-xl rounded-full px-2 py-1 ml-2 bg-[#9945FF]"
                       onClick={GenerateNFT}
@@ -300,20 +303,53 @@ export const SUATMMView: FC = ({}) => {
                       Generate message
                     </button>
                   )}
+                  {wanted != "" && username != "" && isGenerating && (
+                    <button
+                      className="text-white font-semibold text-xl rounded-full px-2 py-1 ml-2 bg-[#9945FF]"
+                      onClick={GenerateNFT}
+                    >
+                      <svg
+                        role="status"
+                        className="inline mr-3 w-4 h-4 text-white animate-spin"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="#E5E7EB"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentColor"
+                        />
+                      </svg> Message generating...
+                    </button>
+                  )}
 
                   {isGenerated && (
-                    <div className="flex justify-center mt-4">
-                      <div
-                        className="sm:w-[250px] sm:h-[250px] w-[150px] h-[150px] bg-[#FF0000]"
-                        id="canvas"
-                      >
-                        <p className="mt-[25%] text-sm sm:text-lg">
-                          I want to buy your <br /> <strong>{name}</strong>
-                        </p>
-                        <p className="mt-[5%] text-sm sm:text-lg">
-                          Contact me on Twitter <br />
-                          <strong>@{username}</strong>
-                        </p>
+                    <div>
+                      <div className="flex justify-center mt-4">
+                        <div
+                          className="sm:w-[250px] sm:h-[250px] w-[150px] h-[150px] bg-[#FF0000]"
+                          id="canvas"
+                        >
+                          <p className="mt-[25%] text-sm sm:text-lg">
+                            I want to buy your <br /> <strong>{name}</strong>
+                          </p>
+                          <p className="mt-[5%] text-sm sm:text-lg">
+                            Contact me on Twitter <br />
+                            <strong>@{username}</strong>
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        {toAddress != "" && (
+                          <div className="mt-2">
+                            Your message will be sent to{" "}
+                            <span className="font-bold">{toAddress}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -328,33 +364,25 @@ export const SUATMMView: FC = ({}) => {
                   )}
 
                   {sending == true && isGenerated && (
-                    <div>
-                      <button className="text-white font-semibold text-xl rounded-full shadow-xl bg-[#2C3B52] border p-3 mt-[3%] uppercase">
-                        <svg
-                          role="status"
-                          className="inline mr-3 w-4 h-4 text-white animate-spin"
-                          viewBox="0 0 100 101"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                            fill="#E5E7EB"
-                          />
-                          <path
-                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                        Sending{" "}
-                      </button>
-                      {toAddress != "" && (
-                        <div className="mt-2">
-                          Your message is sent to{" "}
-                          <span className="font-bold">{toAddress}</span>
-                        </div>
-                      )}
-                    </div>
+                    <button className="text-white font-semibold text-xl rounded-full shadow-xl bg-[#2C3B52] border p-3 mt-[3%] uppercase">
+                      <svg
+                        role="status"
+                        className="inline mr-3 w-4 h-4 text-white animate-spin"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="#E5E7EB"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      Sending{" "}
+                    </button>
                   )}
 
                   {error != "" && (
