@@ -387,22 +387,24 @@ function OneToken() {
               const handle = Receivers[i]["receiver"].replace("@", "");
               const registry = await getTwitterRegistry(connection, handle);
               receiverPubkey = registry.owner;
-            } else if (
-              !Receivers[i]["receiver"].includes(".") &&
-              !Receivers[i]["receiver"].includes("@") &&
-              !isValidSolanaAddress(Receivers[i]["receiver"])
-            ) {
-              const url =
-                "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
-                Receivers[i]["receiver"];
-              const response = await fetch(url);
-              const responseData = await response.json();
-              receiverPubkey = new PublicKey(
-                responseData.user.public_keys.find(
-                  (key: any) => key.blockchain == "solana"
-                ).public_key
-              );
-            } else {
+            }
+            // else if (
+            //   !Receivers[i]["receiver"].includes(".") &&
+            //   !Receivers[i]["receiver"].includes("@") &&
+            //   !isValidSolanaAddress(Receivers[i]["receiver"])
+            // ) {
+            //   const url =
+            //     "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
+            //     Receivers[i]["receiver"];
+            //   const response = await fetch(url);
+            //   const responseData = await response.json();
+            //   receiverPubkey = new PublicKey(
+            //     responseData.user.public_keys.find(
+            //       (key: any) => key.blockchain == "solana"
+            //     ).public_key
+            //   );
+            // }
+            else {
               receiverPubkey = new PublicKey(Receivers[i]["receiver"]);
             }
 
@@ -780,22 +782,24 @@ function OneReceiver() {
             const handle = receiver.replace("@", "");
             const registry = await getTwitterRegistry(connection, handle);
             receiverPubkey = registry.owner;
-          } else if (
-            !receiver.includes(".") &&
-            !receiver.includes("@") &&
-            !isValidSolanaAddress(receiver)
-          ) {
-            const url =
-              "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
-              receiver;
-            const response = await fetch(url);
-            const responseData = await response.json();
-            receiverPubkey = new PublicKey(
-              responseData.user.public_keys.find(
-                (key: any) => key.blockchain == "solana"
-              ).public_key
-            );
-          } else {
+          }
+          // else if (
+          //   !receiver.includes(".") &&
+          //   !receiver.includes("@") &&
+          //   !isValidSolanaAddress(receiver)
+          // ) {
+          //   const url =
+          //     "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
+          //     receiver;
+          //   const response = await fetch(url);
+          //   const responseData = await response.json();
+          //   receiverPubkey = new PublicKey(
+          //     responseData.user.public_keys.find(
+          //       (key: any) => key.blockchain == "solana"
+          //     ).public_key
+          //   );
+          // }
+          else {
             receiverPubkey = new PublicKey(receiver);
           }
 
@@ -1117,22 +1121,24 @@ function CSV() {
                 const handle = receiver.replace("@", "");
                 const registry = await getTwitterRegistry(connection, handle);
                 receiverPubkey = registry.owner;
-              } else if (
-                !receiver.includes(".") &&
-                !receiver.includes("@") &&
-                !isValidSolanaAddress(receiver)
-              ) {
-                const url =
-                  "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
-                  receiver;
-                const response = await fetch(url);
-                const responseData = await response.json();
-                receiverPubkey = new PublicKey(
-                  responseData.user.public_keys.find(
-                    (key: any) => key.blockchain == "solana"
-                  ).public_key
-                );
-              } else {
+              }
+              // else if (
+              //   !receiver.includes(".") &&
+              //   !receiver.includes("@") &&
+              //   !isValidSolanaAddress(receiver)
+              // ) {
+              //   const url =
+              //     "https://xnft-api-server.xnfts.dev/v1/users/fromUsername?username=" +
+              //     receiver;
+              //   const response = await fetch(url);
+              //   const responseData = await response.json();
+              //   receiverPubkey = new PublicKey(
+              //     responseData.user.public_keys.find(
+              //       (key: any) => key.blockchain == "solana"
+              //     ).public_key
+              //   );
+              // }
+              else {
                 receiverPubkey = new PublicKey(receiver);
               }
 
