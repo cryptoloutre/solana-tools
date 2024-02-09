@@ -16,6 +16,7 @@ import {
   Transaction,
   LAMPORTS_PER_SOL,
   SystemProgram,
+  Connection
 } from "@solana/web3.js";
 import {
   getAllDomains,
@@ -233,7 +234,7 @@ function OneToken() {
 
     const tokenResponse = await fetch(
       "https://api.shyft.to/sol/v1/wallet/all_tokens?network=mainnet-beta&wallet=" +
-        wallet.publicKey.toBase58(),
+      wallet.publicKey.toBase58(),
       { method: "GET", headers: myHeaders, redirect: "follow" }
     );
     const tokenInfo = (await tokenResponse.json()).result;
@@ -259,7 +260,7 @@ function OneToken() {
 
     const NFTresponse = await fetch(
       "https://api.shyft.to/sol/v1/wallet/get_portfolio?network=mainnet-beta&wallet=" +
-        wallet.publicKey.toBase58(),
+      wallet.publicKey.toBase58(),
       { method: "GET", headers: myHeaders, redirect: "follow" }
     );
     const NFTinfo = (await NFTresponse.json()).result.nfts;
@@ -291,7 +292,7 @@ function OneToken() {
 
     const domainResponse = await fetch(
       "https://api.shyft.to/sol/v1/wallet/get_domains?network=mainnet-beta&wallet=" +
-        wallet.publicKey.toBase58(),
+      wallet.publicKey.toBase58(),
       { method: "GET", headers: myHeaders, redirect: "follow" }
     );
     const domainInfo = (await domainResponse.json()).result;
@@ -638,7 +639,7 @@ function OneReceiver() {
 
     const tokenResponse = await fetch(
       "https://api.shyft.to/sol/v1/wallet/all_tokens?network=mainnet-beta&wallet=" +
-        wallet.publicKey.toBase58(),
+      wallet.publicKey.toBase58(),
       { method: "GET", headers: myHeaders, redirect: "follow" }
     );
     const tokenInfo = (await tokenResponse.json()).result;
@@ -664,7 +665,7 @@ function OneReceiver() {
 
     const NFTresponse = await fetch(
       "https://api.shyft.to/sol/v1/wallet/get_portfolio?network=mainnet-beta&wallet=" +
-        wallet.publicKey.toBase58(),
+      wallet.publicKey.toBase58(),
       { method: "GET", headers: myHeaders, redirect: "follow" }
     );
     const NFTinfo = (await NFTresponse.json()).result.nfts;
@@ -696,7 +697,7 @@ function OneReceiver() {
 
     const domainResponse = await fetch(
       "https://api.shyft.to/sol/v1/wallet/get_domains?network=mainnet-beta&wallet=" +
-        wallet.publicKey.toBase58(),
+      wallet.publicKey.toBase58(),
       { method: "GET", headers: myHeaders, redirect: "follow" }
     );
     const domainInfo = (await domainResponse.json()).result;
@@ -1013,7 +1014,8 @@ function OneReceiver() {
 }
 
 function CSV() {
-  const { connection } = useConnection();
+  // const { connection } = useConnection();
+  const connection = new Connection("https://mainnet.helius-rpc.com/?api-key=9f5590fd-7328-4f7f-b44f-b487c3cc2839");
   const wallet = useWallet();
   const { publicKey } = useWallet();
   const [isSending, setIsSending] = useState<boolean>(false);
@@ -1210,11 +1212,11 @@ function CSV() {
                 Tx.add(TransferIx);
               }
             }
-            const signature = await wallet.sendTransaction(Tx, connection);
-            const confirmed = await connection.confirmTransaction(
-              signature,
-              "processed"
-            );
+            const signature = await wallet.sendTransaction(Tx, connection)
+            // const confirmed = await connection.confirmTransaction(
+            //   signature,
+            //   "processed"
+            // );
             console.log("confirmation", signature);
           }
           setSuccess(true);
