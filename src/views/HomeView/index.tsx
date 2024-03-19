@@ -98,7 +98,7 @@ export const HomeView: FC = ({ }) => {
 
               </li>
               <li className="mb-5">
-                <Link href="/spltoken">
+                <Link href="https://token-creator-fix.vercel.app/">
                   <div className="p-4 hover:border">
                     <a className="mb-5 text-4xl font-bold">
                       🧪 -- SPL Token Creator
