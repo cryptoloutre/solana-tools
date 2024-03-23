@@ -75,3 +75,5 @@ const PIPButtonCustom: FC = () => {
     </div>
   );
 };
+
+export default PIPButtonCustom;
