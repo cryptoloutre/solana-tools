@@ -32,9 +32,6 @@ const PIPButtonCustom: FC = () => {
               <label className="flex mb-[2px] font-semibold text-lg">Select Currency</label>
               <select className="mb-[10px] w-full text-black pl-1 border-2 border-black rounded-lg" value={currency} onChange={handleChange}>
                 <option className="font-semibold text-lg" value="SOL">SOL</option>
-                <option className="font-semibold text-lg" value="USDC">USDC</option>
-                <option className="font-semibold text-lg" value="PIP">PIP</option>
-                <option className="font-semibold text-lg" value="RAY">RAY</option>
               </select>
 
               <label className="flex mb-[2px] font-semibold text-lg">Amount</label>
