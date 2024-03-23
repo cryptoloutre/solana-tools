@@ -2,8 +2,7 @@ import { FC, useState } from "react";
 import styles from "./index.module.css";
 import { PIPButton } from "@getpip/react-pip-button";
 
-const PIPButtonCustom: FC = ({ }) => {...}
-export default PIPButtonCustom
+const PIPButtonCustom: FC = () => {
 
   const [isClicked, setIsClicked] = useState(false);
   const [tipAmount, setTipAmount] = useState('1');
@@ -15,8 +14,6 @@ export default PIPButtonCustom
   }
 
   return (
-
-
 
     <div>
       <button className="w-[169px] h-[50px] bg-[#1149ff] mb-[10px] hover:bg-[#0e3ed9] rounded-xl shadow-xl font-semibold text-lg" onClick={() => setIsClicked(true)}>
