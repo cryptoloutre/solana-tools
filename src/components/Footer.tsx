@@ -1,4 +1,4 @@
-import PIPButtonCustom from './PIPButtonCustom';
+import PIPButtonCustom from './PIPButtonCustom.tsx';
 const Footer = () => {
   return (
     <footer className="flex justify-center">
