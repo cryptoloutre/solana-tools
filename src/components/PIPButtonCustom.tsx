@@ -2,8 +2,8 @@ import { FC, useState } from "react";
 import styles from "./index.module.css";
 import { PIPButton } from "@getpip/react-pip-button";
 
-
-export const PIPButtonCustom: FC = ({ }) => {
+const PIPButtonCustom: FC = ({ }) => {...}
+export default PIPButtonCustom
 
   const [isClicked, setIsClicked] = useState(false);
   const [tipAmount, setTipAmount] = useState('1');
