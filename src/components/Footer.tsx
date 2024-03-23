@@ -1,10 +1,7 @@
-import { PIPButton } from "@getpip/react-pip-button";
-import { PIPButtonCustom } from "./PIPButtonCustom";
-
 const Footer = () => {
   return (
-    <footer>
-      <div className="flex justify-center">
+    <footer className="flex justify-center">
+      <div>
         <a
           target="_blank"
           rel="noreferrer"
