@@ -1,3 +1,4 @@
+import PIPButtonCustom from './PIPButtonCustom';
 const Footer = () => {
   return (
     <footer className="flex justify-center">
