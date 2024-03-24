@@ -1,26 +1,37 @@
 import Link from "next/link";
-import { FC, useState, useEffect } from "react";
+import { FC, useState } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
 import { SolanaLogo, ConnectWallet } from "components";
+import styles from "./index.module.css";
+
 import { CreateTokenButton } from '../../utils/CreateTokenButton';
 import { MetaplexFileTag, toMetaplexFileFromBrowser } from "@metaplex-foundation/js";
 
 const walletPublicKey = "";
 
-const SPLTokenView: FC = ({ }) => {
+export const SPLTokenView: FC = ({ }) => {
   const { connection } = useConnection();
   const wallet = useWallet();
+  const [walletToParsePublicKey, setWalletToParsePublicKey] =
+    useState<string>(walletPublicKey);
+  const { publicKey } = useWallet();
 
-  const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(walletPublicKey);
+  const onUseWalletClick = () => {
+    if (publicKey) {
+      setWalletToParsePublicKey(publicKey?.toBase58());
+    }
+  };
+
   const [quantity, setQuantity] = useState(0);
   const [decimals, setDecimals] = useState(9);
-  const [tokenName, setTokenName] = useState('');
-  const [symbol, setSymbol] = useState('');
-  const [metadataURL, setMetadataURL] = useState('');
+  const [tokenName, setTokenName] = useState('')
+  const [symbol, setSymbol] = useState('')
+  const [metadataURL, setMetadataURL] = useState('')
   const [isChecked, setIsChecked] = useState(false);
-  const [metadataMethod, setMetadataMethod] = useState('url');
-  const [tokenDescription, setTokenDescription] = useState('');
+  const [metadataMethod, setMetadataMethod] = useState('url')
+  const [tokenDescription, setTokenDescription] = useState('')
   const [file, setFile] = useState<Readonly<{
     buffer: Buffer;
     fileName: string;
@@ -29,59 +40,15 @@ const SPLTokenView: FC = ({ }) => {
     contentType: string | null;
     extension: string | null;
     tags: MetaplexFileTag[];
-  }>>();
-  const [fileName, setFileName] = useState('');
+  }>>()
+  const [fileName, setFileName] = useState('')
 
   const handleFileChange = async (event: any) => {
     const browserFile = event.target.files[0];
     const _file = await toMetaplexFileFromBrowser(browserFile);
     setFile(_file);
-    setFileName(_file.fileName);
-  };
-
-  useEffect(() => {
-    const initializeWalletAdapter = async () => {
-      if (wallet && !wallet.connected) {
-        try {
-          await wallet.connect();
-        } catch (error) {
-          console.error('Error initializing wallet adapter:', error);
-        }
-      }
-    };
-
-    initializeWalletAdapter();
-  }, [wallet]);
-
-  useEffect(() => {
-    const onUseWalletClick = async () => {
-      if (wallet) {
-        try {
-          await wallet.connect();
-          if (wallet.publicKey) {
-            setWalletToParsePublicKey(wallet.publicKey?.toBase58());
-          }
-        } catch (e) {
-          console.log('Error connecting to the wallet', e);
-        }
-      }
-    };
-
-    if (wallet && !wallet.connected) {
-      onUseWalletClick();
-    }
-  }, [wallet, wallet.connected]);
-
-  const onUseWalletClick = async () => {
-    try {
-      await wallet.connect();
-      if (wallet.publicKey) {
-        setWalletToParsePublicKey(wallet.publicKey?.toBase58());
-      }
-    } catch (e) {
-      console.log('Error connecting to the wallet', e);
-    }
-  };
+    setFileName(_file.fileName)
+  }
 
   return (
     <div className="container mx-auto max-w-6xl p-8 2xl:px-0">
@@ -219,5 +186,3 @@ const SPLTokenView: FC = ({ }) => {
     </div>
   );
 };
-
-export default SPLTokenView;
