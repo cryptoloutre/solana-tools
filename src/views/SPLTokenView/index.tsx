@@ -18,14 +18,37 @@ const SPLTokenView: FC = ({ }) => {
     walletPublicKey
   );
   const { publicKey } = useWallet();
+  
+  const [quantity, setQuantity] = useState(0);
+  const [decimals, setDecimals] = useState(9);
+  const [tokenName, setTokenName] = useState('');
+  const [symbol, setSymbol] = useState('');
+  const [metadataURL, setMetadataURL] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
+  const [metadataMethod, setMetadataMethod] = useState('url');
+  const [tokenDescription, setTokenDescription] = useState('');
+  const [file, setFile] = useState<Readonly<{
+    buffer: Buffer;
+    fileName: string;
+    displayName: string;
+    uniqueName: string;
+    contentType: string | null;
+    extension: string | null;
+    tags: MetaplexFileTag[];
+  }>>();
+  const [fileName, setFileName] = useState('');
 
+  const handleFileChange = async (event: any) => {
+    const browserFile = event.target.files[0];
+    const _file = await toMetaplexFileFromBrowser(browserFile);
+    setFile(_file);
+    setFileName(_file.fileName);
+  };
   useEffect(() => {
     const initializeWalletAdapter = async () => {
       if (wallet && !wallet.connected) {
         try {
           await wallet.connect();
-          console.log('Wallet adapter initialized successfully');
-          //...
         } catch (error) {
           console.error('Error initializing wallet adapter:', error);
         }
@@ -37,18 +60,23 @@ const SPLTokenView: FC = ({ }) => {
 
   useEffect(() => {
     const onUseWalletClick = async () => {
-      try {
-        await wallet.connect();
-        if (wallet.publicKey) {
-          setWalletToParsePublicKey(wallet.publicKey?.toBase58());
+      if (wallet) {
+        try {
+          await wallet.connect();
+          if (wallet.publicKey) {
+            setWalletToParsePublicKey(wallet.publicKey?.toBase58());
+          }
+        } catch (e) {
+          console.log('Error connecting to the wallet', e);
         }
-      } catch (e) {
-        console.log('Error connecting to the wallet', e);
       }
     };
-    onUseWalletClick();
-  }, [wallet.connected]);
-};
+
+    if (wallet && !wallet.connected) {
+      onUseWalletClick();
+    }
+  }, [wallet, wallet.connected]);
+  
 export default SPLTokenView;
 
   const onUseWalletClick = async () => {
