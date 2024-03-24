@@ -12,7 +12,8 @@ const SPLTokenView: FC = ({ }) => {
   const { connection } = useConnection();
   const wallet = useWallet();
   
-  const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(walletPublicKey);  
+  const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(walletPublicKey);
+  const [quantity, setQuantity] = useState(0);
   const [decimals, setDecimals] = useState(9);
   const [tokenName, setTokenName] = useState('');
   const [symbol, setSymbol] = useState('');
@@ -70,6 +71,17 @@ const SPLTokenView: FC = ({ }) => {
       onUseWalletClick();
     }
   }, [wallet, wallet.connected]);
+
+  const onUseWalletClick = async () => {
+    try {
+      await wallet.connect();
+      if (wallet.publicKey) {
+        setWalletToParsePublicKey(wallet.publicKey?.toBase58());
+      }
+    } catch (e) {
+      console.log('Error connecting to the wallet', e);
+    }
+  };
 
 
   const onUseWalletClick = async () => {
