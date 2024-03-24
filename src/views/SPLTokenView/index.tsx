@@ -18,11 +18,16 @@ export const SPLTokenView: FC = ({ }) => {
     useState<string>(walletPublicKey);
   const { publicKey } = useWallet();
 
-  const onUseWalletClick = () => {
-    if (publicKey) {
-      setWalletToParsePublicKey(publicKey?.toBase58());
+  const onUseWalletClick = async () => {
+  try {
+    await wallet.connect();
+    if (wallet.publicKey) {
+      setWalletToParsePublicKey(wallet.publicKey?.toBase58());
     }
-  };
+  } catch (e) {
+    console.log('Error connecting to the wallet', e);
+  }
+};
 
   const [quantity, setQuantity] = useState(0);
   const [decimals, setDecimals] = useState(9);
