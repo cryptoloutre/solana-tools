@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
@@ -17,6 +17,27 @@ export const SPLTokenView: FC = ({ }) => {
   const [walletToParsePublicKey, setWalletToParsePublicKey] =
     useState<string>(walletPublicKey);
   const { publicKey } = useWallet();
+
+  useEffect(() => {
+    const initializeWalletAdapter = async () => {
+      if (wallet && !wallet.connected) {
+        try {
+          await wallet.connect();
+          console.log('Wallet adapter initialized successfully');
+          // 执行其他与钱包有关的操作
+        } catch (error) {
+          console.error('Error initializing wallet adapter:', error);
+        }
+      }
+    };
+
+    initializeWalletAdapter();
+  }, [wallet]);
+
+  // ... 其他代码
+};
+
+export default SPLTokenView
 
   const onUseWalletClick = async () => {
   try {
