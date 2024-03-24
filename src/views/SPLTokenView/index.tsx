@@ -13,7 +13,6 @@ const SPLTokenView: FC = ({ }) => {
   const wallet = useWallet();
   
   const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(walletPublicKey);  
-  const [quantity, setQuantity] = useState(0);
   const [decimals, setDecimals] = useState(9);
   const [tokenName, setTokenName] = useState('');
   const [symbol, setSymbol] = useState('');
