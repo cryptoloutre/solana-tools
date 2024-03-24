@@ -2,16 +2,14 @@ import Link from "next/link";
 import { FC, useState, useEffect } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-
 import { SolanaLogo, ConnectWallet } from "components";
 import styles from "./index.module.css";
-
 import { CreateTokenButton } from '../../utils/CreateTokenButton';
 import { MetaplexFileTag, toMetaplexFileFromBrowser } from "@metaplex-foundation/js";
 
 const walletPublicKey = "";
 
-const SPLTokenView: FC = ({ }) => {
+const SPLTokenView: FC = () => {
   const { connection } = useConnection();
   const wallet = useWallet();
   const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(
@@ -19,13 +17,38 @@ const SPLTokenView: FC = ({ }) => {
   );
   const { publicKey } = useWallet();
 
+  const [quantity, setQuantity] = useState(0);
+  const [decimals, setDecimals] = useState(9);
+  const [tokenName, setTokenName] = useState('');
+  const [symbol, setSymbol] = useState('');
+  const [metadataURL, setMetadataURL] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
+  const [metadataMethod, setMetadataMethod] = useState('url');
+  const [tokenDescription, setTokenDescription] = useState('');
+  const [file, setFile] = useState<Readonly<{
+    buffer: Buffer;
+    fileName: string;
+    displayName: string;
+    uniqueName: string;
+    contentType: string | null;
+    extension: string | null;
+    tags: MetaplexFileTag[];
+  }>>();
+  const [fileName, setFileName] = useState('');
+
+  const handleFileChange = async (event: any) => {
+    const browserFile = event.target.files[0];
+    const _file = await toMetaplexFileFromBrowser(browserFile);
+    setFile(_file);
+    setFileName(_file.fileName);
+  };
+
   useEffect(() => {
     const initializeWalletAdapter = async () => {
       if (wallet && !wallet.connected) {
         try {
           await wallet.connect();
           console.log('Wallet adapter initialized successfully');
-          //...
         } catch (error) {
           console.error('Error initializing wallet adapter:', error);
         }
@@ -48,9 +71,6 @@ const SPLTokenView: FC = ({ }) => {
     };
     onUseWalletClick();
   }, [wallet.connected]);
-
-  //...
-};
 
 export default SPLTokenView;
 
