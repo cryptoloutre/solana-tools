@@ -11,11 +11,12 @@ import { MetaplexFileTag, toMetaplexFileFromBrowser } from "@metaplex-foundation
 
 const walletPublicKey = "";
 
-export const SPLTokenView: FC = ({ }) => {
+const SPLTokenView: FC = ({ }) => {
   const { connection } = useConnection();
   const wallet = useWallet();
-  const [walletToParsePublicKey, setWalletToParsePublicKey] =
-    useState<string>(walletPublicKey);
+  const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(
+    walletPublicKey
+  );
   const { publicKey } = useWallet();
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export const SPLTokenView: FC = ({ }) => {
         try {
           await wallet.connect();
           console.log('Wallet adapter initialized successfully');
-          // 执行其他与钱包有关的操作
+          //...
         } catch (error) {
           console.error('Error initializing wallet adapter:', error);
         }
@@ -34,10 +35,24 @@ export const SPLTokenView: FC = ({ }) => {
     initializeWalletAdapter();
   }, [wallet]);
 
-  // ... 其他代码
+  useEffect(() => {
+    const onUseWalletClick = async () => {
+      try {
+        await wallet.connect();
+        if (wallet.publicKey) {
+          setWalletToParsePublicKey(wallet.publicKey?.toBase58());
+        }
+      } catch (e) {
+        console.log('Error connecting to the wallet', e);
+      }
+    };
+    onUseWalletClick();
+  }, [wallet.connected]);
+
+  //...
 };
 
-export default SPLTokenView
+export default SPLTokenView;
 
   const onUseWalletClick = async () => {
   try {
