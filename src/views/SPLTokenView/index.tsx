@@ -4,7 +4,6 @@ import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 import { SolanaLogo, ConnectWallet } from "components";
-import styles from "./index.module.css";
 
 import { CreateTokenButton } from '../../utils/CreateTokenButton';
 import { MetaplexFileTag, toMetaplexFileFromBrowser } from "@metaplex-foundation/js";
@@ -14,10 +13,9 @@ const walletPublicKey = "";
 const SPLTokenView: FC = ({ }) => {
   const { connection } = useConnection();
   const wallet = useWallet();
-  const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(
-    walletPublicKey
-  );
   const { publicKey } = useWallet();
+  
+  const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(walletPublicKey);
   
   const [quantity, setQuantity] = useState(0);
   const [decimals, setDecimals] = useState(9);
@@ -44,6 +42,7 @@ const SPLTokenView: FC = ({ }) => {
     setFile(_file);
     setFileName(_file.fileName);
   };
+
   useEffect(() => {
     const initializeWalletAdapter = async () => {
       if (wallet && !wallet.connected) {
@@ -76,8 +75,7 @@ const SPLTokenView: FC = ({ }) => {
       onUseWalletClick();
     }
   }, [wallet, wallet.connected]);
-  
-export default SPLTokenView;
+
 
   const onUseWalletClick = async () => {
   try {
@@ -252,3 +250,5 @@ export default SPLTokenView;
     </div>
   );
 };
+
+export default SPLTokenView;
