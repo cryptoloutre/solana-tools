@@ -11,7 +11,7 @@ const walletPublicKey = "";
 const SPLTokenView: FC = ({ }) => {
   const { connection } = useConnection();
   const wallet = useWallet();
-  
+
   const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(walletPublicKey);
   const [quantity, setQuantity] = useState(0);
   const [decimals, setDecimals] = useState(9);
