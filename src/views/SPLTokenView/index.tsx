@@ -83,44 +83,6 @@ const SPLTokenView: FC = ({ }) => {
     }
   };
 
-
-  const onUseWalletClick = async () => {
-  try {
-    await wallet.connect();
-    if (wallet.publicKey) {
-      setWalletToParsePublicKey(wallet.publicKey?.toBase58());
-    }
-  } catch (e) {
-    console.log('Error connecting to the wallet', e);
-  }
-};
-
-  const [quantity, setQuantity] = useState(0);
-  const [decimals, setDecimals] = useState(9);
-  const [tokenName, setTokenName] = useState('')
-  const [symbol, setSymbol] = useState('')
-  const [metadataURL, setMetadataURL] = useState('')
-  const [isChecked, setIsChecked] = useState(false);
-  const [metadataMethod, setMetadataMethod] = useState('url')
-  const [tokenDescription, setTokenDescription] = useState('')
-  const [file, setFile] = useState<Readonly<{
-    buffer: Buffer;
-    fileName: string;
-    displayName: string;
-    uniqueName: string;
-    contentType: string | null;
-    extension: string | null;
-    tags: MetaplexFileTag[];
-  }>>()
-  const [fileName, setFileName] = useState('')
-
-  const handleFileChange = async (event: any) => {
-    const browserFile = event.target.files[0];
-    const _file = await toMetaplexFileFromBrowser(browserFile);
-    setFile(_file);
-    setFileName(_file.fileName)
-  }
-
   return (
     <div className="container mx-auto max-w-6xl p-8 2xl:px-0">
       <div className={styles.container}>
