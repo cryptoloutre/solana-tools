@@ -2,9 +2,7 @@ import Link from "next/link";
 import { FC, useState, useEffect } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-
 import { SolanaLogo, ConnectWallet } from "components";
-
 import { CreateTokenButton } from '../../utils/CreateTokenButton';
 import { MetaplexFileTag, toMetaplexFileFromBrowser } from "@metaplex-foundation/js";
 
@@ -13,10 +11,8 @@ const walletPublicKey = "";
 const SPLTokenView: FC = ({ }) => {
   const { connection } = useConnection();
   const wallet = useWallet();
-  const { publicKey } = useWallet();
   
-  const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(walletPublicKey);
-  
+  const [walletToParsePublicKey, setWalletToParsePublicKey] = useState<string>(walletPublicKey);  
   const [quantity, setQuantity] = useState(0);
   const [decimals, setDecimals] = useState(9);
   const [tokenName, setTokenName] = useState('');
