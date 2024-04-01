@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Link from "next/link";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
