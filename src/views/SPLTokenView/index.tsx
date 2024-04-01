@@ -132,7 +132,11 @@ export const SPLTokenView: FC = ({ }) => {
                     }
 
 
-<div className="flex justify-center mb-4">
+
+
+                    <div className="mt-5 mb-2 uppercase underline flex font-bold text-2xl">Authority</div>
+
+                    <div className="flex justify-center mb-4">
   <label className="mx-2">Disable mint authority</label>
   <input className="mx-2"
     type="checkbox"
@@ -140,8 +144,7 @@ export const SPLTokenView: FC = ({ }) => {
     onChange={(e) => setIsMintDisabled(e.target.checked)}
   />
 </div>
-
-                    <div className="mt-5 mb-2 uppercase underline flex font-bold text-2xl">Authority</div>
+                    
                     <div className="flex justify-center mb-4">
                       <label className="mx-2">Enable freeze authority</label>
                       <input className="mx-2"
