@@ -30,6 +30,7 @@ export const SPLTokenView: FC = ({ }) => {
   const [symbol, setSymbol] = useState('')
   const [metadataURL, setMetadataURL] = useState('')
   const [isChecked, setIsChecked] = useState(false);
+  const [isMintDisabled, setIsMintDisabled] = useState(false);
   const [metadataMethod, setMetadataMethod] = useState('url')
   const [tokenDescription, setTokenDescription] = useState('')
   const [file, setFile] = useState<Readonly<{
