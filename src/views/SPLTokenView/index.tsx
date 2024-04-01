@@ -59,7 +59,7 @@ export const SPLTokenView: FC = ({ }) => {
               <ul className="text-xs sm:text-xl">
                 <li>
                   <Link href="/">
-                    <a>SOLANA-TOOLS</a>
+                    <a>SOLANA</a>
                   </Link>
                 </li>
               </ul>
@@ -76,7 +76,7 @@ export const SPLTokenView: FC = ({ }) => {
             <div className="text-center hero-content w-full">
               <div className="w-full">
                 <h1 className="mb-5 text-5xl">
-                  Create Solana <SolanaLogo /> token
+                  Create Solana token
                 </h1>
 
                 <div className="md:w-[600px] mx-auto">
