@@ -1,5 +1,6 @@
+import React, { useState } from 'react';
 import Link from "next/link";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
@@ -30,6 +31,7 @@ export const SPLTokenView: FC = ({ }) => {
   const [symbol, setSymbol] = useState('')
   const [metadataURL, setMetadataURL] = useState('')
   const [isChecked, setIsChecked] = useState(false);
+  const [isMintDisabled, setIsMintDisabled] = useState(false);
   const [metadataMethod, setMetadataMethod] = useState('url')
   const [tokenDescription, setTokenDescription] = useState('')
   const [file, setFile] = useState<Readonly<{
@@ -59,7 +61,7 @@ export const SPLTokenView: FC = ({ }) => {
               <ul className="text-xs sm:text-xl">
                 <li>
                   <Link href="/">
-                    <a>SOLANA-TOOLS</a>
+                    <a>SOLANA</a>
                   </Link>
                 </li>
               </ul>
@@ -76,7 +78,7 @@ export const SPLTokenView: FC = ({ }) => {
             <div className="text-center hero-content w-full">
               <div className="w-full">
                 <h1 className="mb-5 text-5xl">
-                  Create Solana <SolanaLogo /> token
+                  Create Solana Token
                 </h1>
 
                 <div className="md:w-[600px] mx-auto">
@@ -114,17 +116,7 @@ export const SPLTokenView: FC = ({ }) => {
                     />
 
 
-                    <div className="mt-5 mb-2 uppercase underline flex font-bold text-2xl">Metadatas</div>
-                    <div className="flex justify-center">
-                      {metadataMethod == 'url' ?
-                        <button className="text-white mx-2  font-semibold bg-[#343e4f] md:w-[280px] rounded-full shadow-xl border">Use an existing medatata URL</button>
-                        : <button className="text-white mx-2  font-semibold bg-[#667182] md:w-[280px] rounded-full shadow-xl border" onClick={() => { setMetadataMethod('url'), setTokenDescription('') }}>Use an existing medatata URL</button>
-                      }
-                      {metadataMethod == 'upload' ?
-                        <button className="text-white mx-2 font-semibold bg-[#343e4f] md:w-[200px] rounded-full shadow-xl border">Create the metadata</button>
-                        : <button className="text-white mx-2 font-semibold bg-[#667182] md:w-[200px] rounded-full shadow-xl border" onClick={() => { setMetadataMethod('upload'), setMetadataURL(''), setFile(undefined), setFileName('') }}>Create the metadata</button>}
-                    </div>
-
+    
                     {metadataMethod == 'url' &&
                       <div>
                         <div>
@@ -139,34 +131,20 @@ export const SPLTokenView: FC = ({ }) => {
                       </div>
                     }
 
-                    {metadataMethod == 'upload' &&
-                      <div>
-                        <div>
-                          <label className="underline mt-2 flex font-bold">Description</label>
-                          <input className="my-[1%] md:w-[480px] text-left text-black pl-1 border-2 rounded-2xl border-black"
-                            type="text"
-                            placeholder="Description of the token/project"
-                            onChange={(e) => setTokenDescription(e.target.value)}
-                          />
-                        </div>
-                        <div>
-                          <label className="underline mt-2 flex font-bold">Image</label>
-                          <label htmlFor="file" className="text-white font-semibold rounded-full shadow-xl bg-[#414e63] border px-2 py-1 h-[40px] uppercase hover:bg-[#2C3B52] hover:cursor-pointer">
-                            Upload image
-                            <input
-                              id="file"
-                              type="file"
-                              name="file"
-                              accept="image/*, video/*"
-                              onChange={handleFileChange}
-                              style={{ display: 'none' }} />
-                          </label>
-                          {fileName != '' && <div className="mt-2" >{fileName}</div>}
-                        </div>
-                      </div>
-                    }
+
+
 
                     <div className="mt-5 mb-2 uppercase underline flex font-bold text-2xl">Authority</div>
+
+                    <div className="flex justify-center mb-4">
+  <label className="mx-2">Disable mint authority</label>
+  <input className="mx-2"
+    type="checkbox"
+    checked={isMintDisabled}
+    onChange={(e) => setIsMintDisabled(e.target.checked)}
+  />
+</div>
+                    
                     <div className="flex justify-center mb-4">
                       <label className="mx-2">Enable freeze authority</label>
                       <input className="mx-2"
