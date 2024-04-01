@@ -129,32 +129,7 @@ export const SPLTokenView: FC = ({ }) => {
                       </div>
                     }
 
-                    {metadataMethod == 'upload' &&
-                      <div>
-                        <div>
-                          <label className="underline mt-2 flex font-bold">Description</label>
-                          <input className="my-[1%] md:w-[480px] text-left text-black pl-1 border-2 rounded-2xl border-black"
-                            type="text"
-                            placeholder="Description of the token/project"
-                            onChange={(e) => setTokenDescription(e.target.value)}
-                          />
-                        </div>
-                        <div>
-                          <label className="underline mt-2 flex font-bold">Image</label>
-                          <label htmlFor="file" className="text-white font-semibold rounded-full shadow-xl bg-[#414e63] border px-2 py-1 h-[40px] uppercase hover:bg-[#2C3B52] hover:cursor-pointer">
-                            Upload image
-                            <input
-                              id="file"
-                              type="file"
-                              name="file"
-                              accept="image/*, video/*"
-                              onChange={handleFileChange}
-                              style={{ display: 'none' }} />
-                          </label>
-                          {fileName != '' && <div className="mt-2" >{fileName}</div>}
-                        </div>
-                      </div>
-                    }
+                  
 
                     <div className="mt-5 mb-2 uppercase underline flex font-bold text-2xl">Authority</div>
                     <div className="flex justify-center mb-4">
