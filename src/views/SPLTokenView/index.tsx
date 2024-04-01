@@ -76,7 +76,7 @@ export const SPLTokenView: FC = ({ }) => {
             <div className="text-center hero-content w-full">
               <div className="w-full">
                 <h1 className="mb-5 text-5xl">
-                  Create Solana token
+                  Create Solana Token
                 </h1>
 
                 <div className="md:w-[600px] mx-auto">
@@ -114,17 +114,7 @@ export const SPLTokenView: FC = ({ }) => {
                     />
 
 
-                    <div className="mt-5 mb-2 uppercase underline flex font-bold text-2xl">Metadatas</div>
-                    <div className="flex justify-center">
-                      {metadataMethod == 'url' ?
-                        <button className="text-white mx-2  font-semibold bg-[#343e4f] md:w-[280px] rounded-full shadow-xl border">Use an existing medatata URL</button>
-                        : <button className="text-white mx-2  font-semibold bg-[#667182] md:w-[280px] rounded-full shadow-xl border" onClick={() => { setMetadataMethod('url'), setTokenDescription('') }}>Use an existing medatata URL</button>
-                      }
-                      {metadataMethod == 'upload' ?
-                        <button className="text-white mx-2 font-semibold bg-[#343e4f] md:w-[200px] rounded-full shadow-xl border">Create the metadata</button>
-                        : <button className="text-white mx-2 font-semibold bg-[#667182] md:w-[200px] rounded-full shadow-xl border" onClick={() => { setMetadataMethod('upload'), setMetadataURL(''), setFile(undefined), setFileName('') }}>Create the metadata</button>}
-                    </div>
-
+    
                     {metadataMethod == 'url' &&
                       <div>
                         <div>
