@@ -31,6 +31,7 @@ import {
 import Papa from "papaparse";
 import { TldParser } from "@onsol/tldparser";
 import { Metaplex } from "@metaplex-foundation/js";
+import { endpoint } from "pages/_app";
 
 const walletPublicKey = "";
 
@@ -1015,7 +1016,7 @@ function OneReceiver() {
 
 function CSV() {
   // const { connection } = useConnection();
-  const connection = new Connection("https://mainnet.helius-rpc.com/?api-key=9f5590fd-7328-4f7f-b44f-b487c3cc2839");
+  const connection = new Connection(endpoint);
   const wallet = useWallet();
   const { publicKey } = useWallet();
   const [isSending, setIsSending] = useState<boolean>(false);
