@@ -38,7 +38,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.5.4",
-    "zustand": "^3.6.9"
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
