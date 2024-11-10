@@ -1,36 +1,33 @@
-import React from "react";
-import type { AppProps } from "next/app";
-import dynamic from "next/dynamic";
-import { ConnectionProvider } from "@solana/wallet-adapter-react";
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import { FC } from 'react';
+import { ContextProvider } from '../contexts/ContextProvider';
+import { AppBar } from '../components/AppBar';
+import { ContentContainer } from '../components/ContentContainer';
+import { Footer } from '../components/Footer';
+import Notifications from '../components/Notification'
+require('@solana/wallet-adapter-react-ui/styles.css');
+require('../styles/globals.css');
 
-import "tailwindcss/tailwind.css";
-import "../styles/globals.css";
-import "../styles/App.css";
+const App: FC<AppProps> = ({ Component, pageProps }) => {
+    return (
+        <>
+          <Head>
+            <title>Solana Scaffold Lite</title>
+          </Head>
 
-// set custom RPC server endpoint for the final website
-// const endpoint = "https://api.devnet.solana.com";
-// const endpoint = "http://127.0.0.1:8899";
-// const endpoint = "https://ssc-dao.genesysgo.net";
-// const endpoint = "https://solana-api.projectserum.com";
-//  const endpoint = "https://api.mainnet-beta.solana.com";
- export const endpoint = "https://mainnet.helius-rpc.com/?api-key=0b3f0a68-87a6-4154-af64-fe9b95454ac9";
-// const endpoint = "https://try-rpc.mainnet.solana.blockdaemon.tech";
+          <ContextProvider>
+            <div className="flex flex-col h-screen">
+              <Notifications />
+              <AppBar/>
+              <ContentContainer>
+                <Component {...pageProps} />
+                <Footer/>
+              </ContentContainer>
+            </div>
+          </ContextProvider>
+        </>
+    );
+};
 
-const WalletProvider = dynamic(
-  () => import("../contexts/ClientWalletProvider"),
-  {
-    ssr: false,
-  }
-);
-
-function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider autoConnect={true}>
-        <Component {...pageProps} />
-      </WalletProvider>
-    </ConnectionProvider>
-  );
-}
-
-export default MyApp;
+export default App;

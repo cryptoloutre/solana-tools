@@ -1,11 +1,5 @@
-export { HomeView } from "./HomeView";
-export { BurnNFTView } from "./BurnNFTView";
-export { SPLTokenView } from "./SPLTokenView";
-export { UploadView } from "./UploadView";
-export { SUATMMView } from "./SUATM²View";
-export { MultiSenderView } from "./MultiSenderView"
-export { BurnSPLView } from "./BurnSPLView"
-export { CloseAccountView } from "./CloseAccountView"
-export { UpdateNFTMetadataView } from "./UpdateNFTMetadataView";
-export { RevokeView } from "./RevokeView";
-export { CreateNFTCollectionView } from "./CreateNFTCollectionView";
+export { HomeView } from "./home";
+export { CreateView } from "./create";
+export { CloseView } from "./close";
+export { BurnView } from "./burn";
+export { UploadView } from "./upload";
