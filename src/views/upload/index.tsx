@@ -142,7 +142,7 @@ export const UploadView: FC = ({ }) => {
             <div className="flex justify-center">
               {uri !== '' &&
                 <div className="font-semibold text-xl mb-[2%]">
-                  ✅ Successfuly uploaded! <br />Don't forget to copy the following link:
+                  ✅ Successfuly uploaded! <br />Don&apos;t forget to copy the following link:
                 </div>
               }
             </div>
