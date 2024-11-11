@@ -29,7 +29,7 @@ export const AppBar: React.FC = () => {
         {/* Nav Links */}
         {/* Wallet & Settings */}
         <div className="navbar-end">
-          <div className="hidden md:inline-flex align-items-center justify-items gap-6">
+          <div className="hidden md:inline-flex items-center justify-items gap-4">
           <NavElement
             label="Home"
             href="/"
