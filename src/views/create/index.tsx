@@ -217,12 +217,12 @@ export const CreateView: FC = ({ }) => {
             </div>
             <div className="flex justify-center">
               {metadataMethod == "url" ? (
-                <button className="text-white mx-2  font-semibold bg-[#343e4f] md:w-[280px] rounded-full shadow-xl border">
+                <button className="mx-2 py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl font-semibold shadow-xl md:w-[280px]">
                   Use an existing medatata URL
                 </button>
               ) : (
                 <button
-                  className="text-white mx-2  font-semibold bg-[#667182] md:w-[280px] rounded-full shadow-xl border"
+                  className="mx-2 py-1 px-2 bg-[#4f4b48] border border-[#c8ab6e] rounded-xl font-semibold shadow-xl md:w-[280px]"
                   onClick={() => {
                     setMetadataMethod("url"), setTokenDescription("");
                   }}
@@ -231,12 +231,12 @@ export const CreateView: FC = ({ }) => {
                 </button>
               )}
               {metadataMethod == "upload" ? (
-                <button className="text-white mx-2 font-semibold bg-[#343e4f] md:w-[200px] rounded-full shadow-xl border">
+                <button className="mx-2 py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl font-semibold shadow-xl md:w-[200px]">
                   Create the metadata
                 </button>
               ) : (
                 <button
-                  className="text-white mx-2 font-semibold bg-[#667182] md:w-[200px] rounded-full shadow-xl border"
+                  className="mx-2 py-1 px-2 bg-[#4f4b48] border border-[#c8ab6e] rounded-xl font-semibold shadow-xl md:w-[200px]"
                   onClick={() => {
                     setMetadataMethod("upload"),
                       setMetadataURL(""),
@@ -279,22 +279,24 @@ export const CreateView: FC = ({ }) => {
                   />
                 </div>
                 <div>
-                  <label className="underline mt-2 flex font-bold">Image</label>
-                  <label
-                    htmlFor="file"
-                    className="text-white font-semibold rounded-full shadow-xl bg-[#414e63] border px-2 py-1 h-[40px] uppercase hover:bg-[#2C3B52] hover:cursor-pointer"
-                  >
-                    Upload image
-                    <input
-                      id="file"
-                      type="file"
-                      name="file"
-                      accept="image/*, video/*"
-                      onChange={handleFileChange}
-                      style={{ display: "none" }}
-                    />
-                  </label>
-                  {fileName != "" && <div className="mt-2">{fileName}</div>}
+                  <label className="underline mt-2 flex font-bold mb-2">Image</label>
+                  <div className="flex justify-center">
+                    <label
+                      htmlFor="file"
+                      className="mx-2 py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl text-white font-semibold shadow-xl uppercase hover:cursor-pointer"
+                    >
+                      Upload image
+                      <input
+                        id="file"
+                        type="file"
+                        name="file"
+                        accept="image/*, video/*"
+                        onChange={handleFileChange}
+                        style={{ display: "none" }}
+                      />
+                    </label>
+                  </div>
+                  {fileName != "" && <div className="mt-2 flex justify-center">{fileName}</div>}
                 </div>
               </div>
             )}
@@ -324,7 +326,7 @@ export const CreateView: FC = ({ }) => {
 
           <div className="flex justify-center">
             {iscreating ? (
-              <button className="font-bold px-4 py-2 bg-[#445566] rounded-xl hover:scale-110">
+              <button className="mx-2 font-bold text-lg py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl">
                 <svg
                   role="status"
                   className="inline mr-3 w-4 h-4 text-white animate-spin"
@@ -345,7 +347,7 @@ export const CreateView: FC = ({ }) => {
               </button>
             ) : (
               <button
-                className="font-bold px-4 py-2 bg-[#445566] rounded-xl hover:scale-110"
+                className="mx-2 font-bold text-lg py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl"
                 onClick={create}
               >
                 Create Token
