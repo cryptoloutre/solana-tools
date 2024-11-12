@@ -35,18 +35,18 @@ export const CreateView: FC = ({ }) => {
     setConnection(connection)
   }, [networkConfig]);
 
-  const [quantity, setQuantity] = useState(0);
-  const [decimals, setDecimals] = useState(9);
-  const [tokenName, setTokenName] = useState("");
-  const [symbol, setSymbol] = useState("");
-  const [metadataURL, setMetadataURL] = useState("");
-  const [isChecked, setIsChecked] = useState(false);
-  const [disableMintIsChecked, setDisableMintIsChecked] = useState(false);
-  const [metadataMethod, setMetadataMethod] = useState("url");
-  const [tokenDescription, setTokenDescription] = useState("");
+  const [quantity, setQuantity] = useState<number>(0);
+  const [decimals, setDecimals] = useState<number>(9);
+  const [tokenName, setTokenName] = useState<string>("");
+  const [symbol, setSymbol] = useState<string>("");
+  const [metadataURL, setMetadataURL] = useState<string>("");
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [disableMintIsChecked, setDisableMintIsChecked] = useState<boolean>(false);
+  const [metadataMethod, setMetadataMethod] = useState<string>("url");
+  const [tokenDescription, setTokenDescription] = useState<string>("");
   const [file, setFile] = useState<GenericFile>();
-  const [fileName, setFileName] = useState("");
-  const [iscreating, setIscreating] = useState(false);
+  const [fileName, setFileName] = useState<string>("");
+  const [iscreating, setIscreating] = useState<boolean>(false);
 
   const handleFileChange = async (event: any) => {
     const browserFile = event.target.files[0];

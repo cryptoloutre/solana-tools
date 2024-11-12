@@ -12,6 +12,10 @@ import { ADD_COMPUTE_UNIT_LIMIT_CU, ADD_COMPUTE_UNIT_PRICE_CU, CLOSE_ACCOUNT_CU 
 import { AUTHORITY } from "config";
 import { notify } from "utils/notifications";
 import { getTotalLamports } from "utils/getTotalLamports";
+import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
+import { fetchAllDigitalAssetByOwner, mplTokenMetadata, TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
+import { Pda, publicKey } from "@metaplex-foundation/umi";
+import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
 
 export const CloseView: FC = ({ }) => {
   const wallet = useWallet();
@@ -20,11 +24,35 @@ export const CloseView: FC = ({ }) => {
   const networkSelected = networkConfig.networkConfiguration;
 
   const [connection, setConnection] = useState<Connection>();
-  const [emptyAccounts, setEmptyAccounts] = useState<{ account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number }[]>([]);
-  const [assetsSelected, setAssetSelected] = useState<{ account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number }[]>([]);
-  const [isClosing, setIsClosing] = useState(false);
-  const [isFetched, setIsFetched] = useState(false);
+  const [emptyAccounts, setEmptyAccounts] = useState<{
+    account: PublicKey,
+    program: PublicKey,
+    image: string,
+    name: string,
+    mint: string,
+    lamports: number,
+    amount: number,
+    tokenStandard: TokenStandard,
+    collectionMetadata: Pda | undefined,
+    tokenRecord: Pda | undefined
+  }[]>([]);
+  const [assetsSelected, setAssetSelected] = useState<{
+    account: PublicKey,
+    program: PublicKey,
+    image: string,
+    name: string,
+    mint: string,
+    lamports: number,
+    amount: number,
+    tokenStandard: TokenStandard,
+    collectionMetadata: Pda | undefined,
+    tokenRecord: Pda | undefined
+  }[]>([]);
+  const [isClosing, setIsClosing] = useState<boolean>(false);
+  const [isFetched, setIsFetched] = useState<boolean>(false);
   const [totalLamports, setTotalLamports] = useState<number>();
+  const [page, setPage] = useState<number>(0);
+  const assetsPerPage = 12;
 
   const nbPerTx = 20;
 
@@ -54,7 +82,11 @@ export const CloseView: FC = ({ }) => {
         emptyTokenAccounts2022,
       );
 
-      const assetsWithInfos = await getAssetsInfos(emptyTokenAccounts, networkSelected);
+      const umi = createUmi(connection);
+
+      umi.use(mplTokenMetadata()).use(walletAdapterIdentity(wallet));
+      const digitalAssets = await fetchAllDigitalAssetByOwner(umi, publicKey(wallet.publicKey.toBase58()));
+      const assetsWithInfos = await getAssetsInfos(emptyTokenAccounts, digitalAssets, umi, networkSelected);
       console.log(assetsWithInfos);
       const totalLamports = getTotalLamports(emptyTokenAccounts);
       setTotalLamports(totalLamports);
@@ -63,7 +95,20 @@ export const CloseView: FC = ({ }) => {
     }
   }
 
-  function SelectButton(props: { assetsWithInfos: { account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number } }) {
+  function SelectButton(props: {
+    assetsWithInfos: {
+      account: PublicKey,
+      program: PublicKey,
+      image: string,
+      name: string,
+      mint: string,
+      lamports: number;
+      amount: number,
+      tokenStandard: TokenStandard,
+      collectionMetadata: Pda | undefined,
+      tokenRecord: Pda | undefined
+    }
+  }) {
     const [isSelected, setIsSelected] = useState(false);
 
     useEffect(() => {
@@ -100,7 +145,19 @@ export const CloseView: FC = ({ }) => {
     );
   }
 
-  const closeAccounts = async (assets: { account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number }[]) => {
+  const closeAccounts = async (assets:
+    {
+      account: PublicKey,
+      program: PublicKey,
+      image: string,
+      name: string,
+      mint: string,
+      lamports: number,
+      amount: number,
+      tokenStandard: TokenStandard,
+      collectionMetadata: Pda | undefined,
+      tokenRecord: Pda | undefined
+    }[]) => {
 
     if (assets.length == 0) {
       notify({ type: 'error', message: `Please choose at least one token account to close first!` });
@@ -225,6 +282,10 @@ export const CloseView: FC = ({ }) => {
             }
           </div>
 
+          {!wallet.publicKey || !wallet.connected && <div className="text-center font-bold mt-4 text-xl">Please, connect your wallet!</div>}
+
+          {wallet.publicKey && !isFetched && <Loader text="Fetching assets..." />}
+
           {wallet.publicKey && isFetched &&
             <div className="flex items-center p-4 mb-4 font-bold text-lg text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
               <svg className="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -239,33 +300,35 @@ export const CloseView: FC = ({ }) => {
             <div className="text-center">No account to close</div> :
             <div className="grid grid-cols-4 gap-4">
               {emptyAccounts.map((account, key) => {
-                return (
-                  <Card key={key} className="flex justify-center">
-                    <div>
-                      <img src={account.image} className="w-[160px] h-[160px] mt-2"></img>
-                      <div className="text-center mt-2 text-xs">
-                        {account.name != undefined ? account.name : "Unknown token"}
+                if (key >= page * assetsPerPage && key < (page + 1) * assetsPerPage) {
+                  return (
+                    <Card key={key} className="flex justify-center">
+                      <div>
+                        <img src={account.image} className="w-[160px] h-[160px] mt-2"></img>
+                        <div className="text-center mt-2 text-xs">
+                          {account.name != undefined ? account.name : "Unknown token"}
+                        </div>
+                        <div className="flex justify-center my-2">
+                          <SelectButton assetsWithInfos={account} />
+                          <a
+                            target="_blank"
+                            rel="noreferrer"
+                            href={`https://solscan.io/token/${account.mint}`}
+                            className="mx-2 font-bold py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl">
+                            Info
+                          </a>
+                        </div>
                       </div>
-                      <div className="flex justify-center my-2">
-                        <SelectButton assetsWithInfos={account} />
-                        <a
-                          target="_blank"
-                          rel="noreferrer"
-                          href={`https://solscan.io/token/${account.mint}`}
-                          className="mx-2 font-bold py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl">
-                          Info
-                        </a>
-                      </div>
-                    </div>
-                  </Card>
-                )
+                    </Card>
+                  )
+                }
               })}
             </div>
           }
-
-          {!wallet.publicKey && <div className="text-center font-bold mt-4 text-xl">Please, connect your wallet!</div>}
-
-          {wallet.publicKey && !isFetched && <Loader text="Fetching assets..." />}
+          <div className="mt-4 flex justify-center">
+            {page > 0 && <button className="mx-2 font-bold py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl" onClick={() => setPage(page - 1)}>{"<"} Previous page</button>}
+            {page < Math.floor(emptyAccounts.length / assetsPerPage) && <button className="mx-2 font-bold py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl" onClick={() => setPage(page + 1)}>Next page {">"}</button>}
+          </div>
         </div>
       </div>
     </div>

@@ -28,11 +28,11 @@ export const UploadView: FC = ({ }) => {
     setConnection(connection)
   }, [networkConfig]);
 
-  const [fileIsSelected, setFileIsSelected] = useState(false)
+  const [fileIsSelected, setFileIsSelected] = useState<boolean>(false)
   const [file, setFile] = useState<GenericFile>();
-  const [fileName, setFileName] = useState("");
-  const [uri, setURI] = useState("");
-  const [uploading, setUploading] = useState(false);
+  const [fileName, setFileName] = useState<string>("");
+  const [uri, setURI] = useState<string>("");
+  const [uploading, setUploading] = useState<boolean>(false);
   const [uploadCost, setUploadCost] = useState<number>();
 
   const handleFileChange = async (event: any) => {

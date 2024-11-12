@@ -1,5 +1,7 @@
 import { PublicKey, Connection } from "@solana/web3.js";
 import { SCAM_TOKEN_LIST } from "./scamToken";
+import { TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
+import { Pda } from "@metaplex-foundation/umi";
 
 export function filterByScamsAndLegit(
     assets: {
@@ -9,7 +11,10 @@ export function filterByScamsAndLegit(
         mint: string;
         name: string;
         image: string;
-        amount: number
+        amount: number;
+        tokenStandard: TokenStandard;
+        collectionMetadata: Pda | undefined;
+        tokenRecord: Pda | undefined
     }[]
 ) {
     const scamAssets: {
@@ -19,7 +24,10 @@ export function filterByScamsAndLegit(
         mint: string;
         name: string;
         image: string;
-        amount: number
+        amount: number;
+        tokenStandard: TokenStandard;
+        collectionMetadata: Pda | undefined;
+        tokenRecord: Pda | undefined
     }[] = [];
     const legitAssets: {
         account: PublicKey;
@@ -28,7 +36,10 @@ export function filterByScamsAndLegit(
         mint: string;
         name: string;
         image: string;
-        amount: number
+        amount: number;
+        tokenStandard: TokenStandard;
+        collectionMetadata: Pda | undefined;
+        tokenRecord: Pda | undefined
     }[] = [];
 
     assets.map((asset) => {

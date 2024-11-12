@@ -1,18 +1,23 @@
 import { FC, useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { ComputeBudgetProgram, Connection, PublicKey, Transaction } from "@solana/web3.js";
+import { ComputeBudgetProgram, Connection, PublicKey, Transaction, TransactionInstruction, TransactionMessage } from "@solana/web3.js";
 import { useNetworkConfiguration } from "contexts/NetworkConfigurationProvider";
 import { getConnection } from "utils/getConnection";
 import { getAssetsInfos } from "utils/getAssetsInfos";
 import { Loader } from "components/Loader";
 import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, createCloseAccountInstruction, createBurnInstruction } from "@solana/spl-token";
-import { getEmptyTokenAccounts } from "utils/getEmptyAccounts";
 import { Card } from "components/ui/card";
 import { ADD_COMPUTE_UNIT_LIMIT_CU, ADD_COMPUTE_UNIT_PRICE_CU, BURN_CU, CLOSE_ACCOUNT_CU } from "utils/CUPerInstruction";
 import { AUTHORITY } from "config";
 import { notify } from "utils/notifications";
 import { getNonEmptyTokenAccounts } from "utils/getNonEmptyAccounts";
 import { filterByScamsAndLegit } from "utils/filterByScamsAndLegit";
+import { burnV1, fetchAllDigitalAssetByOwner, mplTokenMetadata, TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
+import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
+import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
+import { Pda, publicKey, transactionBuilder, TransactionBuilder } from "@metaplex-foundation/umi";
+import { setComputeUnitPrice, burnToken, closeToken, setComputeUnitLimit } from "@metaplex-foundation/mpl-toolbox";
+import { base58 } from "@metaplex-foundation/umi/serializers";
 
 export const BurnView: FC = ({ }) => {
   const wallet = useWallet();
@@ -21,13 +26,46 @@ export const BurnView: FC = ({ }) => {
   const networkSelected = networkConfig.networkConfiguration;
 
   const [connection, setConnection] = useState<Connection>();
-  const [nonEmptyAccounts, setNonEmptyAccounts] = useState<{ account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number, amount: number }[]>([]);
-  const [assetsSelected, setAssetSelected] = useState<{ account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number, amount: number }[]>([]);
-  const [scams, setScams] = useState<{ account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number, amount: number }[]>([]);
-  const [isBurning, setIsBurning] = useState(false);
-  const [isFetched, setIsFetched] = useState(false);
-
-  const nbPerTx = 10;
+  const [nonEmptyAccounts, setNonEmptyAccounts] = useState<{
+    account: PublicKey,
+    program: PublicKey,
+    image: string,
+    name: string,
+    mint: string,
+    lamports: number,
+    amount: number,
+    tokenStandard: TokenStandard,
+    collectionMetadata: Pda | undefined,
+    tokenRecord: Pda | undefined
+  }[]>([]);
+  const [assetsSelected, setAssetSelected] = useState<{
+    account: PublicKey,
+    program: PublicKey,
+    image: string,
+    name: string,
+    mint: string,
+    lamports: number,
+    amount: number,
+    tokenStandard: TokenStandard,
+    collectionMetadata: Pda | undefined,
+    tokenRecord: Pda | undefined
+  }[]>([]);
+  const [scams, setScams] = useState<{
+    account: PublicKey,
+    program: PublicKey,
+    image: string,
+    name: string,
+    mint: string,
+    lamports: number,
+    amount: number,
+    tokenStandard: TokenStandard,
+    collectionMetadata: Pda | undefined,
+    tokenRecord: Pda | undefined
+  }[]>([]);
+  const [isBurning, setIsBurning] = useState<boolean>(false);
+  const [isFetched, setIsFetched] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const assetsPerPage = 12;
 
   useEffect(() => {
     const connection = getConnection(networkSelected);
@@ -55,7 +93,11 @@ export const BurnView: FC = ({ }) => {
         nonEmptyTokenAccounts2022,
       );
 
-      const assetsWithInfos = await getAssetsInfos(nonEmptyTokenAccounts, networkSelected);
+      const umi = createUmi(connection);
+
+      umi.use(mplTokenMetadata()).use(walletAdapterIdentity(wallet));
+      const digitalAssets = await fetchAllDigitalAssetByOwner(umi, publicKey(wallet.publicKey.toBase58()));
+      const assetsWithInfos = await getAssetsInfos(nonEmptyTokenAccounts, digitalAssets, umi, networkSelected);
 
       const [scamAssets, legitAssets] = filterByScamsAndLegit(assetsWithInfos);
       console.log(assetsWithInfos)
@@ -65,7 +107,20 @@ export const BurnView: FC = ({ }) => {
     }
   }
 
-  function SelectButton(props: { assetsWithInfos: { account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number; amount: number } }) {
+  function SelectButton(props: {
+    assetsWithInfos: {
+      account: PublicKey,
+      program: PublicKey,
+      image: string,
+      name: string,
+      mint: string,
+      lamports: number;
+      amount: number,
+      tokenStandard: TokenStandard,
+      collectionMetadata: Pda | undefined,
+      tokenRecord: Pda | undefined
+    }
+  }) {
     const [isSelected, setIsSelected] = useState(false);
 
     useEffect(() => {
@@ -102,13 +157,32 @@ export const BurnView: FC = ({ }) => {
     );
   }
 
-  const burn = async (assets: { account: PublicKey, program: PublicKey, image: string, name: string, mint: string, lamports: number, amount: number }[]) => {
+  const burn = async (assets: {
+    account: PublicKey,
+    program: PublicKey,
+    image: string,
+    name: string,
+    mint: string,
+    lamports: number,
+    amount: number,
+    tokenStandard: TokenStandard,
+    collectionMetadata: Pda | undefined,
+    tokenRecord: Pda | undefined
+  }[], type: string) => {
 
     if (assets.length == 0) {
       notify({ type: 'error', message: `Please choose at least one asset to burn!` });
     }
     else {
       setIsBurning(true);
+
+      let nbPerTx = 5;
+      if (type == "scams") {
+        nbPerTx = 10;
+      }
+
+      const umi = createUmi(connection);
+      umi.use(mplTokenMetadata()).use(walletAdapterIdentity(wallet));
       try {
         let nbTx: number;
         if (assets.length % nbPerTx == 0) {
@@ -146,43 +220,116 @@ export const BurnView: FC = ({ }) => {
             isSigner: false,
           });
 
+          const burnIXs = [];
+
           for (let j = nbPerTx * i; j < bornSup; j++) {
-            Tx.add(
-              createBurnInstruction(
-                assets[j].account,
-                new PublicKey(assets[j].mint),
-                wallet.publicKey,
-                assets[j].amount,
-                [],
-                assets[j].program,
-              ),
-              createCloseAccountInstruction(
-                assets[j].account,
-                wallet.publicKey,
-                wallet.publicKey,
-                [],
-                assets[j].program,
-              ),
-            );
-          }
-          notify({ type: 'information', message: `Please confirm Tx: ${i + 1}/${nbTx}` });
-          const signature = await wallet.sendTransaction(Tx, connection, { preflightCommitment: "confirmed" });
-          let confirmed = false;
-          let timeout = 0;
-          while (!confirmed && timeout < 10000) {
-            let status = await connection.getSignatureStatuses([signature]);
-            if (status.value[0]?.confirmationStatus == "confirmed") {
-              notify({ type: 'success', message: `Success!`, txid: signature });
-              confirmed = true;
+
+            if (type == "scams") {
+              Tx.add(
+                createBurnInstruction(
+                  assets[j].account,
+                  new PublicKey(assets[j].mint),
+                  wallet.publicKey,
+                  assets[j].amount,
+                  [],
+                  assets[j].program,
+                ),
+                createCloseAccountInstruction(
+                  assets[j].account,
+                  wallet.publicKey,
+                  wallet.publicKey,
+                  [],
+                  assets[j].program,
+                ),
+              );
             }
             else {
-              timeout += 500;
-              await new Promise(r => setTimeout(r, 500));
+              burnIXs.push(burnV1(umi, {
+                mint: publicKey(assets[j].mint),
+                tokenOwner: publicKey(wallet.publicKey.toBase58()),
+                collectionMetadata: assets[j].collectionMetadata,
+                token: publicKey(assets[j].account),
+                tokenRecord: assets[j].tokenRecord,
+                tokenStandard: assets[j].tokenStandard,
+              }))
             }
           }
 
-          if (timeout == 1000) {
-            notify({ type: 'error', message: `Tx timed-out. Try again` });
+          if (type == "assets") {
+            // inject an authority key to track this transaction on chain
+            burnIXs[0].items[0].instruction.keys.push({
+              pubkey: AUTHORITY,
+              isWritable: false,
+              isSigner: false,
+            });
+          }
+
+          notify({ type: 'information', message: `Please confirm Tx: ${i + 1}/${nbTx}` });
+
+          if (type == "scams") {
+            const signature = await wallet.sendTransaction(Tx, connection, { preflightCommitment: "confirmed" });
+            let confirmed = false;
+            let timeout = 0;
+            while (!confirmed && timeout < 10000) {
+              let status = await connection.getSignatureStatuses([signature]);
+              if (status.value[0]?.confirmationStatus == "confirmed") {
+                notify({ type: 'success', message: `Success!`, txid: signature });
+                confirmed = true;
+              }
+              else {
+                timeout += 500;
+                await new Promise(r => setTimeout(r, 500));
+              }
+            }
+
+            if (timeout == 1000) {
+              notify({ type: 'error', message: `Tx timed-out. Try again` });
+            }
+          }
+          else {
+            const instructions: TransactionInstruction[] = [];
+
+            const umiInstructions = transactionBuilder()
+              .add(burnIXs)
+              .add(setComputeUnitPrice(umi, { microLamports: 1000 }))
+              .getInstructions();
+
+            for (let i = 0; i < umiInstructions.length; i++) {
+              const ix = umiInstructions[i]
+              instructions.push({
+                data: Buffer.from(ix.data),
+                keys: ix.keys.map((key) => {
+                  return {
+                    pubkey: new PublicKey(key.pubkey.toString()),
+
+                    isSigner: key.isSigner,
+
+                    isWritable: key.isWritable,
+                  }
+                }),
+                programId: new PublicKey(ix.programId.toString())
+              })
+            };
+
+            let latestBlockhash = await connection.getLatestBlockhash();
+            const transactionMessage = new TransactionMessage({
+              payerKey: wallet.publicKey,
+              recentBlockhash: latestBlockhash.blockhash,
+              instructions: instructions,
+            });;
+
+            const simulation = await connection.simulateTransaction(transactionMessage.compileToLegacyMessage());
+            const units = simulation.value.unitsConsumed;
+
+            const tx = await transactionBuilder()
+              .add(burnIXs)
+              .add(setComputeUnitPrice(umi, { microLamports: 1000 }))
+              .add(setComputeUnitLimit(umi, { units: (units + 150) * 1.05 }))
+              .sendAndConfirm(umi, {
+                confirm: { commitment: "confirmed" },
+              });
+            const signature = base58.deserialize(tx.signature)[0];
+            notify({ type: 'success', message: `Success!`, txid: signature });
           }
         }
         await getNonEmptyAccounts();
@@ -192,6 +339,7 @@ export const BurnView: FC = ({ }) => {
       catch (error) {
         setIsBurning(false);
         const err = (error as any)?.message;
+        console.log(err)
         notify({ type: 'error', message: err });
         setAssetSelected([]);
       }
@@ -208,7 +356,7 @@ export const BurnView: FC = ({ }) => {
 
           <div className="flex justify-center mb-4">
             {!isBurning ?
-              <button onClick={() => burn(assetsSelected)} className="mx-2 font-bold text-lg py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl">Burn assets selected</button> :
+              <button onClick={() => burn(assetsSelected, "assets")} className="mx-2 font-bold text-lg py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl">Burn assets selected</button> :
               <button className="mx-2 font-bold text-lg py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl">
                 <svg
                   role="status"
@@ -245,7 +393,7 @@ export const BurnView: FC = ({ }) => {
               </div>
               <div className="flex justify-center">
                 {!isBurning ?
-                  <button onClick={() => burn(scams)} type="button" className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                  <button onClick={() => burn(scams, "scams")} type="button" className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-3 py-1.5 me-2 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                     Burn Scams
                   </button> :
 
@@ -273,38 +421,44 @@ export const BurnView: FC = ({ }) => {
             </div>
           }
 
+          {!wallet.publicKey || !wallet.connected && <div className="text-center font-bold mt-4 text-xl">Please, connect your wallet!</div>}
+
+          {wallet.publicKey && !isFetched && <Loader text="Fetching assets..." />}
+
           {wallet.publicKey && isFetched && nonEmptyAccounts.length == 0 ?
             <div className="text-center">No asset to burn</div> :
             <div className="grid grid-cols-4 gap-4">
               {nonEmptyAccounts.map((account, key) => {
-                return (
-                  <Card key={key} className="flex justify-center">
-                    <div>
-                      <img src={account.image} className="w-[160px] h-[160px] mt-2"></img>
-                      <div className="text-center mt-2 text-xs">
-                        {account.name != undefined ? account.name : "Unknown token"}
+                if (key >= page * assetsPerPage && key < (page + 1) * assetsPerPage) {
+                  return (
+                    <Card key={key} className="flex justify-center">
+                      <div>
+                        <img src={account.image} className="w-[160px] h-[160px] mt-2"></img>
+                        <div className="text-center mt-2 text-xs">
+                          {account.name != undefined ? account.name : "Unknown token"}
+                        </div>
+                        <div className="flex justify-center my-2">
+                          <SelectButton assetsWithInfos={account} />
+                          <a
+                            target="_blank"
+                            rel="noreferrer"
+                            href={`https://solscan.io/token/${account.mint}`}
+                            className="mx-2 font-bold py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl">
+                            Info
+                          </a>
+                        </div>
                       </div>
-                      <div className="flex justify-center my-2">
-                        <SelectButton assetsWithInfos={account} />
-                        <a
-                          target="_blank"
-                          rel="noreferrer"
-                          href={`https://solscan.io/token/${account.mint}`}
-                          className="mx-2 font-bold py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl">
-                          Info
-                        </a>
-                      </div>
-                    </div>
-                  </Card>
-                )
+                    </Card>
+                  )
+                }
               })}
             </div>
           }
 
-          {!wallet.publicKey && <div className="text-center font-bold mt-4 text-xl">Please, connect your wallet!</div>}
-
-
-          {wallet.publicKey && !isFetched && <Loader text="Fetching assets..." />}
+          <div className="mt-4 flex justify-center">
+            {page > 0 && <button className="mx-2 font-bold py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl" onClick={() => setPage(page - 1)}>{"<"} Previous page</button>}
+            {page < Math.floor(nonEmptyAccounts.length / assetsPerPage) && <button className="mx-2 font-bold py-1 px-2 bg-[#312d29] border border-[#c8ab6e] rounded-xl" onClick={() => setPage(page + 1)}>Next page {">"}</button>}
+          </div>
         </div>
       </div>
     </div>
