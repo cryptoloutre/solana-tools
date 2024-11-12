@@ -5052,5 +5052,8 @@ export const SCAM_TOKEN_LIST =
     "2tBUWnY6xd6KXGFBke8vqyMwjAgqkrC7TdgkeBcCknFr",
     "3DTbv5EyvUrbD1UL83drYiAyNmz4cD5fRTFDEMrxbDyS",
     "8LcCGGHYfp2MVQhE6mJdfAPgodSzMWoPMppXAcdq4ne6",
-    "E7BKm7Fn2pMo2X8FfLPAG3Gp6X6Bc9F81HZq4ZadsbxM"
+    "E7BKm7Fn2pMo2X8FfLPAG3Gp6X6Bc9F81HZq4ZadsbxM",
+    "2T2JyjneHjbqAF4RfU67VbXgrJkreZ47dAtyQnN4Khtx",
+    "GGE6XpnYB6tpqjQN8i4h5owAPuqXUsc4VAmGpEqtE19E",
+    "McGcYa4CqyS9pa5UaNN8AhMESgzjTJLqdKRubbA1cfe"
 ]
