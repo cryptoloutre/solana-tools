@@ -124,4 +124,4 @@ To deploy on Vercel use the following settings :
 
 
 ## Community
-If you have questions or any troubles, feel free to reach me on Twitter [@laloutre](https://twitter.com/laloutre).
+If you have questions or any troubles, feel free to reach me on X (formerly Twitter) [@laloutre](https://x.com/laloutre).
