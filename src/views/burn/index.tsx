@@ -18,6 +18,8 @@ import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { Pda, publicKey, transactionBuilder, TransactionBuilder } from "@metaplex-foundation/umi";
 import { setComputeUnitPrice, burnToken, closeToken, setComputeUnitLimit } from "@metaplex-foundation/mpl-toolbox";
 import { base58 } from "@metaplex-foundation/umi/serializers";
+import { confirmTransaction } from "utils/confirmTransaction";
+import { getBurnAndCloseTransactions } from "utils/getBurnAndCloseTransactions";
 
 export const BurnView: FC = ({ }) => {
   const wallet = useWallet();
@@ -175,162 +177,17 @@ export const BurnView: FC = ({ }) => {
     }
     else {
       setIsBurning(true);
-
-      let nbPerTx = 5;
-      if (type == "scams") {
-        nbPerTx = 10;
-      }
-
-      const umi = createUmi(connection);
-      umi.use(mplTokenMetadata()).use(walletAdapterIdentity(wallet));
       try {
-        let nbTx: number;
-        if (assets.length % nbPerTx == 0) {
-          nbTx = assets.length / nbPerTx;
-        } else {
-          nbTx = Math.floor(assets.length / nbPerTx) + 1;
-        }
 
-        for (let i = 0; i < nbTx; i++) {
-          let bornSup: number;
+        const transactions = await getBurnAndCloseTransactions(assets, connection, wallet, type);
 
-          if (i == nbTx - 1) {
-            bornSup = assets.length;
-          } else {
-            bornSup = nbPerTx * (i + 1);
-          }
-
-          let Tx = new Transaction().add(
-            ComputeBudgetProgram.setComputeUnitPrice({
-              microLamports: 1000,
-            }),
-            ComputeBudgetProgram.setComputeUnitLimit({
-              units:
-                bornSup * (BURN_CU + CLOSE_ACCOUNT_CU) +
-                ADD_COMPUTE_UNIT_PRICE_CU +
-                ADD_COMPUTE_UNIT_LIMIT_CU
-            }),);
-
-          const NON_MEMO_IX_INDEX = 1;
-
-          // inject an authority key to track this transaction on chain
-          Tx.instructions[NON_MEMO_IX_INDEX].keys.push({
-            pubkey: AUTHORITY,
-            isWritable: false,
-            isSigner: false,
+        notify({ type: 'information', message: `Please sign the transactions` });
+        const signedTransactions = await wallet.signAllTransactions(transactions);
+        for (let n = 0; n < signedTransactions.length; n++) {
+          const signature = await connection.sendRawTransaction(signedTransactions[n].serialize(), {
+            skipPreflight: true
           });
-
-          const burnIXs = [];
-
-          for (let j = nbPerTx * i; j < bornSup; j++) {
-
-            if (type == "scams") {
-              Tx.add(
-                createBurnInstruction(
-                  assets[j].account,
-                  new PublicKey(assets[j].mint),
-                  wallet.publicKey,
-                  assets[j].amount,
-                  [],
-                  assets[j].program,
-                ),
-                createCloseAccountInstruction(
-                  assets[j].account,
-                  wallet.publicKey,
-                  wallet.publicKey,
-                  [],
-                  assets[j].program,
-                ),
-              );
-            }
-            else {
-              burnIXs.push(burnV1(umi, {
-                mint: publicKey(assets[j].mint),
-                tokenOwner: publicKey(wallet.publicKey.toBase58()),
-                collectionMetadata: assets[j].collectionMetadata,
-                token: publicKey(assets[j].account),
-                tokenRecord: assets[j].tokenRecord,
-                tokenStandard: assets[j].tokenStandard,
-              }))
-            }
-          }
-
-          if (type == "assets") {
-            // inject an authority key to track this transaction on chain
-            burnIXs[0].items[0].instruction.keys.push({
-              pubkey: AUTHORITY,
-              isWritable: false,
-              isSigner: false,
-            });
-          }
-
-          notify({ type: 'information', message: `Please confirm Tx: ${i + 1}/${nbTx}` });
-
-          if (type == "scams") {
-            const signature = await wallet.sendTransaction(Tx, connection, { preflightCommitment: "confirmed" });
-            let confirmed = false;
-            let timeout = 0;
-            while (!confirmed && timeout < 10000) {
-              let status = await connection.getSignatureStatuses([signature]);
-              if (status.value[0]?.confirmationStatus == "confirmed") {
-                notify({ type: 'success', message: `Success!`, txid: signature });
-                confirmed = true;
-              }
-              else {
-                timeout += 500;
-                await new Promise(r => setTimeout(r, 500));
-              }
-            }
-
-            if (timeout == 1000) {
-              notify({ type: 'error', message: `Tx timed-out. Try again` });
-            }
-          }
-          else {
-            const instructions: TransactionInstruction[] = [];
-
-            const umiInstructions = transactionBuilder()
-              .add(burnIXs)
-              .add(setComputeUnitPrice(umi, { microLamports: 1000 }))
-              .getInstructions();
-
-            for (let i = 0; i < umiInstructions.length; i++) {
-              const ix = umiInstructions[i]
-              instructions.push({
-                data: Buffer.from(ix.data),
-                keys: ix.keys.map((key) => {
-                  return {
-                    pubkey: new PublicKey(key.pubkey.toString()),
-
-                    isSigner: key.isSigner,
-
-                    isWritable: key.isWritable,
-                  }
-                }),
-                programId: new PublicKey(ix.programId.toString())
-              })
-            };
-
-            let latestBlockhash = await connection.getLatestBlockhash();
-            const transactionMessage = new TransactionMessage({
-              payerKey: wallet.publicKey,
-              recentBlockhash: latestBlockhash.blockhash,
-              instructions: instructions,
-            });;
-
-            const simulation = await connection.simulateTransaction(transactionMessage.compileToLegacyMessage());
-            const units = simulation.value.unitsConsumed;
-
-            const tx = await transactionBuilder()
-              .add(burnIXs)
-              .add(setComputeUnitPrice(umi, { microLamports: 1000 }))
-              .add(setComputeUnitLimit(umi, { units: (units + 150) * 1.05 }))
-              .sendAndConfirm(umi, {
-                confirm: { commitment: "confirmed" },
-              });
-            const signature = base58.deserialize(tx.signature)[0];
-            notify({ type: 'success', message: `Success!`, txid: signature });
-          }
+          await confirmTransaction(connection, signature);
         }
         await getNonEmptyAccounts();
         setIsBurning(false);

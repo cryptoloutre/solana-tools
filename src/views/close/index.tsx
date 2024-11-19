@@ -1,21 +1,21 @@
 import { FC, useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { ComputeBudgetProgram, Connection, PublicKey, Transaction } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { useNetworkConfiguration } from "contexts/NetworkConfigurationProvider";
 import { getConnection } from "utils/getConnection";
 import { getAssetsInfos } from "utils/getAssetsInfos";
 import { Loader } from "components/Loader";
-import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, createCloseAccountInstruction } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { getEmptyTokenAccounts } from "utils/getEmptyAccounts";
 import { Card } from "components/ui/card";
-import { ADD_COMPUTE_UNIT_LIMIT_CU, ADD_COMPUTE_UNIT_PRICE_CU, CLOSE_ACCOUNT_CU } from "utils/CUPerInstruction";
-import { AUTHORITY } from "config";
 import { notify } from "utils/notifications";
 import { getTotalLamports } from "utils/getTotalLamports";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { fetchAllDigitalAssetByOwner, mplTokenMetadata, TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
 import { Pda, publicKey } from "@metaplex-foundation/umi";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
+import { confirmTransaction } from "utils/confirmTransaction";
+import { getCloseTransactions } from "utils/getCloseTransactions";
 
 export const CloseView: FC = ({ }) => {
   const wallet = useWallet();
@@ -53,8 +53,6 @@ export const CloseView: FC = ({ }) => {
   const [totalLamports, setTotalLamports] = useState<number>();
   const [page, setPage] = useState<number>(0);
   const assetsPerPage = 12;
-
-  const nbPerTx = 20;
 
   useEffect(() => {
     const connection = getConnection(networkSelected);
@@ -165,72 +163,15 @@ export const CloseView: FC = ({ }) => {
     else {
       setIsClosing(true);
       try {
-        let nbTx: number;
-        if (assets.length % nbPerTx == 0) {
-          nbTx = assets.length / nbPerTx;
-        } else {
-          nbTx = Math.floor(assets.length / nbPerTx) + 1;
-        }
+        const transactions = await getCloseTransactions(assets, connection, wallet.publicKey);
 
-        for (let i = 0; i < nbTx; i++) {
-          let bornSup: number;
-
-          if (i == nbTx - 1) {
-            bornSup = assets.length;
-          } else {
-            bornSup = nbPerTx * (i + 1);
-          }
-
-          let Tx = new Transaction().add(
-            ComputeBudgetProgram.setComputeUnitPrice({
-              microLamports: 1000,
-            }),
-            ComputeBudgetProgram.setComputeUnitLimit({
-              units:
-                bornSup * CLOSE_ACCOUNT_CU +
-                ADD_COMPUTE_UNIT_PRICE_CU +
-                ADD_COMPUTE_UNIT_LIMIT_CU
-            }),);
-
-          const NON_MEMO_IX_INDEX = 1;
-
-          // inject an authority key to track this transaction on chain
-          Tx.instructions[NON_MEMO_IX_INDEX].keys.push({
-            pubkey: AUTHORITY,
-            isWritable: false,
-            isSigner: false,
+        notify({ type: 'information', message: `Please sign the transactions` });
+        const signedTransactions = await wallet.signAllTransactions(transactions);
+        for (let n = 0; n < signedTransactions.length; n++) {
+          const signature = await connection.sendRawTransaction(signedTransactions[n].serialize(), {
+            skipPreflight: true
           });
-
-          for (let j = nbPerTx * i; j < bornSup; j++) {
-            Tx.add(
-              createCloseAccountInstruction(
-                assets[j].account,
-                wallet.publicKey,
-                wallet.publicKey,
-                [],
-                assets[j].program,
-              ),
-            );
-          }
-          notify({ type: 'information', message: `Please confirm Tx: ${i + 1}/${nbTx}` });
-          const signature = await wallet.sendTransaction(Tx, connection, { preflightCommitment: "confirmed" });
-          let confirmed = false;
-          let timeout = 0;
-          while (!confirmed && timeout < 10000) {
-            let status = await connection.getSignatureStatuses([signature]);
-            if (status.value[0]?.confirmationStatus == "confirmed") {
-              notify({ type: 'success', message: `Success!`, txid: signature });
-              confirmed = true;
-            }
-            else {
-              timeout += 500;
-              await new Promise(r => setTimeout(r, 500));
-            }
-          }
-
-          if (timeout == 1000) {
-            notify({ type: 'error', message: `Tx timed-out. Try again` });
-          }
+          await confirmTransaction(connection, signature);
         }
         await getEmptyAccounts();
         setIsClosing(false);
