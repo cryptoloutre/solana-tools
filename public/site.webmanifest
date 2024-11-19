@@ -1,6 +1,7 @@
 {
     "name": "Solana-Tools",
     "short_name": "",
+    "description": "Bunch of free and open source tools to help you on Solana.",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
