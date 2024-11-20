@@ -12,6 +12,7 @@ export function filterByScamsAndLegit(
         name: string;
         image: string;
         amount: number;
+        hasWithheldAmount: boolean;
         tokenStandard: TokenStandard;
         collectionMetadata: Pda | undefined;
         tokenRecord: Pda | undefined
@@ -25,6 +26,7 @@ export function filterByScamsAndLegit(
         name: string;
         image: string;
         amount: number;
+        hasWithheldAmount: boolean;
         tokenStandard: TokenStandard;
         collectionMetadata: Pda | undefined;
         tokenRecord: Pda | undefined
@@ -37,6 +39,7 @@ export function filterByScamsAndLegit(
         name: string;
         image: string;
         amount: number;
+        hasWithheldAmount: boolean;
         tokenStandard: TokenStandard;
         collectionMetadata: Pda | undefined;
         tokenRecord: Pda | undefined

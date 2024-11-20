@@ -1,5 +1,5 @@
 import { ComputeBudgetProgram, Connection, PublicKey, Transaction, TransactionInstruction, TransactionMessage } from "@solana/web3.js";
-import { createBurnInstruction, createCloseAccountInstruction } from "@solana/spl-token";
+import { createBurnInstruction, createCloseAccountInstruction, createHarvestWithheldTokensToMintInstruction } from "@solana/spl-token";
 import { AUTHORITY } from "config";
 import { CLOSE_ACCOUNT_CU, ADD_COMPUTE_UNIT_PRICE_CU, ADD_COMPUTE_UNIT_LIMIT_CU } from "./CUPerInstruction";
 import { Pda, publicKey, transactionBuilder } from "@metaplex-foundation/umi";
@@ -18,6 +18,7 @@ export async function getBurnAndCloseTransactions(
         mint: string;
         lamports: number;
         amount: number;
+        hasWithheldAmount: boolean;
         tokenStandard: TokenStandard;
         collectionMetadata: Pda | undefined;
         tokenRecord: Pda | undefined;
@@ -116,6 +117,14 @@ export async function getBurnAndCloseTransactions(
 
             for (let j = nbPerTx * i; j < bornSup; j++) {
                 if (assets[j].program.toBase58() == "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb") {
+                    if (assets[j].hasWithheldAmount) {
+                        instructions.push(
+                            createHarvestWithheldTokensToMintInstruction(
+                                new PublicKey(assets[j].mint),
+                                [assets[j].account],
+                                assets[j].program
+                            ))
+                    }
                     instructions.push(
                         createBurnInstruction(
                             assets[j].account,
@@ -185,7 +194,7 @@ export async function getBurnAndCloseTransactions(
             const Tx = new Transaction();
             Tx.instructions = instructions;
 
-            const NON_MEMO_IX_INDEX = 0;
+            const NON_MEMO_IX_INDEX = instructions.length - 1;
 
             // inject an authority key to track this transaction on chain
             Tx.instructions[NON_MEMO_IX_INDEX].keys.push({

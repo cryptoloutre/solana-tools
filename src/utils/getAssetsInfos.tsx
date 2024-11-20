@@ -11,7 +11,8 @@ export const getAssetsInfos = async (
         program: PublicKey;
         lamports: number;
         mint: string;
-        amount: number
+        amount: number;
+        hasWithheldAmount: boolean
     }[],
     digitalAssets: DigitalAsset[],
     umi: Umi,
@@ -25,6 +26,7 @@ export const getAssetsInfos = async (
         lamports: number;
         mint: string;
         amount: number;
+        hasWithheldAmount: boolean;
         name: string;
         image: string;
         tokenStandard: TokenStandard,
@@ -89,6 +91,7 @@ export const getAssetsInfos = async (
                     program: assets[i].program,
                     lamports: assets[i].lamports,
                     amount: assets[i].amount,
+                    hasWithheldAmount: assets[i].hasWithheldAmount,
                     mint: assets[i].mint,
                     name: name,
                     image: image,

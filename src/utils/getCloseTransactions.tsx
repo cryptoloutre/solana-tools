@@ -1,7 +1,7 @@
 import { ComputeBudgetProgram, Connection, PublicKey, Transaction } from "@solana/web3.js";
-import { createCloseAccountInstruction } from "@solana/spl-token";
+import { createCloseAccountInstruction, createHarvestWithheldTokensToMintInstruction } from "@solana/spl-token";
 import { AUTHORITY } from "config";
-import { CLOSE_ACCOUNT_CU, ADD_COMPUTE_UNIT_PRICE_CU, ADD_COMPUTE_UNIT_LIMIT_CU } from "./CUPerInstruction";
+import { CLOSE_ACCOUNT_CU, ADD_COMPUTE_UNIT_PRICE_CU, ADD_COMPUTE_UNIT_LIMIT_CU, HARVEST_TOKENS_CU } from "./CUPerInstruction";
 import { Pda } from "@metaplex-foundation/umi";
 import { TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
 
@@ -14,6 +14,7 @@ export async function getCloseTransactions(
         mint: string;
         lamports: number;
         amount: number;
+        hasWithheldAmount: boolean;
         tokenStandard: TokenStandard;
         collectionMetadata: Pda | undefined;
         tokenRecord: Pda | undefined;
@@ -45,9 +46,19 @@ export async function getCloseTransactions(
                 microLamports: 1000,
             }));
 
-        let n = 0;
+        let nbCloseinstruction = 0;
+        let nbHarvestToken = 0;
         for (let j = nbPerTx * i; j < bornSup; j++) {
-            n += 1;
+            nbCloseinstruction += 1;
+            if (assets[j].hasWithheldAmount) {
+                nbHarvestToken += 1;
+                Tx.add(
+                    createHarvestWithheldTokensToMintInstruction(
+                        new PublicKey(assets[j].mint),
+                        [assets[j].account],
+                        assets[j].program
+                    ))
+            }
             Tx.add(
                 createCloseAccountInstruction(
                     assets[j].account,
@@ -60,7 +71,7 @@ export async function getCloseTransactions(
         }
         Tx.add(
             ComputeBudgetProgram.setComputeUnitLimit({
-                units: n * CLOSE_ACCOUNT_CU + ADD_COMPUTE_UNIT_PRICE_CU + ADD_COMPUTE_UNIT_LIMIT_CU
+                units: nbCloseinstruction * CLOSE_ACCOUNT_CU + nbHarvestToken * HARVEST_TOKENS_CU + ADD_COMPUTE_UNIT_PRICE_CU + ADD_COMPUTE_UNIT_LIMIT_CU
             }));
 
         const NON_MEMO_IX_INDEX = 0;

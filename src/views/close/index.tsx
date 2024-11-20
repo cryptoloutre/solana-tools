@@ -32,6 +32,7 @@ export const CloseView: FC = ({ }) => {
     mint: string,
     lamports: number,
     amount: number,
+    hasWithheldAmount: boolean,
     tokenStandard: TokenStandard,
     collectionMetadata: Pda | undefined,
     tokenRecord: Pda | undefined
@@ -44,6 +45,7 @@ export const CloseView: FC = ({ }) => {
     mint: string,
     lamports: number,
     amount: number,
+    hasWithheldAmount: boolean,
     tokenStandard: TokenStandard,
     collectionMetadata: Pda | undefined,
     tokenRecord: Pda | undefined
@@ -100,8 +102,9 @@ export const CloseView: FC = ({ }) => {
       image: string,
       name: string,
       mint: string,
-      lamports: number;
+      lamports: number,
       amount: number,
+      hasWithheldAmount: boolean,
       tokenStandard: TokenStandard,
       collectionMetadata: Pda | undefined,
       tokenRecord: Pda | undefined
@@ -152,6 +155,7 @@ export const CloseView: FC = ({ }) => {
       mint: string,
       lamports: number,
       amount: number,
+      hasWithheldAmount: boolean
       tokenStandard: TokenStandard,
       collectionMetadata: Pda | undefined,
       tokenRecord: Pda | undefined

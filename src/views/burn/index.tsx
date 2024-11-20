@@ -36,6 +36,7 @@ export const BurnView: FC = ({ }) => {
     mint: string,
     lamports: number,
     amount: number,
+    hasWithheldAmount: boolean,
     tokenStandard: TokenStandard,
     collectionMetadata: Pda | undefined,
     tokenRecord: Pda | undefined
@@ -48,6 +49,7 @@ export const BurnView: FC = ({ }) => {
     mint: string,
     lamports: number,
     amount: number,
+    hasWithheldAmount: boolean,
     tokenStandard: TokenStandard,
     collectionMetadata: Pda | undefined,
     tokenRecord: Pda | undefined
@@ -60,6 +62,7 @@ export const BurnView: FC = ({ }) => {
     mint: string,
     lamports: number,
     amount: number,
+    hasWithheldAmount: boolean,
     tokenStandard: TokenStandard,
     collectionMetadata: Pda | undefined,
     tokenRecord: Pda | undefined
@@ -116,8 +119,9 @@ export const BurnView: FC = ({ }) => {
       image: string,
       name: string,
       mint: string,
-      lamports: number;
+      lamports: number,
       amount: number,
+      hasWithheldAmount: boolean,
       tokenStandard: TokenStandard,
       collectionMetadata: Pda | undefined,
       tokenRecord: Pda | undefined
@@ -167,6 +171,7 @@ export const BurnView: FC = ({ }) => {
     mint: string,
     lamports: number,
     amount: number,
+    hasWithheldAmount: boolean,
     tokenStandard: TokenStandard,
     collectionMetadata: Pda | undefined,
     tokenRecord: Pda | undefined
