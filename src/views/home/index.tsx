@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from 'components/ui/card';
-import { FlameIcon, PenLineIcon, Trash2Icon, UploadIcon, ScalingIcon, TriangleAlert } from 'lucide-react';
+import { FlameIcon, PenLineIcon, Trash2Icon, UploadIcon, HandCoinsIcon } from 'lucide-react';
 import useUserSOLBalanceStore from 'stores/useUserSOLBalanceStore';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useNetworkConfiguration } from 'contexts/NetworkConfigurationProvider';
@@ -34,13 +34,13 @@ const actionCards: Array<{
         "Close token accounts and earn $SOL",
       icon: <Trash2Icon size={50} />,
     },
-    // {
-    //   title: "Resize",
-    //   href: "/resize",
-    //   description:
-    //     "Resize your NFTs and earn $SOL",
-    //   icon: <ScalingIcon size={50} />,
-    // },
+    {
+      title: "Claim transfer fees",
+      href: "/claim-fees",
+      description:
+        "Claim the transfer fees of your token2022",
+      icon: <HandCoinsIcon size={50} />,
+    },
     {
       title: "Upload",
       href: "/upload",
