@@ -114,7 +114,7 @@ export const ClaimFeesView: FC = ({ }) => {
       <div className="md:hero-content flex flex-col">
         <div className="mt-6 ">
           <h1 className="text-center text-5xl font-bold mb-8">
-            Claim Token2022's transfer fees
+            Claim Token2022&apos;s transfer fees
           </h1>
 
           <div>
