@@ -1,23 +1,19 @@
 import { FC, useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { ComputeBudgetProgram, Connection, PublicKey, Transaction, TransactionInstruction, TransactionMessage } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { useNetworkConfiguration } from "contexts/NetworkConfigurationProvider";
 import { getConnection } from "utils/getConnection";
 import { getAssetsInfos } from "utils/getAssetsInfos";
 import { Loader } from "components/Loader";
-import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, createCloseAccountInstruction, createBurnInstruction } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { Card } from "components/ui/card";
-import { ADD_COMPUTE_UNIT_LIMIT_CU, ADD_COMPUTE_UNIT_PRICE_CU, BURN_CU, CLOSE_ACCOUNT_CU } from "utils/CUPerInstruction";
-import { AUTHORITY } from "config";
 import { notify } from "utils/notifications";
 import { getNonEmptyTokenAccounts } from "utils/getNonEmptyAccounts";
 import { filterByScamsAndLegit } from "utils/filterByScamsAndLegit";
-import { burnV1, fetchAllDigitalAssetByOwner, mplTokenMetadata, TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
+import { fetchAllDigitalAssetByOwner, mplTokenMetadata, TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
-import { Pda, publicKey, transactionBuilder, TransactionBuilder } from "@metaplex-foundation/umi";
-import { setComputeUnitPrice, burnToken, closeToken, setComputeUnitLimit } from "@metaplex-foundation/mpl-toolbox";
-import { base58 } from "@metaplex-foundation/umi/serializers";
+import { Pda, publicKey } from "@metaplex-foundation/umi";
 import { confirmTransaction } from "utils/confirmTransaction";
 import { getBurnAndCloseTransactions } from "utils/getBurnAndCloseTransactions";
 

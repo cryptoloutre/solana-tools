@@ -4,7 +4,7 @@ import { AUTHORITY } from "config";
 import { CLOSE_ACCOUNT_CU, ADD_COMPUTE_UNIT_PRICE_CU, ADD_COMPUTE_UNIT_LIMIT_CU } from "./CUPerInstruction";
 import { Pda, publicKey, transactionBuilder } from "@metaplex-foundation/umi";
 import { WalletContextState } from "@solana/wallet-adapter-react";
-import { burnV1, fetchAllDigitalAssetByOwner, mplTokenMetadata, TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
+import { burnV1, mplTokenMetadata, TokenStandard } from "@metaplex-foundation/mpl-token-metadata";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
 import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { setComputeUnitPrice } from "@metaplex-foundation/mpl-toolbox";
