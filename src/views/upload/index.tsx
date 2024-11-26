@@ -67,8 +67,7 @@ export const UploadView: FC = ({ }) => {
       if (networkSelected == "devnet") {
         umi.use(
           irysUploader({
-            providerUrl: "https://turbo.ardrive.io",
-            timeout: 60000,
+            address: "https://devnet.irys.xyz"
           })
         );
       } else {
@@ -79,8 +78,15 @@ export const UploadView: FC = ({ }) => {
 
       umi.use(mplTokenMetadata()).use(walletAdapterIdentity(wallet));
 
-      const [uri] = await umi.uploader.upload([file]);
-      setURI(uri);
+      const [uri]= await umi.uploader.upload([file]);
+      let correctURI: string;
+      if (networkSelected == "devnet") {
+        correctURI = uri.replace("https://arweave.net", 'https://devnet.irys.xyz');
+      }
+      else {
+        correctURI = uri.replace("https://arweave.net", 'https://node1.irys.xyz');
+      }
+      setURI(correctURI);
       setUploading(false);
       notify({ type: 'success', message: `Success!` });
 
