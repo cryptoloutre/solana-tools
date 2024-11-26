@@ -64,12 +64,13 @@ export const CreateView: FC = ({ }) => {
       if (networkSelected == "devnet") {
         umi.use(
           irysUploader({
-            providerUrl: "https://turbo.ardrive.io",
-            timeout: 60000,
+            address: "https://devnet.irys.xyz"
           })
         );
       } else {
-        umi.use(irysUploader());
+        umi.use(irysUploader({
+          address: "https://node1.irys.xyz/"
+        }));
       }
 
       umi.use(mplTokenMetadata()).use(walletAdapterIdentity(wallet));
@@ -91,14 +92,15 @@ export const CreateView: FC = ({ }) => {
           const [ImageUri] = await umi.uploader.upload([file]);
 
           if (ImageUri) {
+            const correctURI = networkSelected == "devnet" ? ImageUri.replace("https://arweave.net", 'https://devnet.irys.xyz') : ImageUri.replace("https://arweave.net", 'https://node1.irys.xyz');
             const uri = await umi.uploader.uploadJson({
               name: tokenName,
               symbol: symbol,
               description: tokenDescription,
-              image: ImageUri,
+              image: correctURI,
             });
             if (uri) {
-              URI = uri;
+              URI = networkSelected == "devnet" ? uri.replace("https://arweave.net", 'https://devnet.irys.xyz') : uri.replace("https://arweave.net", 'https://node1.irys.xyz');
             }
           }
         } else {

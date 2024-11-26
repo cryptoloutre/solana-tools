@@ -79,13 +79,7 @@ export const UploadView: FC = ({ }) => {
       umi.use(mplTokenMetadata()).use(walletAdapterIdentity(wallet));
 
       const [uri]= await umi.uploader.upload([file]);
-      let correctURI: string;
-      if (networkSelected == "devnet") {
-        correctURI = uri.replace("https://arweave.net", 'https://devnet.irys.xyz');
-      }
-      else {
-        correctURI = uri.replace("https://arweave.net", 'https://node1.irys.xyz');
-      }
+      const correctURI = networkSelected == "devnet" ? uri.replace("https://arweave.net", 'https://devnet.irys.xyz') : uri.replace("https://arweave.net", 'https://node1.irys.xyz');
       setURI(correctURI);
       setUploading(false);
       notify({ type: 'success', message: `Success!` });
