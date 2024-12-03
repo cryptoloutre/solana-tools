@@ -1,4 +1,5 @@
 import { Connection } from "@solana/web3.js";
+import { RPC_URL } from "config";
 
 export function getConnection(networkSelected: string) {
     let connection: Connection;
@@ -9,7 +10,7 @@ export function getConnection(networkSelected: string) {
         });
     } else {
         connection = new Connection(
-            "https://rpc.helius.xyz/?api-key=57bfd2f0-4693-4ab1-9f5b-d0301c16b90b",
+            RPC_URL,
             { commitment: "confirmed" }
         );
     }
