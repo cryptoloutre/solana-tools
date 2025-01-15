@@ -8,7 +8,7 @@ A bunch of tools to help people in the Solana ecosystem. This website includes:
 - a UI to create SPL-Tokens
 - a UI to upload file to Arweave
 - a UI to update the metadata of your NFT
-- a UI to send a NFT message to the owner of your desired NFT or solana domain name
+- a UI to send an NFT message to the owner of your desired NFT or solana domain name
 - More tools are scheduled...
 
 Download our xNFT [here](https://test.xnft.gg/app/621U7cWfav4ypS7e7uxdXcZTjTFgkeXW48sRReoFewg9). Find the source code of our xNFT just [here](https://github.com/cryptoloutre/solana-tools-xnft).
@@ -47,13 +47,13 @@ https://user-images.githubusercontent.com/35653371/183292063-5ada43f5-9212-46cf-
 
 
 ## Close empty account UI
-A UI to close empty token account and getting back $SOL from the associated token account.
+A UI to close an empty token account and getting back $SOL from the associated token account.
 
 
 https://user-images.githubusercontent.com/35653371/183292119-6b8de305-f5af-4039-ab6e-8d46cbb82857.mp4
 
 ## Multi sender UI
-A UI to send multiple tokens in 1 transaction (same token to different people/many tokens to one person/transfer solana domain name)
+An UI to send multiple tokens in 1 transaction (same token to different people/many tokens to one person/transfer solana domain name)
 
 
 https://user-images.githubusercontent.com/35653371/183292184-7397b437-742d-4cdd-a8e5-744c31a479b3.mp4
@@ -90,7 +90,7 @@ https://user-images.githubusercontent.com/35653371/187695118-2d2e90f2-0b78-48ea-
 
 
 ## Send NFT message
-An UI to send a NFT message to the owner of your desired NFT
+An UI to send an NFT message to the owner of your desired NFT
 
 
 
@@ -107,11 +107,11 @@ More info here: https://daisyui.com/docs/default-themes
 
 This app encourages you to use CSS Modules over other style techniques (like SASS/LESS, Styled Components, usual CSS).
 It has a modular nature and supports modern CSS. [Read more on Next.JS site](https://nextjs.org/docs/basic-features/built-in-css-support).
-Anyway, if you want to connect LESS there is example code in `./next.config.js`
+Anyway, if you want to connect LESS there is an example code in `./next.config.js`
 
 ## Deploy on Vercel
 
-Before push run locally `npm run build` to make sure app can be build successfully on vercel.
+Before push run locally `npm run build` to make sure the app can be built successfully on vercel.
 
 Vercel will automatically create environment and deployment for you if you have vercel account connected to your GitHub account. Go to the vercel.com to connect it.
 Then any push to `main` branch will automatically rebuild and redeploy app.
