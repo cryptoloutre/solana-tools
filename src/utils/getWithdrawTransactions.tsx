@@ -44,7 +44,7 @@ export async function getWithdrawTransactions(
             bornSup = nbWithdrawsPerTx * (i + 1);
         }
 
-        const start = nbWithdrawsPerTx * i; // index of the begining of the sub array
+        const start = nbWithdrawsPerTx * i; // index of the beginning of the sub array
         const end = bornSup; // index of the end of the sub array
 
         const transaction = new Transaction();
