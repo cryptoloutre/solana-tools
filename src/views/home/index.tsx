@@ -94,7 +94,7 @@ export const HomeView: FC = ({ }) => {
               <h3 className="text-lg font-medium ml-2">High SOL Balance</h3>
             </div>
             <div className="mt-2 mb-4 text-sm">
-              You have {balance} SOL. Please consider to stake it to help strengthen Solana&apos;s network decentralization. For exemple, you can stake with SolBlaze or Marinade.
+              You have {balance} SOL. Please consider to stake it to help strengthen Solana&apos;s network decentralization. For example, you can stake with SolBlaze or Marinade.
             </div>
             <div className="flex">
               <a target='_blank' href='https://stake.solblaze.org/?r=944e95f397748b97' rel='noreferrer' className='mr-2'>
